@@ -1,1 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entraînement Conjugaison</title>
+    <style>
+        /* Design général */
+    body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    margin: 3px 8px; 
+    background-color: #f0f2f5; 
+    color: #333;
+}
 
+/* Bandeau d'en-tête (Titre + Bouton) */
+.header-container {
+    display: flex;
+    justify-content: space-between; /* Titre à gauche, bouton à droite */
+    align-items: center;            /* Aligne verticalement au centre */
+    background: white;
+    padding: 3px 8px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    margin-bottom: 3px;
+}
+
+h1 { 
+    font-size: 1rem; /* Titre beaucoup plus petit */
+    color: #2c3e50; 
+    margin: 0; 
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Conteneur des deux tableaux */
+.container { 
+    display: flex; 
+    justify-content: center; 
+    gap: 12px; 
+    flex-wrap: wrap; 
+}
+
+table { 
+    border-collapse: collapse; 
+    background: white; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th, td { 
+    border: 1px solid #dee2e6; 
+    padding: 7px 11px; 
+    text-align: left; 
+}
+
+th { 
+    background-color: #4a69bd; 
+    color: white; 
+    text-transform: uppercase;
+    font-size: 0.8rem;
+}
+
+/* Style des cases de saisie */
+input { 
+    border: 2px solid #bdc3c7; 
+    padding: 4px; 
+    border-radius: 5px;
+    width: 160px;
+    font-size: 1.1rem; 
+    font-weight: bold;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+input:focus { border-color: #4a69bd; background-color: #f8f9fa; }
+
+/* Couleurs de correction */
+.correct { background-color: #d4edda !important; border-color: #28a745 !important; color: #155724; }
+.incorrect { background-color: #f8d7da !important; border-color: #dc3545 !important; color: #721c24; }
+
+/* Zone du Score à côté du bouton */
+#resultat { 
+    font-size: 1.1rem; 
+    font-weight: bold; 
+    margin-right: 12px;
+    vertical-align: middle;
+}
+
+/* Bouton Vérifier */
+button { 
+    padding: 7px 15px; 
+    font-size: 0.9rem; 
+    cursor: pointer; 
+    background-color: #2ecc71; 
+    color: white; 
+    border: none; 
+    border-radius: 15px;
+    box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+}
+
+button:hover { background-color: #27ae60; transform: translateY(-1px); }
+button:active { transform: translateY(0); }
+
+/* Soulignement spécifique */
+u { text-decoration-color: #e74c3c; text-decoration-thickness: 2px; }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <h1>Présent indicatif régulier</h1>
+        <div>
+            <span id="resultat"></span>
+            <button onclick="verifier()">Vérifier mes réponses</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Infinitif</th>
+                    <th>Personne</th>
+                    <th>Réponse</th>
+                </tr>
+            </thead>
+            <tbody id="table1"></tbody>
+        </table>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Infinitif</th>
+                    <th>Personne</th>
+                    <th>Réponse</th>
+                </tr>
+            </thead>
+            <tbody id="table2"></tbody>
+        </table>
+    </div>
+
+    
+    <script>
+        // --- MODÈLE DE DONNÉES (À modifier pour vos futurs exercices) ---
+        // Utilisez <u>...</u> pour souligner une lettre
+        const exercices = [
+            { v: "DOBLAR", p: "1", r: "doblo" },
+            { v: "BARRER", p: "5", r: "barren" },
+            { v: "DIMITIR", p: "2", r: "dimites" },
+            { v: "BAILAR", p: "4", r: "bailamos" },
+            { v: "APRENDER", p: "2", r: "aprendes" },
+            { v: "CAMBIAR", p: "5", r: "cambiáis" },
+            { v: "OBSERVAR", p: "6", r: "observan" },
+            { v: "CORRER", p: "4", r: "corremos" },
+            { v: "VIVIR", p: "3", r: "vive" },
+            { v: "LAVAR", p: "3", r: "lava" },
+            // Suite pour le tableau 2
+            { v: "VENDER", p: "2", r: "vendes" },
+            { v: "OMITIR", p: "5", r: "omitís" },
+            { v: "APRECIAR", p: "6", r: "aprecian" },
+            { v: "ACCEDER", p: "3", r: "accede" },
+            { v: "LEER", p: "6", r: "leen" },
+            { v: "INSISTIR", p: "4", r: "insistimos" },
+            { v: "EXISTIR", p: "6", r: "existen" },
+            { v: "BEBER", p: "2", r: "bebes" },
+            { v: "PASEAR", p: "5", r: "paseáis" },
+            { v: "ESCRIBIR", p: "1", r: "escribo" }
+        ];
+
+        // Génération des tableaux à l'ouverture
+        function genererTableaux() {
+            const t1 = document.getElementById('table1');
+            const t2 = document.getElementById('table2');
+
+            exercices.forEach((ex, index) => {
+                const row = `<tr>
+                    <td>${ex.v}</td>
+                    <td>${ex.p}</td>
+                    <td>
+                        <input type="text" 
+                               id="input-${index}" 
+                               autocomplete="off" 
+                               spellcheck="false"
+                               onkeydown="if(event.key==='Enter') passerSuivant(${index})">
+                    </td>
+                </tr>`;
+                if (index < 10) t1.innerHTML += row;
+                else t2.innerHTML += row;
+            });
+        }
+
+        // Fonction pour passer à la ligne suivante avec Entrée
+        function passerSuivant(index) {
+            const suivant = document.getElementById(`input-${index + 1}`);
+            if (suivant) suivant.focus();
+        }
+
+        // Fonction de vérification et calcul du score
+        function verifier() {
+            let score = 0;
+            exercices.forEach((ex, index) => {
+                const input = document.getElementById(`input-${index}`);
+                const reponseEleve = input.value.trim().toLowerCase();
+                const reponseAttendue = ex.r.toLowerCase();
+
+                if (reponseEleve === reponseAttendue) {
+                    input.classList.add("correct");
+                    input.classList.remove("incorrect");
+                    score++;
+                } else {
+                    input.classList.add("incorrect");
+                    input.classList.remove("correct");
+                }
+            });
+
+            const zoneScore = document.getElementById('resultat');
+            zoneScore.innerHTML = `Score : ${score} / ${exercices.length}`;
+            
+            if (score === exercices.length) {
+                zoneScore.style.color = "#27ae60";
+                zoneScore.innerHTML += " - Excellent ! 🎉";
+            } else if (score >= exercices.length / 2) {
+                zoneScore.style.color = "#d35400";
+                zoneScore.innerHTML += " - Courage, encore un effort !";
+            } else {
+                zoneScore.style.color = "#c0392b";
+            }
+        }
+
+        window.onload = genererTableaux;
+    </script>
+</body>
+</html>

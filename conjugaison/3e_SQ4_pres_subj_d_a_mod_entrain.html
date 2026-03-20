@@ -202,7 +202,7 @@ u { text-decoration-color: #e74c3c; text-decoration-thickness: 2px; }
             let score = 0;
             exercices.forEach((ex, index) => {
                 const input = document.getElementById(`input-${index}`);
-                const reponseEleve = input.value.trim().toLowerCase();
+                const reponseEleve = input.value.trim().toLowerCase().replace(/\s+/g, ' ');
                 const reponseAttendue = ex.r.toLowerCase();
 
                 if (reponseEleve === reponseAttendue) {

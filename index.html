@@ -67,24 +67,39 @@
                         const grid = document.getElementById(`grid-${item.name}`);
                         
                         files.forEach(file => {
-                            if (file.name.endsWith('.html')) {
-                                const card = document.createElement('a');
-                                card.className = 'card';
-                                // URL de la page web (GitHub Pages)
-                                card.setAttribute('target', '_blank');
-                                card.href = `https://${USER}.github.io/${REPO}/${item.name}/${file.name}`;
-                                
-                                const title = file.name.replace('.html', '').replace(/-/g, ' ').replace(/_/g, ' ');
-                                card.innerHTML = `<h3>${title}</h3>`;
-                                grid.appendChild(card);
-                            }
-                        });
+                          if (file.name.endsWith('.html')) {
+                            const card = document.createElement('a');
+                            card.className = 'card';
+                            card.href = `https://${USER}.github.io/${REPO}/${item.name}/${file.name}`;
+                            card.setAttribute('target', '_blank');
+                            
+                            // On crée un identifiant unique pour pouvoir mettre à jour le titre plus tard
+                            const titleId = `title-${item.name}-${file.name.replace(/[^a-z0-9]/gi, '')}`;
+                            
+                            // Titre par défaut (en attendant la lecture du fichier)
+                            let tempTitle = file.name.replace('.html', '').replace(/_/g, ' ').replace(/-/g, ' ');
+                            card.innerHTML = `<h3 id="${titleId}">${tempTitle}</h3>`;
+                            grid.appendChild(card);
+
+                            // --- LA MAGIE : On va lire le vrai titre dans le fichier ---
+                            fetch(card.href)
+                                .then(response => response.text())
+                                .then(text => {
+                                    const doc = new DOMParser().parseFromString(text, 'text/html');
+                                    const realTitle = doc.querySelector('title') ? doc.querySelector('title').innerText : "";
+                                    if (realTitle && realTitle.trim() !== "") {
+                                        document.getElementById(titleId).innerText = realTitle;
+                                    }
+                                })
+                                .catch(err => console.log("Erreur lecture titre pour " + file.name));
+                        }
                     }
                 }
-            } catch (error) {
-                main.innerHTML = "<p>Erreur lors du chargement. Vérifiez votre pseudo ou la visibilité du dépôt.</p>";
-                console.error(error);
             }
+        } catch (error) {
+            main.innerHTML = "<p>Erreur lors du chargement. Vérifiez votre pseudo ou la visibilité du dépôt.</p>";
+            console.error(error);
+        }
         }
 
         init();

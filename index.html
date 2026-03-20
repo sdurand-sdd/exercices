@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portail Pédagogique - Mes Exercices</title>
+    <style>
+        :root { --primary: #3498db; --bg: #f8f9fa; --text: #2c3e50; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); padding: 30px; line-height: 1.6; }
+        h1 { text-align: center; color: var(--primary); font-size: 2.5rem; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 2px; }
+        
+        /* Style des Sections (Dossiers) */
+        .section-container { margin-bottom: 50px; }
+        .folder-title { 
+            font-size: 1.8rem; border-bottom: 3px solid var(--primary); 
+            padding-bottom: 10px; margin-bottom: 20px; display: flex; align-items: center;
+        }
+        .folder-title::before { content: "📁"; margin-right: 15px; }
+
+        /* Grille d'exercices */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        
+        /* Style des Cartes (Fichiers) */
+        .card { 
+            background: white; padding: 25px; border-radius: 12px; shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-decoration: none; color: inherit; display: block; transition: all 0.3s ease;
+            border: 1px solid #eee; position: relative; overflow: hidden;
+        }
+        .card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 10px 20px rgba(52, 152, 219, 0.2); }
+        .card h3 { margin: 0; color: var(--text); font-size: 1.1rem; }
+        .card::after { content: "Lancer l'exercice →"; display: block; margin-top: 15px; font-size: 0.8rem; color: var(--primary); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>🚀 Portail des Exercices</h1>
+    <div id="main-container">
+        <p style="text-align:center;">Analyse du dépôt en cours...</p>
+    </div>
+
+    <script>
+        const USER = "VOTRE_PSEUDO_GITHUB"; // <--- METTEZ VOTRE PSEUDO ICI
+        const REPO = "exercices"; 
+
+        async function fetchContent(path = "") {
+            const url = `https://api.github.com/repos/${USER}/${REPO}/contents/${path}`;
+            const response = await fetch(url);
+            return await response.json();
+        }
+
+        async function init() {
+            const main = document.getElementById('main-container');
+            try {
+                const rootContent = await fetchContent();
+                main.innerHTML = ""; // On efface le message de chargement
+
+                for (const item of rootContent) {
+                    if (item.type === "dir") {
+                        // C'EST UN DOSSIER (ex: conjugaison)
+                        const section = document.createElement('div');
+                        section.className = 'section-container';
+                        section.innerHTML = `<h2 class="folder-title">${item.name.toUpperCase()}</h2><div id="grid-${item.name}" class="grid"></div>`;
+                        main.appendChild(section);
+
+                        // On va chercher les fichiers dans ce dossier
+                        const files = await fetchContent(item.path);
+                        const grid = document.getElementById(`grid-${item.name}`);
+                        
+                        files.forEach(file => {
+                            if (file.name.endsWith('.html')) {
+                                const card = document.createElement('a');
+                                card.className = 'card';
+                                // URL de la page web (GitHub Pages)
+                                card.href = `https://${USER}.github.io/${REPO}/${item.name}/${file.name}`;
+                                
+                                const title = file.name.replace('.html', '').replace(/-/g, ' ').replace(/_/g, ' ');
+                                card.innerHTML = `<h3>${title}</h3>`;
+                                grid.appendChild(card);
+                            }
+                        });
+                    }
+                }
+            } catch (error) {
+                main.innerHTML = "<p>Erreur lors du chargement. Vérifiez votre pseudo ou la visibilité du dépôt.</p>";
+                console.error(error);
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

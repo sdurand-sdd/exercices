@@ -71,6 +71,7 @@
                                 const card = document.createElement('a');
                                 card.className = 'card';
                                 // URL de la page web (GitHub Pages)
+                                card.setAttribute('target', '_blank');
                                 card.href = `https://${USER}.github.io/${REPO}/${item.name}/${file.name}`;
                                 
                                 const title = file.name.replace('.html', '').replace(/-/g, ' ').replace(/_/g, ' ');

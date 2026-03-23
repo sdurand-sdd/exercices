@@ -1,1 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Défi Devinettes Espagnol</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body { font-family: 'Comic Sans MS', sans-serif; background-color: #e8f4f8; margin: 20px; }
+        h1 { text-align: center; color: #2c3e50; text-shadow: 1px 1px 2px white; }
+        
+        /* Barre de progression */
+        .progress-container { width: 80%; background: #ddd; height: 20px; border-radius: 10px; margin: 10px auto 20px; overflow: hidden; border: 2px solid #2c3e50; }
+        #progress-bar { width: 0%; height: 100%; background: #3498db; transition: width 0.3s; }
 
+        .container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 5px; }
+        table { border-collapse: collapse; background: white; box-shadow: 0 8px 20px rgba(0,0,0,0.15); border-radius: 12px; overflow: hidden; }
+        th, td { border: 1px solid #dee2e6; padding: 12px; }
+        th { background-color: #ff9f43; color: white; font-size: 0.9rem; }
+        
+        td:first-child { max-width: 300px; background-color: #fff9f1; font-weight: bold; color: #576574; }
+
+        input { 
+            border: 3px solid #ced6e0; padding: 8px; border-radius: 8px; width: 250px; 
+            font-size: 1.1rem; font-weight: bold; outline: none; transition: 0.2s;
+        }
+        input:focus { border-color: #ff9f43; transform: scale(1.02); }
+
+        .correct { background-color: #2ecc71 !important; color: white !important; border-color: #27ae60 !important; }
+        .incorrect { background-color: #ff7675 !important; color: white !important; border-color: #d63031 !important; }
+
+        .controls { text-align: center; margin-top: 10px; }
+        #resultat { font-size: 2rem; font-weight: bold; margin-bottom: 10px; }
+        
+        button { 
+            padding: 15px 40px; font-size: 1.3rem; cursor: pointer; 
+            background: linear-gradient(to bottom, #2ecc71, #27ae60);
+            color: white; border: none; border-radius: 50px;
+            box-shadow: 0 5px 0 #1e8449; transition: 0.1s;
+        }
+        button:active { transform: translateY(4px); box-shadow: 0 1px 0 #1e8449; }
+    </style>
+</head>
+<body>
+
+    <h1>🌟 ¡El Gran Desafío de Vocabulario! 🌟</h1>
+
+    <div class="progress-container"><div id="progress-bar"></div></div>
+
+    <div class="container">
+        <table>
+            <thead><tr><th>Pregunta</th><th>Respuesta</th></tr></thead>
+            <tbody id="table1"></tbody>
+        </table>
+        <table>
+            <thead><tr><th>Pregunta</th><th>Respuesta</th></tr></thead>
+            <tbody id="table2"></tbody>
+        </table>
+    </div>
+
+    <div class="controls">
+        <div id="resultat"></div>
+        <button onclick="verifier()">¡VERIFICAR MI SCORE!</button>
+    </div>
+
+    <script>
+        const exercices = [
+            { q: "Es el tío de Rodrigo y el padre de Sara", r: "Es Ricardo" },
+            { q: "La hermana de mi madre est mi...", r: "tía" },
+            { q: "El animal que dice 'miau'", r: "el gato" },
+            { q: "La capital de España", r: "Madrid" },
+            { q: "Fruta roja y pequeña", r: "la fresa" },
+            { q: "Se usa para escribir en la pizarra", r: "la tiza" },
+            { q: "El hijo de mi abuelo (no es mi padre)", r: "mi tío" },
+            { q: "Lo usas para protegerte de la lluvia", r: "el paraguas" },
+            { q: "Día después de martes", r: "miércoles" },
+            { q: "Color del cielo", r: "azul" },
+            { q: "Contrario de 'grande'", r: "pequeño" },
+            { q: "Lo usas para comer la sopa", r: "la cuchara" },
+            { q: "Lugar donde compramos pan", r: "la panadería" },
+            { q: "Estación del año con mucho sol", r: "el verano" },
+            { q: "Persona que cura a los enfermos", r: "el médico" },
+            { q: "Número después de diez", r: "once" },
+            { q: "Lo usas para dormir", r: "la cama" },
+            { q: "Animal que da leche", r: "la vaca" },
+            { q: "Sirve para cortar carne", r: "el cuchillo" },
+            { q: "Mes de la Navidad", r: "diciembre" }
+        ];
+
+        // Sons (utilisent des sons système courts de Google)
+        const audioWin = new Audio('https://actions.google.com/sounds/v1/foley/success_chime.ogg');
+        const audioPerfect = new Audio('https://actions.google.com/sounds/v1/human_voices/applause.ogg');
+
+        function genererTableaux() {
+            const t1 = document.getElementById('table1');
+            const t2 = document.getElementById('table2');
+
+            exercices.forEach((ex, index) => {
+                const row = `<tr>
+                    <td>${ex.q}</td>
+                    <td><input type="text" id="input-${index}" oninput="updateProgress()" onkeydown="if(event.key==='Enter') passerSuivant(${index})"></td>
+                </tr>`;
+                if (index < 10) t1.innerHTML += row;
+                else t2.innerHTML += row;
+            });
+        }
+
+        function updateProgress() {
+            const inputs = document.querySelectorAll('input');
+            let remplis = 0;
+            inputs.forEach(i => { if(i.value.trim() !== "") remplis++; });
+            document.getElementById('progress-bar').style.width = (remplis / exercices.length * 100) + "%";
+        }
+
+        function passerSuivant(index) {
+            const suivant = document.getElementById(`input-${index + 1}`);
+            if (suivant) suivant.focus();
+        }
+
+        function verifier() {
+            let score = 0;
+            const netoyer = (t) => t.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, ' ').replace(/\.$/, '');
+
+            exercices.forEach((ex, index) => {
+                const input = document.getElementById(`input-${index}`);
+                if (netoyer(input.value) === netoyer(ex.r)) {
+                    input.className = "correct";
+                    score++;
+                } else {
+                    input.className = "incorrect";
+                }
+            });
+
+            const zone = document.getElementById('resultat');
+            zone.innerHTML = `🏆 Score : ${score} / ${exercices.length}`;
+
+            if (score === exercices.length) {
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                audioPerfect.play();
+                zone.style.color = "#27ae60";
+            } else if (score > 0) {
+                audioWin.play();
+                zone.style.color = "#d35400";
+            }
+        }
+
+        window.onload = genererTableaux;
+    </script>
+</body>
+</html>

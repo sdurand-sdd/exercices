@@ -63,12 +63,12 @@
     <script>
         // MODIFIEZ UNIQUEMENT CETTE LISTE :
         const exercices = [
+            { q: "¿quiénes son los tíos de Amadeo?", r: "son Ricardo y Rodrigo" },
+            { q: "¿Cuántos primos tiene?", r: "Tiene cuatro primos" },
+            { q: "Quién es el marido de Adelina?", r: "Es Rodrigo" },
             { q: "Es le tío de Rodrigo y el padre de Sara", r: "Es Ricardo" },
-            { q: "La hermana de mi madre es mi...", r: "tía" },
-            { q: "Día después de martes", r: "miércoles" },
-            { q: "Animal que da leche", r: "la vaca" },
-            { q: "Contrario de 'grande'", r: "pequeño" },
-            { q: "Mes de la Navidad", r: "diciembre" }
+            { q: "Es la prima de Pitu y la sobrina de Adelina", r: "Es Marcela | Es Sara" },
+            { q: "Es la tía de Amadeo y la madre de Marcela", r: "Es Margarita" }
         ];
 
         const audioWin = new Audio('https://actions.google.com/sounds/v1/foley/success_chime.ogg');
@@ -120,11 +120,16 @@
 
             exercices.forEach((ex, index) => {
                 const input = document.getElementById(`input-${index}`);
-                if (netoyer(input.value) === netoyer(ex.r)) {
-                    input.className = "correct";
-                    score++;
+                const reponseEleve = netoyer(input.value);
+            // On sépare les réponses possibles par le signe "|"
+                const reponsesPossibles = ex.r.split('|').map(res => netoyer(res));
+
+            // On vérifie si la réponse de l'élève est dans la liste des possibles
+                if (reponsesPossibles.includes(reponseEleve)) {
+                input.className = "correct";
+                score++;
                 } else {
-                    input.className = "incorrect";
+                input.className = "incorrect";
                 }
             });
 

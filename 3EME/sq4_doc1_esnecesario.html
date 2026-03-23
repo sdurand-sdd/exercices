@@ -6,7 +6,7 @@
     <title>Défi Langues - Score Automatique</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        body { font-family: 'Comic Sans MS', sans-serif; background-color: #e8f4f8; margin: 20px; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #e8f4f8; margin: 20px; }
         h1 { text-align: center; color: #2c3e50; }
         
         .progress-container { width: 80%; background: #ddd; height: 15px; border-radius: 10px; margin: 10px auto 20px; overflow: hidden; border: 2px solid #2c3e50; }
@@ -29,7 +29,25 @@
         }
         input:focus { border-color: #ff9f43; background-color: #fff; }
 
-        .correct { background-color: #2ecc71 !important; color: white !important; border-color: #27ae60 !important; }
+		/* Style spécifique pour les cases dans les phrases */
+		.input-trou {
+    		width: 150px; /* Plus court pour tenir dans une phrase */
+    		padding: 2px 5px;
+    		margin: 0 5px;
+    		border-width: 0 0 2px 0; /* Uniquement une ligne en bas */
+    		border-radius: 0;
+    		background-color: transparent;
+    		display: inline-block;
+    		vertical-align: middle;
+		}
+
+		/* On élargit la cellule pour que la phrase ne revienne pas trop à la ligne */
+		td {
+    		min-width: 400px; 
+    		line-height: 2rem; /* Donne de l'espace entre les lignes */
+		}
+        
+		.correct { background-color: #2ecc71 !important; color: white !important; border-color: #27ae60 !important; }
         .incorrect { background-color: #ff7675 !important; color: white !important; border-color: #d63031 !important; }
 
         .controls { text-align: center; margin-top: 5px; padding-bottom: 30px; }
@@ -63,13 +81,17 @@
     <script>
         // MODIFIEZ UNIQUEMENT CETTE LISTE :
         const exercices = [
-            { q: "Es le tío de Rodrigo y el padre de Sara", r: "Es Ricardo" },
-            { q: "La hermana de mi madre es mi...", r: "tía" },
-            { q: "Día después de martes", r: "miércoles" },
-            { q: "Animal que da leche", r: "la vaca" },
-            { q: "Contrario de 'grande'", r: "pequeño" },
-            { q: "Mes de la Navidad", r: "diciembre" }
-        ];
+    	{ q: "Es necesario que ___ (plantar - 2) árboles.", r: "plantes" },
+    	{ q: "Es necesario que no ___ (dejar - 5) la luz encendida", r: "dejéis" },
+    	{ q: "Es necesario que ___ (crear - 1) energías renovables.", r: "cree" }, 
+		{ q: "Es necesario que ___ (utilizar - 6) los transportes públicos.", r: "utilicen" }, 
+		{ q: "Es necesario que ___ (usar - 4) las papeleras.", r: "usemos" },
+		{ q: "Es necesario que ___ (proteger - 3) las especies protegidas.", r: "proteja" },
+		{ q: "Es necesario que no ___ (tirar - 2) las bolsas de plástico.", r: "tires" },
+		{ q: "Es necesario que ___ (reciclar - 5) el papel, el vidrio y el plástico.", r: "recicléis" },
+		{ q: "Es necesario que no ___ (coger - 6) las flores y las plantas protegidas.", r: "cojan" },
+		{ q: "Es necesario que ___ (respetar - 4) la naturaleza.", r: "respetemos" }
+];
 
         const audioWin = new 		Audio('https://actions.google.com/sounds/v1/foley/success_chime.ogg');
         const audioPerfect = new 	Audio('https://actions.google.com/sounds/v1/human_voices/applause.ogg');

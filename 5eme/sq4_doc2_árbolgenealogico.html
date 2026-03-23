@@ -3,37 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Défi Devinettes Espagnol</title>
+    <title>Défi Langues - Score Automatique</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         body { font-family: 'Comic Sans MS', sans-serif; background-color: #e8f4f8; margin: 20px; }
-        h1 { text-align: center; color: #2c3e50; text-shadow: 1px 1px 2px white; }
+        h1 { text-align: center; color: #2c3e50; }
         
-        /* Barre de progression */
-        .progress-container { width: 80%; background: #ddd; height: 20px; border-radius: 10px; margin: 10px auto 20px; overflow: hidden; border: 2px solid #2c3e50; }
+        .progress-container { width: 80%; background: #ddd; height: 15px; border-radius: 10px; margin: 10px auto 20px; overflow: hidden; border: 2px solid #2c3e50; }
         #progress-bar { width: 0%; height: 100%; background: #3498db; transition: width 0.3s; }
 
-        .container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 5px; }
-        table { border-collapse: collapse; background: white; box-shadow: 0 8px 20px rgba(0,0,0,0.15); border-radius: 12px; overflow: hidden; }
-        th, td { border: 1px solid #dee2e6; padding: 12px; }
-        th { background-color: #ff9f43; color: white; font-size: 0.9rem; }
+        .container { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 5px; }
         
-        td:first-child { max-width: 300px; background-color: #fff9f1; font-weight: bold; color: #576574; }
+        table { border-collapse: collapse; background: white; box-shadow: 0 8px 20px rgba(0,0,0,0.15); border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
+        /* Cache le tableau s'il est vide */
+        table:empty { display: none; }
+
+        th, td { border: 1px solid #dee2e6; padding: 12px; }
+        th { background-color: #ff9f43; color: white; font-size: 0.9rem; text-transform: uppercase; }
+        
+        td:first-child { min-width: 200px; max-width: 350px; background-color: #fff9f1; font-weight: bold; color: #576574; }
 
         input { 
-            border: 3px solid #ced6e0; padding: 8px; border-radius: 8px; width: 250px; 
+            border: 3px solid #ced6e0; padding: 8px; border-radius: 8px; width: 260px; 
             font-size: 1.1rem; font-weight: bold; outline: none; transition: 0.2s;
         }
-        input:focus { border-color: #ff9f43; transform: scale(1.02); }
+        input:focus { border-color: #ff9f43; background-color: #fff; }
 
         .correct { background-color: #2ecc71 !important; color: white !important; border-color: #27ae60 !important; }
         .incorrect { background-color: #ff7675 !important; color: white !important; border-color: #d63031 !important; }
 
-        .controls { text-align: center; margin-top: 10px; }
-        #resultat { font-size: 2rem; font-weight: bold; margin-bottom: 10px; }
+        .controls { text-align: center; margin-top: 5px; padding-bottom: 30px; }
+        #resultat { font-size: 2rem; font-weight: bold; margin-bottom: 10px; min-height: 2.5rem; }
         
         button { 
-            padding: 15px 40px; font-size: 1.3rem; cursor: pointer; 
+            padding: 15px 45px; font-size: 1.3rem; cursor: pointer; 
             background: linear-gradient(to bottom, #2ecc71, #27ae60);
             color: white; border: none; border-radius: 50px;
             box-shadow: 0 5px 0 #1e8449; transition: 0.1s;
@@ -43,66 +46,58 @@
 </head>
 <body>
 
-    <h1>🌟 ¡El Gran Desafío de Vocabulario! 🌟</h1>
+    <h1>🌟 ¡El Gran Desafío! 🌟</h1>
 
     <div class="progress-container"><div id="progress-bar"></div></div>
 
     <div class="container">
-        <table>
-            <thead><tr><th>Pregunta</th><th>Respuesta</th></tr></thead>
-            <tbody id="table1"></tbody>
-        </table>
-        <table>
-            <thead><tr><th>Pregunta</th><th>Respuesta</th></tr></thead>
-            <tbody id="table2"></tbody>
-        </table>
+        <table id="table-left"><thead><tr><th>Pregunta</th><th>Respuesta</th></tr><tbody id="tbody-left"></tbody></thead></table>
+        <table id="table-right"><thead><tr><th>Pregunta</th><th>Respuesta</th></tr><tbody id="tbody-right"></tbody></thead></table>
     </div>
 
     <div class="controls">
         <div id="resultat"></div>
-        <button onclick="verifier()">¡VERIFICAR MI SCORE!</button>
+        <button onclick="verifier()">¡VERIFICAR!</button>
     </div>
 
     <script>
+        // MODIFIEZ UNIQUEMENT CETTE LISTE :
         const exercices = [
-            { q: "Es el tío de Rodrigo y el padre de Sara", r: "Es Ricardo" },
-            { q: "La hermana de mi madre est mi...", r: "tía" },
-            { q: "El animal que dice 'miau'", r: "el gato" },
-            { q: "La capital de España", r: "Madrid" },
-            { q: "Fruta roja y pequeña", r: "la fresa" },
-            { q: "Se usa para escribir en la pizarra", r: "la tiza" },
-            { q: "El hijo de mi abuelo (no es mi padre)", r: "mi tío" },
-            { q: "Lo usas para protegerte de la lluvia", r: "el paraguas" },
+            { q: "Es le tío de Rodrigo y el padre de Sara", r: "Es Ricardo" },
+            { q: "La hermana de mi madre es mi...", r: "tía" },
             { q: "Día después de martes", r: "miércoles" },
-            { q: "Color del cielo", r: "azul" },
-            { q: "Contrario de 'grande'", r: "pequeño" },
-            { q: "Lo usas para comer la sopa", r: "la cuchara" },
-            { q: "Lugar donde compramos pan", r: "la panadería" },
-            { q: "Estación del año con mucho sol", r: "el verano" },
-            { q: "Persona que cura a los enfermos", r: "el médico" },
-            { q: "Número después de diez", r: "once" },
-            { q: "Lo usas para dormir", r: "la cama" },
             { q: "Animal que da leche", r: "la vaca" },
-            { q: "Sirve para cortar carne", r: "el cuchillo" },
+            { q: "Contrario de 'grande'", r: "pequeño" },
             { q: "Mes de la Navidad", r: "diciembre" }
         ];
 
-        // Sons (utilisent des sons système courts de Google)
         const audioWin = new Audio('https://actions.google.com/sounds/v1/foley/success_chime.ogg');
         const audioPerfect = new Audio('https://actions.google.com/sounds/v1/human_voices/applause.ogg');
 
         function genererTableaux() {
-            const t1 = document.getElementById('table1');
-            const t2 = document.getElementById('table2');
+            const tLeft = document.getElementById('tbody-left');
+            const tRight = document.getElementById('tbody-right');
+            const tableRight = document.getElementById('table-right');
+
+            const milieu = Math.ceil(exercices.length / 2);
 
             exercices.forEach((ex, index) => {
                 const row = `<tr>
                     <td>${ex.q}</td>
                     <td><input type="text" id="input-${index}" oninput="updateProgress()" onkeydown="if(event.key==='Enter') passerSuivant(${index})"></td>
                 </tr>`;
-                if (index < 10) t1.innerHTML += row;
-                else t2.innerHTML += row;
+                
+                if (index < milieu) {
+                    tLeft.innerHTML += row;
+                } else {
+                    tRight.innerHTML += row;
+                }
             });
+
+            // Si une seule colonne suffit, on cache la table de droite
+            if (exercices.length <= 1) {
+                tableRight.style.display = "none";
+            }
         }
 
         function updateProgress() {
@@ -119,7 +114,9 @@
 
         function verifier() {
             let score = 0;
-            const netoyer = (t) => t.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, ' ').replace(/\.$/, '');
+            
+            // NETTOYAGE STRICT : On garde les accents (pas de .normalize)
+            const netoyer = (t) => t.trim().toLowerCase().replace(/\s+/g, ' ').replace(/\.$/, '');
 
             exercices.forEach((ex, index) => {
                 const input = document.getElementById(`input-${index}`);
@@ -138,7 +135,7 @@
                 confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
                 audioPerfect.play();
                 zone.style.color = "#27ae60";
-            } else if (score > 0) {
+            } else {
                 audioWin.play();
                 zone.style.color = "#d35400";
             }

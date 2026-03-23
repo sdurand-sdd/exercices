@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercice à Trous - Espagnol</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body { font-family: 'Comic Sans MS', sans-serif; background-color: #f4f7f6; margin: 20px; }
+        h1 { text-align: center; color: #2c3e50; }
+
+        .progress-container { width: 80%; background: #ddd; height: 12px; border-radius: 10px; margin: 10px auto 20px; border: 2px solid #2c3e50; }
+        #progress-bar { width: 0%; height: 100%; background: #3498db; transition: width 0.3s; }
+
+        .container { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        
+        table { border-collapse: collapse; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; margin-bottom: 10px; }
+        td { border: 1px solid #eee; padding: 15px; font-size: 1.1rem; line-height: 2.2rem; min-width: 450px; }
+
+        /* Style des "Trous" (Inputs) */
+        .input-trou { 
+            border: none;
+            border-bottom: 3px dashed #4a69bd;
+            background-color: #fffde7;
+            width: 150px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+            color: #2c3e50;
+            outline: none;
+            margin: 0 5px;
+            transition: 0.3s;
+        }
+        .input-trou:focus { background-color: #fff; border-bottom-style: solid; transform: translateY(-2px); }
+
+        .correct { background-color: #2ecc71 !important; color: white !important; border-bottom-color: #27ae60 !important; }
+        .incorrect { background-color: #ff7675 !important; color: white !important; border-bottom-color: #d63031 !important; }
+
+        .controls { text-align: center; margin-top: 10px; padding-bottom: 30px; }
+        #resultat { font-size: 2rem; font-weight: bold; margin-bottom: 10px; min-height: 2.5rem; }
+        
+        button { 
+            padding: 15px 45px; font-size: 1.3rem; cursor: pointer; 
+            background: #2ecc71; color: white; border: none; border-radius: 50px;
+            box-shadow: 0 5px 0 #1e8449;
+        }
+        button:active { transform: translateY(4px); box-shadow: 0 1px 0 #1e8449; }
+    </style>
+</head>
+<body>
+
+    <h1>📝 Rellena les huecos (Texte à trous)</h1>
+
+    <div class="progress-container"><div id="progress-bar"></div></div>
+
+    <div class="container">
+        <table id="table-left"><tbody id="tbody-left"></tbody></table>
+        <table id="table-right"><tbody id="tbody-right"></tbody></table>
+    </div>
+
+    <div class="controls">
+        <div id="resultat"></div>
+        <button onclick="verifier()">¡VERIFICAR!</button>
+    </div>
+
+    <script>
+        // Écrivez "___" (3 underscores) là où vous voulez le trou
+        const exercices = [
+            { q: "Hoy ___ (ser) lunes.", r: "es" },
+            { q: "Mis amigos ___ (vivir | habitar) en Valencia.", r: "viven | habitan" },
+            { q: "El cielo es ___ (blue).", r: "azul" },
+            { q: "Mañana voy a la ___ (beach).", r: "playa" },
+            { q: "Me gusta el ___ (car).", r: "coche | carro | auto | vehículo" },
+            { q: "Tengo ___ (15) años.", r: "quince" }
+        ];
+
+        const audioWin = new Audio('https://actions.google.com/sounds/v1/foley/success_chime.ogg');
+        const audioPerfect = new Audio('https://actions.google.com/sounds/v1/human_voices/applause.ogg');
+
+        function genererTableaux() {
+            const tLeft = document.getElementById('tbody-left');
+            const tRight = document.getElementById('tbody-right');
+            const milieu = Math.ceil(exercices.length / 2);
+
+            exercices.forEach((ex, index) => {
+                const inputHTML = `<input type="text" id="input-${index}" class="input-trou" oninput="updateProgress()" onkeydown="if(event.key==='Enter') passerSuivant(${index})">`;
+                const phraseHtml = ex.q.replace("___", inputHTML);
+                
+                const row = `<tr><td>${phraseHtml}</td></tr>`;
+                if (index < milieu) tLeft.innerHTML += row;
+                else tRight.innerHTML += row;
+            });
+        }
+
+        function updateProgress() {
+            const inputs = document.querySelectorAll('input');
+            let remplis = 0;
+            inputs.forEach(i => { if(i.value.trim() !== "") remplis++; });
+            document.getElementById('progress-bar').style.width = (remplis / exercices.length * 100) + "%";
+        }
+
+        function passerSuivant(index) {
+            const suivant = document.getElementById(`input-${index + 1}`);
+            if (suivant) suivant.focus();
+        }
+
+        function verifier() {
+            let score = 0;
+            const netoyer = (t) => t.trim().toLowerCase().replace(/\s+/g, ' ').replace(/\.$/, '');
+
+            exercices.forEach((ex, index) => {
+                const input = document.getElementById(`input-${index}`);
+                const reponseEleve = netoyer(input.value);
+                const reponsesPossibles = ex.r.split('|').map(res => netoyer(res));
+
+                if (reponsesPossibles.includes(reponseEleve)) {
+                    input.className = "input-trou correct";
+                    score++;
+                } else {
+                    input.className = "input-trou incorrect";
+                }
+            });
+
+            const zone = document.getElementById('resultat');
+            zone.innerHTML = `🏆 Score : ${score} / ${exercices.length}`;
+            if (score === exercices.length) {
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                audioPerfect.play();
+                zone.style.color = "#27ae60";
+            } else {
+                audioWin.play();
+                zone.style.color = "#d35400";
+            }
+        }
+
+        window.onload = genererTableaux;
+    </script>
+</body>
+</html>

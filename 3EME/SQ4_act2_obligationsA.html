@@ -51,13 +51,20 @@
     <div class="progress-container"><div id="progress-bar"></div></div>
 
     <div class="container">
-        <table id="table-left"><thead><tr><th>Pregunta</th><th>Respuesta</th></tr><tbody id="tbody-left"></tbody></thead></table>
-        <table id="table-right"><thead><tr><th>Pregunta</th><th>Respuesta</th></tr><tbody id="tbody-right"></tbody></thead></table>
+        <table id="mon-tableau-unique">
+            <thead>
+                <tr>
+                    <th>Phrase d'origine</th>
+                    <th>Transformation (Obligation)</th>
+                </tr>
+            </thead>
+            <tbody id="tbody-unique"></tbody>
+        </table>
     </div>
 
     <div class="controls">
         <div id="resultat"></div>
-        <button onclick="verifier()">¡VERIFICAR!</button>
+        <button onclick="verifier()">¡COMPROBAR!</button>
     </div>
 
     <script>

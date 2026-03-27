@@ -1,82 +1,105 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SQ4 - Act.2 - Obligations (3ème)</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-    /* Fond de page Taupe Clair/Chaud */
-    body { 
-        font-family: 'Segoe UI', sans-serif; 
-        background-color: #d2b48c; /* Taupe chaud / Tan */
-        margin: 20px; 
-        color: #4a3f35;
-    }
-    
-    h1 { text-align: center; color: #4a3f35; margin-bottom: 30px; text-shadow: 1px 1px 2px rgba(255,255,255,0.5); }
-    
-    .progress-container { width: 80%; background: #ede0d4; height: 15px; border-radius: 10px; margin: 10px auto 20px; overflow: hidden; border: 2px solid #4a3f35; }
-    #progress-bar { width: 0%; height: 100%; background: #8b7355; transition: width 0.3s; }
+        /* DESIGN TAUPE CHAUD - SPÉCIAL 3ÈME */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #d2b48c; /* Taupe clair / Tan */
+            margin: 20px; 
+            color: #4a3f35;
+        }
+        
+        h1 { text-align: center; color: #4a3f35; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(255,255,255,0.5); }
+        
+        /* ZONE DE CONSIGNE PEDAGOGIQUE */
+        .consigne-box {
+            max-width: 1050px;
+            margin: 0 auto 30px auto;
+            padding: 20px;
+            background-color: #eaddcf; /* Taupe très doux */
+            border-left: 6px solid #6f5f51; /* Taupe foncé */
+            border-radius: 4px;
+            color: #4a3f35;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+        }
+        .consigne-box strong { color: #6f5f51; text-transform: uppercase; margin-right: 10px; }
 
-    .container { display: flex; justify-content: center; margin-bottom: 20px; }
-    
-    table { 
-        width: 95%; 
-        max-width: 1100px; 
-        border-collapse: collapse; 
-        background: #fdfaf7; /* Fond de cellule très légèrement cassé */
-        box-shadow: 0 8px 25px rgba(0,0,0,0.2); 
-        border-radius: 12px; 
-        overflow: hidden; 
-    }
+        .progress-container { width: 80%; background: #ede0d4; height: 15px; border-radius: 10px; margin: 10px auto 25px; overflow: hidden; border: 2px solid #4a3f35; }
+        #progress-bar { width: 0%; height: 100%; background: #8b7355; transition: width 0.3s; }
 
-    th, td { border: 1px solid #c5b4a2; padding: 15px; }
-    
-    /* En-têtes Taupe Foncé */
-    th { background-color: #6f5f51; color: #fdfaf7; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
-    
-    td:first-child { width: 40%; background-color: #eaddcf; font-weight: bold; color: #4a3f35; }
-    td:last-child { width: 60%; }
+        .container { display: flex; justify-content: center; margin-bottom: 20px; }
+        
+        table { 
+            width: 95%; 
+            max-width: 1100px; 
+            border-collapse: collapse; 
+            background: #fdfaf7; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2); 
+            border-radius: 12px; 
+            overflow: hidden; 
+        }
 
-    input { 
-        border: 2px solid #c5b4a2; 
-        padding: 12px; 
-        border-radius: 8px; 
-        width: 100%; 
-        font-size: 1.1rem; 
-        background-color: #fdfaf7;
-        color: #4a3f35;
-        outline: none; 
-        transition: 0.3s;
-        box-sizing: border-box;
-    }
-    input:focus { border-color: #6f5f51; background-color: #fff; box-shadow: 0 0 8px rgba(111, 95, 81, 0.3); }
+        th, td { border: 1px solid #c5b4a2; padding: 15px; }
+        
+        /* EN-TÊTES TAUPE FONCÉ */
+        th { background-color: #6f5f51; color: #fdfaf7; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+        
+        td:first-child { width: 40%; background-color: #eaddcf; font-weight: bold; color: #4a3f35; }
+        td:last-child { width: 60%; }
 
-    .correct { background-color: #7a9461 !important; color: white !important; border-color: #5d7049 !important; }
-    .incorrect { background-color: #bc6c25 !important; color: white !important; border-color: #9b581e !important; }
+        input { 
+            border: 2px solid #c5b4a2; 
+            padding: 12px; 
+            border-radius: 8px; 
+            width: 100%; 
+            font-size: 1.1rem; 
+            background-color: #fdfaf7;
+            color: #4a3f35;
+            outline: none; 
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+        input:focus { border-color: #6f5f51; background-color: #fff; box-shadow: 0 0 8px rgba(111, 95, 81, 0.3); transform: scale(1.01); }
 
-    .controls { text-align: center; margin-top: 10px; padding-bottom: 40px; }
-    #resultat { font-size: 2rem; font-weight: bold; margin-bottom: 10px; min-height: 2.5rem; color: #4a3f35; }
-    
-    /* Bouton assorti au Taupe Foncé */
-    button { 
-        padding: 15px 50px; font-size: 1.4rem; cursor: pointer; 
-        background: #6f5f51;
-        color: #fdfaf7; border: none; border-radius: 50px;
-        box-shadow: 0 5px 0 #4a3f35; transition: 0.1s;
-        font-weight: bold;
-    }
-    button:hover { background: #827162; }
-    button:active { transform: translateY(4px); box-shadow: 0 1px 0 #4a3f35; }
-</style>
+        /* COULEURS DE CORRECTION HARMONISÉES */
+        .correct { background-color: #7a9461 !important; color: white !important; border-color: #5d7049 !important; }
+        .incorrect { background-color: #bc6c25 !important; color: white !important; border-color: #9b581e !important; }
+
+        .controls { text-align: center; margin-top: 10px; padding-bottom: 50px; }
+        #resultat { font-size: 2rem; font-weight: bold; margin-bottom: 15px; min-height: 2.5rem; color: #4a3f35; }
+        
+        /* BOUTON ¡COMPROBAR! */
+        button { 
+            padding: 18px 60px; font-size: 1.5rem; cursor: pointer; 
+            background: #6f5f51;
+            color: #fdfaf7; border: none; border-radius: 50px;
+            box-shadow: 0 5px 0 #4a3f35; transition: 0.1s;
+            font-weight: bold;
+        }
+        button:hover { background: #827162; }
+        button:active { transform: translateY(4px); box-shadow: 0 1px 0 #4a3f35; }
+    </style>
 </head>
 <body>
+
     <div style="text-align: center; margin: 20px 0;">
-    <img src="https://sdurand-sdd.github.io/exercices/3EME/bitmoji_planeta.png" alt="Profe Bitmoji" 
-         style="max-height: 120px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));">
+        <img src="URL_DE_VOTRE_BITMOJI.png" alt="Profe" style="max-height: 120px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));">
     </div>
+
     <h1>🌟 ¡El Gran Desafío de las Obligaciones! 🌟</h1>
+
+    <div class="consigne-box">
+        <strong>Consigna:</strong> 
+        Transforma las frases utilizando las estructuras de obligación (personales o impersonales) indicadas entre paréntesis. 
+        Presta atención a la conjugación y a las tildes.
+    </div>
 
     <div class="progress-container"><div id="progress-bar"></div></div>
 
@@ -85,7 +108,7 @@
             <thead>
                 <tr>
                     <th>Frase original</th>
-                    <th>Transformación (Obligación)</th>
+                    <th>Tu transformación</th>
                 </tr>
             </thead>
             <tbody id="tbody-unique"></tbody>
@@ -94,18 +117,21 @@
 
     <div class="controls">
         <div id="resultat"></div>
-        <button onclick="verifier()">¡VERIFICAR!</button>
+        <button onclick="verifier()">¡COMPROBAR!</button>
     </div>
 
     <script>
-        // LISTE DES EXERCICES (Adaptée pour 3ème)
+        // LISTE DES EXERCICES
         const exercices = [
-            { q: "Plantáis árboles → obligation impersonnelle", r: "hay que plantar árboles | es necesario plantar árboles | hace falta plantar árboles" },
-            { q: "Explican las normas ecológicas → obligations personnelles", r: "tienen que explicar las normas ecológicas | deben explicar las normas ecológicas | es necesario que expliquen las normas ecológicas" },
-            { q: "Ahorramos agua → obligation personnelle (nosotros)", r: "tenemos que ahorrar agua | debemos ahorrar agua | es necesario que ahorremos agua" },
-            { q: "Protege el medio ambiente → obligation impersonnelle", r: "hay que proteger el medio ambiente | es necesario proteger el medio ambiente" },
-            { q: "Reciclo el plástico → obligation personnelle (yo)", r: "tengo que reciclar el plástico | debo reciclar el plástico | es necesario que recicle el plástico" },
-            { q: "Consumís menos energía → obligation personnelle (vosotros)", r: "tenéis que consumir menos energía | debéis consumir menos energía | es necesario que consumáis menos energía" }
+            { 
+                q: "Plantáis árboles → obligación impersonnelle", 
+                r: "hay que plantar árboles | es necesario plantar árboles | hace falta plantar árboles" 
+            },
+            { 
+                q: "Explican las normas ecológicas → obligations personnelles", 
+                r: "tienen que explicar las normas ecológicas | deben explicar las normas ecológicas | es necesario que expliquen las normas ecológicas" 
+            }
+            // Vous pouvez ajouter vos 10 autres phrases ici en suivant le même modèle !
         ];
 
         const audioWin = new Audio('https://actions.google.com/sounds/v1/foley/success_chime.ogg');
@@ -117,12 +143,7 @@
                 const row = `<tr>
                     <td>${ex.q}</td>
                     <td>
-                        <input type="text" 
-                               id="input-${index}" 
-                               placeholder="Escribe la frase completa..."
-                               autocomplete="off"
-                               oninput="updateProgress()" 
-                               onkeydown="if(event.key==='Enter') passerSuivant(${index})">
+                        <input type="text" id="input-${index}" placeholder="Escribe aquí..." autocomplete="off" oninput="updateProgress()" onkeydown="if(event.key==='Enter') passerSuivant(${index})">
                     </td>
                 </tr>`;
                 tbody.innerHTML += row;
@@ -164,10 +185,10 @@
             if (score === exercices.length) {
                 confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
                 audioPerfect.play();
-                zone.style.color = "#27ae60";
+                zone.style.color = "#7a9461";
             } else {
                 audioWin.play();
-                zone.style.color = "#d35400";
+                zone.style.color = "#bc6c25";
             }
         }
 

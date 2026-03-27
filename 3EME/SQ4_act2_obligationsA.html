@@ -17,20 +17,37 @@
         h1 { text-align: center; color: #4a3f35; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(255,255,255,0.5); }
         
         /* ZONE DE CONSIGNE PEDAGOGIQUE */
-        .consigne-box {
+       /* ZONE DE CONSIGNE PEDAGOGIQUE AMÉLIORÉE (Flexbox) */
+        .header-container {
             max-width: 1050px;
             margin: 0 auto 30px auto;
-            padding: 20px;
+            display: flex; /* Active le mode Flexbox */
+            align-items: center; /* Centre verticalement les éléments l'un par rapport à l'autre */
+            justify-content: space-between; /* Espace équilibré */
             background-color: #eaddcf; /* Taupe très doux */
             border-left: 6px solid #6f5f51; /* Taupe foncé */
             border-radius: 4px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden; /* Pour que l'image ne dépasse pas */
+
+            /* Style pour l'image dans ce conteneur */
+        .header-container img {
+            max-height: 120px; /* Limite la hauteur */
+            width: auto;
+            margin-left: 20px; /* Espace à gauche */
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
+            flex-shrink: 0; /* Empêche l'image de se compresser */
+
+            /* Style pour le texte dans ce conteneur */
+        .consigne-box {
+            padding: 20px 30px; /* Plus d'espace sur les côtés */
             color: #4a3f35;
             font-size: 1.1rem;
             line-height: 1.6;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+            flex-grow: 1; /* Le texte prend tout l'espace restant */
         }
         .consigne-box strong { color: #6f5f51; text-transform: uppercase; margin-right: 10px; }
-
+            
         .progress-container { width: 80%; background: #ede0d4; height: 15px; border-radius: 10px; margin: 10px auto 25px; overflow: hidden; border: 2px solid #4a3f35; }
         #progress-bar { width: 0%; height: 100%; background: #8b7355; transition: width 0.3s; }
 
@@ -89,16 +106,16 @@
 </head>
 <body>
 
-    <div style="text-align: center; margin: 20px 0;">
-        <img src="https://sdurand-sdd.github.io/exercices/3EME/bitmoji_planeta.png" alt="Profe" style="max-height: 120px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));">
-    </div>
-
     <h1>🌟 ¡El Gran Desafío de las Obligaciones! 🌟</h1>
 
-    <div class="consigne-box">
-        <strong>Consigna:</strong> 
-        Transforma las frases utilizando las estructuras de obligación (personales o impersonales) indicadas entre paréntesis. 
-        Presta atención a la conjugación y a las tildes.
+    <div class="header-container">
+        <div class="consigne-box">
+            <strong>Consigna:</strong> 
+            Transforma las frases utilizando las estructuras de obligación (personales o impersonales) indicadas entre paréntesis. 
+            Presta atención a la conjugación y a las tildes.
+        </div>
+
+        <img src="URL_DE_VOTRE_BITMOJI.png" alt="Profe">
     </div>
 
     <div class="progress-container"><div id="progress-bar"></div></div>

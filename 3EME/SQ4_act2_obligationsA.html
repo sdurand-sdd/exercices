@@ -130,8 +130,72 @@
 
     <script>
         const exercices = [
-            { q: "Plantáis árboles → obligación impersonnelle", r: "hay que plantar árboles | es necesario plantar árboles | hace falta plantar árboles" },
-            { q: "Explican las normas ecológicas → obligations personnelles", r: "tienen que explicar las normas ecológicas | deben explicar las normas ecológicas | es necesario que expliquen las normas ecológicas" }
+            { 
+                q: "Plantáis árboles → obligación impersonnelle", 
+                r: "hay que plantar árboles | " + 
+                   "es necesario plantar árboles | " + 
+                   "hace falta plantar árboles" 
+            },
+            { 
+                q: "Explican las normas ecológicas → obligations personnelles", 
+                r: "tienen que explicar las normas ecológicas | " + 
+                   "deben explicar las normas ecológicas | " + 
+                   "es necesario que expliquen las normas ecológicas | " + 
+                   "hace falta que que expliquen las normas ecológicas" 
+            },
+            { 
+                q: "Ahorramos agua en casa → obligación personal", 
+                r: "tenemos que ahorrar agua en casa | " + 
+                   "debemos ahorrar agua en casa | " + 
+                   "es necesario que ahorremos agua en casa | " +
+                   "hace falta que ahorremos agua en casa | " 
+            },
+            { 
+                q: "Protege la naturaleza → obligación impersonnelle", 
+                r: "hay que proteger la naturaleza | " + 
+                   "es necesario proteger la naturaleza | " + 
+                   "hace falta proteger la naturaleza"
+            },
+            { 
+                q: "Reciclo el papel y el cartón → obligación personal ", 
+                r: "tengo que reciclar el papel y el cartón | " + 
+                   "debo reciclar el papel y el cartón | " + 
+                   "es necesario que recicle el papel y el cartón | " +
+                   "hace falta que recicle el papel y el cartón" 
+            },
+            { 
+                q: "Consumís menos energía → obligación personal", 
+                r: "tenéis que consumir menos energía | " + 
+                   "debéis consumir menos energía | " + 
+                   "es necesario que consumáis menos energía | " +
+                   "hace falta que consumáis menos energía"         
+            },
+            {
+                q: "Tiran la basura al contenedor → obligación personal", 
+                r: "tienen que tirar la basura al contenedor | " + 
+                   "deben tirar la basura al contenedor | " + 
+                   "es necesario que tiren la basura al contenedor | " +
+                   "hace falta que tiren la basura al contenedor"  
+            },
+            { 
+                q: "Cerrar el grifo → obligación impersonnelle", 
+                r: "hay que cerrar el grifo | " + 
+                   "es necesario cerrar el grifo | " + 
+                   "hace falta cerrar el grifo" 
+            },
+            { 
+                q: "Usas el transporte público → obligación personal", 
+                r: "tienes que usar el transporte público | " + 
+                   "debes usar el transporte público | " + 
+                   "es necesario que uses el transporte público | " +
+                   "hace falta que uses el transporte público" 
+            },
+            { 
+                q: "Preservar los océanos → obligación impersonnelle", 
+                r: "hay que preservar los océanos | " + 
+                    "es necesario preservar los océanos | " + 
+                    "hace falta preservar los océanos" 
+            }
         ];
 
         const audioWin = new Audio('https://actions.google.com/sounds/v1/foley/success_chime.ogg');

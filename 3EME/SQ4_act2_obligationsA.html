@@ -3,40 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQ4 - Act.2 - Obligations</title>
+    <title>SQ4 - Act.2 - Obligations (3ème)</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #e8f4f8; margin: 20px; }
-        h1 { text-align: center; color: #2c3e50; }
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 30px; }
         
         .progress-container { width: 80%; background: #ddd; height: 15px; border-radius: 10px; margin: 10px auto 20px; overflow: hidden; border: 2px solid #2c3e50; }
         #progress-bar { width: 0%; height: 100%; background: #3498db; transition: width 0.3s; }
 
-        .container { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 5px; }
+        /* Conteneur pour centrer le grand tableau */
+        .container { display: flex; justify-content: center; margin-bottom: 20px; }
         
-        table { border-collapse: collapse; background: white; box-shadow: 0 8px 20px rgba(0,0,0,0.15); border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
-        /* Cache le tableau s'il est vide */
-        table:empty { display: none; }
+        table { 
+            width: 95%; 
+            max-width: 1100px; 
+            border-collapse: collapse; 
+            background: white; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15); 
+            border-radius: 12px; 
+            overflow: hidden; 
+        }
 
-        th, td { border: 1px solid #dee2e6; padding: 12px; }
-        th { background-color: #ff9f43; color: white; font-size: 0.9rem; text-transform: uppercase; }
+        th, td { border: 1px solid #dee2e6; padding: 15px; }
+        th { background-color: #ff9f43; color: white; font-size: 1rem; text-transform: uppercase; }
         
-        td:first-child { min-width: 200px; max-width: 350px; background-color: #fff9f1; font-weight: bold; color: #576574; }
+        /* Colonne de gauche (Consigne) */
+        td:first-child { width: 40%; background-color: #fff9f1; font-weight: bold; color: #576574; }
+        /* Colonne de droite (Saisie) */
+        td:last-child { width: 60%; }
 
         input { 
-            border: 3px solid #ced6e0; padding: 8px; border-radius: 8px; width: 260px; 
-            font-size: 1.1rem; font-weight: bold; outline: none; transition: 0.2s;
+            border: 3px solid #ced6e0; 
+            padding: 12px; 
+            border-radius: 8px; 
+            width: 100%; 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            outline: none; 
+            transition: 0.2s;
+            box-sizing: border-box; /* Empêche l'input de déborder */
         }
-        input:focus { border-color: #ff9f43; background-color: #fff; }
+        input:focus { border-color: #ff9f43; background-color: #fff; transform: scale(1.01); }
 
         .correct { background-color: #2ecc71 !important; color: white !important; border-color: #27ae60 !important; }
         .incorrect { background-color: #ff7675 !important; color: white !important; border-color: #d63031 !important; }
 
-        .controls { text-align: center; margin-top: 5px; padding-bottom: 30px; }
+        .controls { text-align: center; margin-top: 10px; padding-bottom: 40px; }
         #resultat { font-size: 2rem; font-weight: bold; margin-bottom: 10px; min-height: 2.5rem; }
         
         button { 
-            padding: 15px 45px; font-size: 1.3rem; cursor: pointer; 
+            padding: 15px 50px; font-size: 1.4rem; cursor: pointer; 
             background: linear-gradient(to bottom, #2ecc71, #27ae60);
             color: white; border: none; border-radius: 50px;
             box-shadow: 0 5px 0 #1e8449; transition: 0.1s;
@@ -46,16 +63,16 @@
 </head>
 <body>
 
-    <h1>🌟 ¡El Gran Desafío! 🌟</h1>
+    <h1>🌟 ¡El Gran Desafío de las Obligaciones! 🌟</h1>
 
     <div class="progress-container"><div id="progress-bar"></div></div>
 
     <div class="container">
-        <table id="mon-tableau-unique">
+        <table>
             <thead>
                 <tr>
-                    <th>Phrase d'origine</th>
-                    <th>Transformation (Obligation)</th>
+                    <th>Frase original</th>
+                    <th>Transformación (Obligación)</th>
                 </tr>
             </thead>
             <tbody id="tbody-unique"></tbody>
@@ -64,44 +81,41 @@
 
     <div class="controls">
         <div id="resultat"></div>
-        <button onclick="verifier()">¡COMPROBAR!</button>
+        <button onclick="verifier()">¡VERIFICAR!</button>
     </div>
 
     <script>
-        // MODIFIEZ UNIQUEMENT CETTE LISTE :
+        // LISTE DES EXERCICES (Adaptée pour 3ème)
         const exercices = [
-            { q: "Plantáis árboles → obligation impersonnelle", r: "hay que plantar árboles | es necesario plantar árboles | hace falta plantar árboles" },
-            { q: "Explican las normas ecológicas → obligations personnelles", r: "tienen que explicar las normas ecológicas | deben plantar árboles | es necesario que planten árboles | hace falta que planten árboles" }
-            ];
-    
+            { 
+                q: "Plantáis árboles → obligation impersonnelle", 
+                r: "hay que plantar árboles | es necesario plantar árboles | hace falta plantar árboles" 
+            },
+            { 
+                q: "Explican las normas ecológicas → obligations personnelles", 
+                r: "tienen que explicar las normas ecológicas | deben explicar las normas ecológicas | es necesario que expliquen las normas ecológicas | hace falta que expliquen las normas ecológicas" 
+            }
+        ];
 
         const audioWin = new Audio('https://actions.google.com/sounds/v1/foley/success_chime.ogg');
         const audioPerfect = new Audio('https://actions.google.com/sounds/v1/human_voices/applause.ogg');
 
         function genererTableaux() {
-            const tLeft = document.getElementById('tbody-left');
-            const tRight = document.getElementById('tbody-right');
-            const tableRight = document.getElementById('table-right');
-
-            const milieu = Math.ceil(exercices.length / 2);
-
+            const tbody = document.getElementById('tbody-unique');
             exercices.forEach((ex, index) => {
                 const row = `<tr>
                     <td>${ex.q}</td>
-                    <td><input type="text" id="input-${index}" oninput="updateProgress()" onkeydown="if(event.key==='Enter') passerSuivant(${index})"></td>
+                    <td>
+                        <input type="text" 
+                               id="input-${index}" 
+                               placeholder="Escribe la frase completa..."
+                               autocomplete="off"
+                               oninput="updateProgress()" 
+                               onkeydown="if(event.key==='Enter') passerSuivant(${index})">
+                    </td>
                 </tr>`;
-                
-                if (index < milieu) {
-                    tLeft.innerHTML += row;
-                } else {
-                    tRight.innerHTML += row;
-                }
+                tbody.innerHTML += row;
             });
-
-            // Si une seule colonne suffit, on cache la table de droite
-            if (exercices.length <= 1) {
-                tableRight.style.display = "none";
-            }
         }
 
         function updateProgress() {
@@ -118,22 +132,18 @@
 
         function verifier() {
             let score = 0;
-            
-            // NETTOYAGE STRICT : On garde les accents (pas de .normalize)
             const netoyer = (t) => t.trim().toLowerCase().replace(/\s+/g, ' ').replace(/\.$/, '');
 
             exercices.forEach((ex, index) => {
                 const input = document.getElementById(`input-${index}`);
                 const reponseEleve = netoyer(input.value);
-            // On sépare les réponses possibles par le signe "|"
                 const reponsesPossibles = ex.r.split('|').map(res => netoyer(res));
 
-            // On vérifie si la réponse de l'élève est dans la liste des possibles
                 if (reponsesPossibles.includes(reponseEleve)) {
-                input.className = "correct";
-                score++;
+                    input.className = "correct";
+                    score++;
                 } else {
-                input.className = "incorrect";
+                    input.className = "incorrect";
                 }
             });
 

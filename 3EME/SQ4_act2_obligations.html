@@ -67,7 +67,11 @@
         th, td { border: 1px solid #c5b4a2; padding: 15px; }
         th { background-color: #6f5f51; color: #fdfaf7; text-transform: uppercase; letter-spacing: 1px; }
         
-        td:first-child { width: 40%; background-color: #eaddcf; font-weight: bold; color: #4a3f35; }
+        td:first-child { 
+            width: 40%; 
+            background-color: #eaddcf; 
+            font-weight: normal; 
+            color: #4a3f35; }
         td:last-child { width: 60%; }
 
         input { 
@@ -204,8 +208,11 @@
         function genererTableaux() {
             const tbody = document.getElementById('tbody-unique');
             exercices.forEach((ex, index) => {
+                const parts = ex.q.split("→");
+                const questionGras = parts[1] ? `<strong>${parts[0]}</strong> →${parts[1]}` : ex.q;
+
                 const row = `<tr>
-                    <td>${ex.q}</td>
+                    <td>${questionGras}</td>
                     <td><input type="text" id="input-${index}" placeholder="Escribe aquí..." oninput="updateProgress()" onkeydown="if(event.key==='Enter') passerSuivant(${index})"></td>
                 </tr>`;
                 tbody.innerHTML += row;

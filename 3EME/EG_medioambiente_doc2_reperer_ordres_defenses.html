@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misión 2: Órdenes e Interdicciones</title>
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-light: #e8f5e9;
+            --bg-color: #f4f7f5;
+            --card-bg: #ffffff;
+            --orden-color: #ff9800;
+            --orden-bg: #fff3e0;
+            --interdiction-color: #e53935;
+            --interdiction-bg: #ffebee;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 650px;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 20px;
+            text-align: center;
+            margin: 0 0 10px 0;
+        }
+
+        .instructions {
+            background-color: var(--primary-light);
+            color: #1b5e20;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .text-box {
+            font-size: 16px;
+            line-height: 2;
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            margin-bottom: 15px;
+        }
+
+        /* Style des blocs de verbes cliquables */
+        .clickable {
+            cursor: pointer;
+            border-radius: 4px;
+            padding: 2px 6px;
+            transition: all 0.2s ease;
+            border-bottom: 2px dashed #999;
+            display: inline-block;
+            font-weight: 500;
+        }
+
+        .clickable:hover {
+            background-color: #eeeeee;
+        }
+
+        /* Sélection Étape 1 : Ordre (Orange) */
+        .clickable.selected-orden {
+            background-color: var(--orden-bg) !important;
+            color: var(--orden-color) !important;
+            border: 2px solid var(--orden-color);
+            font-weight: bold;
+        }
+
+        /* Sélection Étape 2 : Interdiction (Rouge) */
+        .clickable.selected-interdiction {
+            background-color: var(--interdiction-bg) !important;
+            color: var(--interdiction-color) !important;
+            border: 2px solid var(--interdiction-color);
+            font-weight: bold;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .validate-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .validate-btn:hover {
+            background-color: #1b5e20;
+        }
+
+        .clear-btn {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        .clear-btn:hover {
+            background-color: #ccc;
+        }
+
+        .result-box {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+            font-size: 14px;
+        }
+
+        .success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 2px dashed #4caf50;
+        }
+
+        .code-box {
+            background-color: #fff9c4;
+            border: 2px dashed #fbc02d;
+            padding: 8px;
+            font-size: 18px;
+            margin-top: 8px;
+            display: inline-block;
+            letter-spacing: 1px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🌍 "Tu pueblo es tu planeta"</h1>
+    
+    <div class="instructions">
+        <strong>¡A jugar!</strong> Encuentra las formas verbales dans le texte :
+        <br>• Cliquez <strong>1 fois</strong> si c'est un <strong>ORDRE</strong> (Naranja)
+        <br>• Cliquez <strong>2 fois</strong> si c'est une <strong>INTERDICCIÓN</strong> (Rojo)
+        <br>• Cliquez une 3ème fois pour annuler.
+    </div>
+
+    <div class="text-box">
+        Si el hombre continúa consumiendo y contaminando, los efectos serán irreversibles. Para cuidar la Tierra, sigue estos consejos de la Junta de Andalucía:
+        <br><br>
+        - <span class="clickable" data-type="interdiction">no utilices los ríos ni los mares</span> como un cubo de basura.<br>
+        - <span class="clickable" data-type="orden">Cierra bien los grifos</span>.<br>
+        - <span class="clickable" data-type="orden">Aconseja a tu madre</span> para que compre productos biodegradables.<br>
+        - <span class="clickable" data-type="orden">Recicla el papel</span>, el plástico, el metal y el vidrio.<br>
+        - <span class="clickable" data-type="orden">Ayuda a replantar árboles</span>.<br>
+        - <span class="clickable" data-type="interdiction">No camines fuera de los senderos</span> ni esquíes fuera de las pistas.<br>
+        - <span class="clickable" data-type="orden">Di « ¡no! » a la matanza de animales</span>.<br>
+        - <span class="clickable" data-type="orden">Protege todos los animales</span> y ayuda a la conservación.
+    </div>
+
+    <div class="btn-container">
+        <button class="clear-btn" onclick="resetExercise()">🔄 Reiniciar</button>
+        <button class="validate-btn" onclick="validateExercise()">Comprobar ➔</button>
+    </div>
+
+    <div id="result" class="result-box"></div>
+</div>
+
+<script>
+    // Logique de clic cyclique (Neutre -> Orange -> Rouge -> Neutre)
+    document.querySelectorAll('.clickable').forEach(item => {
+        item.addEventListener('click', () => {
+            if (!item.classList.contains('selected-orden') && !item.classList.contains('selected-interdiction')) {
+                item.classList.add('selected-orden');
+            } else if (item.classList.contains('selected-orden')) {
+                item.classList.remove('selected-orden');
+                item.classList.add('selected-interdiction');
+            } else {
+                item.classList.remove('selected-interdiction');
+            }
+        });
+    });
+
+    function validateExercise() {
+        const items = document.querySelectorAll('.clickable');
+        let totalTargets = items.length;
+        let correctCount = 0;
+        let errorCount = 0;
+
+        items.forEach(item => {
+            const expectedType = item.getAttribute('data-type');
+            const hasOrden = item.classList.contains('selected-orden');
+            const hasInterdiction = item.classList.contains('selected-interdiction');
+
+            if (expectedType === 'orden' && hasOrden) {
+                correctCount++;
+            } else if (expectedType === 'interdiction' && hasInterdiction) {
+                correctCount++;
+            } else if (hasOrden || hasInterdiction) {
+                errorCount++;
+            }
+        });
+
+        const resultBox = document.getElementById('result');
+        resultBox.style.display = "block";
+
+        // Tolérance : Réussite si toutes les structures sont identifiées avec max 1 oubli/erreur
+        if (correctCount >= (totalTargets - 1) && errorCount === 0) {
+            resultBox.className = "result-box success";
+            resultBox.innerHTML = `
+                ¡Magnífico! 🌟<br>
+                Habéis reconocido perfectamente las estructuras del imperativo.<br>
+                <div class="code-box">CÓDIGO : IMPERATIVO-2026</div>
+            `;
+        } else {
+            resultBox.className = "result-box";
+            resultBox.style.backgroundColor = "#ffebee";
+            resultBox.style.color = "#c62828";
+            resultBox.style.border = "2px dashed #f44336";
+            resultBox.innerHTML = `
+                Inténtalo de nuevo. Quedan errores o elementos sin seleccionar.<br>
+                <span style="font-size:12px; font-weight:normal;">Respuestas correctas: ${correctCount} / ${totalTargets}.</span>
+            `;
+        }
+    }
+
+    function resetExercise() {
+        document.querySelectorAll('.clickable').forEach(item => {
+            item.className = 'clickable';
+        });
+        document.getElementById('result').style.display = "none";
+    }
+</script>
+
+</body>
+</html>

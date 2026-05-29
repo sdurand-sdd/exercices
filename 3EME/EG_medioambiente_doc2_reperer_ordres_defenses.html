@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Misión 2: Órdenes e Interdicciones</title>
+    <title>Misión 2: Todo le texto es clicable</title>
     <style>
         :root {
             --primary-color: #2e7d32;
@@ -54,44 +54,44 @@
             line-height: 1.4;
         }
 
+        /* Zone de texte */
         .text-box {
-            font-size: 16px;
-            line-height: 2;
+            font-size: 17px;
+            line-height: 2.2;
             background: #fafafa;
             padding: 15px;
             border-radius: 8px;
             border: 1px solid #e0e0e0;
             margin-bottom: 15px;
+            text-align: justify;
         }
 
-        /* Style des blocs de verbes cliquables */
-        .clickable {
+        /* Style de CHAQUE mot cliquable */
+        .word {
             cursor: pointer;
-            border-radius: 4px;
-            padding: 2px 6px;
-            transition: all 0.2s ease;
-            border-bottom: 2px dashed #999;
+            border-radius: 3px;
+            padding: 0 3px;
+            transition: all 0.15s ease;
             display: inline-block;
-            font-weight: 500;
         }
 
-        .clickable:hover {
-            background-color: #eeeeee;
+        .word:hover {
+            background-color: #e0e0e0;
         }
 
         /* Sélection Étape 1 : Ordre (Orange) */
-        .clickable.selected-orden {
+        .word.selected-orden {
             background-color: var(--orden-bg) !important;
             color: var(--orden-color) !important;
-            border: 2px solid var(--orden-color);
+            outline: 2px solid var(--orden-color);
             font-weight: bold;
         }
 
         /* Sélection Étape 2 : Interdiction (Rouge) */
-        .clickable.selected-interdiction {
+        .word.selected-interdiction {
             background-color: var(--interdiction-bg) !important;
             color: var(--interdiction-color) !important;
-            border: 2px solid var(--interdiction-color);
+            outline: 2px solid var(--interdiction-color);
             font-weight: bold;
         }
 
@@ -163,23 +163,14 @@
     <h1>🌍 "Tu pueblo es tu planeta"</h1>
     
     <div class="instructions">
-        <strong>¡A jugar!</strong> Encuentra las formas verbales dans le texte :
-        <br>• Cliquez <strong>1 fois</strong> si c'est un <strong>ORDRE</strong> (Naranja)
-        <br>• Cliquez <strong>2 fois</strong> si c'est une <strong>INTERDICCIÓN</strong> (Rojo)
+        <strong>¡A jugar!</strong> Chaque mot du texte est cliquable. Retrouvez les structures cibles :
+        <br>• Cliquez <strong>1 fois</strong> sur un verbe d'<strong>ORDRE</strong> (Naranja)
+        <br>• Cliquez <strong>2 fois</strong> sur un verbe d'<strong>INTERDICTION</strong> (Rojo)
         <br>• Cliquez une 3ème fois pour annuler.
     </div>
 
-    <div class="text-box">
-        Si el hombre continúa consumiendo y contaminando, los efectos serán irreversibles. Para cuidar la Tierra, sigue estos consejos de la Junta de Andalucía:
-        <br><br>
-        - <span class="clickable" data-type="interdiction">no utilices los ríos ni los mares</span> como un cubo de basura.<br>
-        - <span class="clickable" data-type="orden">Cierra bien los grifos</span>.<br>
-        - <span class="clickable" data-type="orden">Aconseja a tu madre</span> para que compre productos biodegradables.<br>
-        - <span class="clickable" data-type="orden">Recicla el papel</span>, el plástico, el metal y el vidrio.<br>
-        - <span class="clickable" data-type="orden">Ayuda a replantar árboles</span>.<br>
-        - <span class="clickable" data-type="interdiction">No camines fuera de los senderos</span> ni esquíes fuera de las pistas.<br>
-        - <span class="clickable" data-type="orden">Di « ¡no! » a la matanza de animales</span>.<br>
-        - <span class="clickable" data-type="orden">Protege todos los animales</span> y ayuda a la conservación.
+    <div class="text-box" id="text-container">
+        Si el hombre continúa consumiendo y contaminando, los efectos serán irreversibles. Para cuidar la Tierra, sigue estos consejos de la Junta de Andalucía: no utilices los ríos ni los mares como un cubo de basura. Cierra bien los grifos. Aconseja a tu madre para que compre productos biodegradables. Recicla el papel, el plástico, el metal y el vidrio. Ayuda a replantar árboles. No camines fuera de los senderos ni esquíes fuera de las pistas. Di « ¡no! » a la matanza de animales. Protege todos los animales y ayuda a la conservación.
     </div>
 
     <div class="btn-container">
@@ -191,36 +182,76 @@
 </div>
 
 <script>
-    // Logique de clic cyclique (Neutre -> Orange -> Rouge -> Neutre)
-    document.querySelectorAll('.clickable').forEach(item => {
-        item.addEventListener('click', () => {
-            if (!item.classList.contains('selected-orden') && !item.classList.contains('selected-interdiction')) {
-                item.classList.add('selected-orden');
-            } else if (item.classList.contains('selected-orden')) {
-                item.classList.remove('selected-orden');
-                item.classList.add('selected-interdiction');
+    // Liste exacte des mots cibles à trouver (sans majuscules ni ponctuation, géré par le script)
+    const targetOrdres = ["cierra", "aconseja", "recicla", "ayuda", "di", "protege"];
+    const targetInterdictions = ["utilices", "camines", "esquíes"];
+
+    const textContainer = document.getElementById('text-container');
+    const rawText = textContainer.innerText;
+    textContainer.innerHTML = ''; // On vide pour reconstruire mot par mot
+
+    // Découpage automatique du texte par les espaces
+    const wordsArray = rawText.split(/\s+/);
+
+    wordsArray.forEach((word, index) => {
+        // Nettoyage du mot pour l'analyse en coulisses (retrait de la ponctuation et minuscules)
+        const cleanWord = word.toLowerCase().replace(/[.,:;«»¡!]/g, '');
+
+        // Création de l'élément cliquable pour le mot
+        const span = document.createElement('span');
+        span.className = 'word';
+        span.innerText = word;
+        
+        // On stocke le mot nettoyé dans un attribut pour la comparaison finale
+        span.setAttribute('data-clean', cleanWord);
+
+        // Définir si ce mot est une cible attendue
+        if (targetOrdres.includes(cleanWord)) {
+            span.setAttribute('data-target', 'orden');
+        } else if (targetInterdictions.includes(cleanWord)) {
+            span.setAttribute('data-target', 'interdiction');
+        } else {
+            span.setAttribute('data-target', 'none');
+        }
+
+        // Événement au clic (cycle : Neutre -> Orange -> Rouge -> Neutre)
+        span.addEventListener('click', () => {
+            if (!span.classList.contains('selected-orden') && !span.classList.contains('selected-interdiction')) {
+                span.classList.add('selected-orden');
+            } else if (span.classList.contains('selected-orden')) {
+                span.classList.remove('selected-orden');
+                span.classList.add('selected-interdiction');
             } else {
-                item.classList.remove('selected-interdiction');
+                span.classList.remove('selected-interdiction');
             }
         });
+
+        textContainer.appendChild(span);
+        
+        // Ajouter un espace après chaque mot (sauf le dernier)
+        if (index < wordsArray.length - 1) {
+            textContainer.appendChild(document.createTextNode(' '));
+        }
     });
 
     function validateExercise() {
-        const items = document.querySelectorAll('.clickable');
-        let totalTargets = items.length;
+        const allWords = document.querySelectorAll('.word');
+        const totalCibles = targetOrdres.length + targetInterdictions.length; // Égal à 9
+        
         let correctCount = 0;
         let errorCount = 0;
 
-        items.forEach(item => {
-            const expectedType = item.getAttribute('data-type');
-            const hasOrden = item.classList.contains('selected-orden');
-            const hasInterdiction = item.classList.contains('selected-interdiction');
+        allWords.forEach(word => {
+            const targetType = word.getAttribute('data-target');
+            const isSelectedOrden = word.classList.contains('selected-orden');
+            const isSelectedInterdiction = word.classList.contains('selected-interdiction');
 
-            if (expectedType === 'orden' && hasOrden) {
+            if (targetType === 'orden' && isSelectedOrden) {
                 correctCount++;
-            } else if (expectedType === 'interdiction' && hasInterdiction) {
+            } else if (targetType === 'interdiction' && isSelectedInterdiction) {
                 correctCount++;
-            } else if (hasOrden || hasInterdiction) {
+            } else if (isSelectedOrden || isSelectedInterdiction) {
+                // L'élève a sélectionné un mauvais mot OU s'est trompé de couleur (ex: rouge au lieu d'orange)
                 errorCount++;
             }
         });
@@ -228,8 +259,8 @@
         const resultBox = document.getElementById('result');
         resultBox.style.display = "block";
 
-        // Tolérance : Réussite si toutes les structures sont identifiées avec max 1 oubli/erreur
-        if (correctCount >= (totalTargets - 1) && errorCount === 0) {
+        // CORRECTION : Strictement égal au total (9/9) et AUCUNE erreur (0)
+        if (correctCount === totalCibles && errorCount === 0) {
             resultBox.className = "result-box success";
             resultBox.innerHTML = `
                 ¡Magnífico! 🌟<br>
@@ -242,15 +273,15 @@
             resultBox.style.color = "#c62828";
             resultBox.style.border = "2px dashed #f44336";
             resultBox.innerHTML = `
-                Inténtalo de nuevo. Quedan errores o elementos sin seleccionar.<br>
-                <span style="font-size:12px; font-weight:normal;">Respuestas correctas: ${correctCount} / ${totalTargets}.</span>
+                Inténtalo de nuevo. Quedan errores o verbos clave por seleccionar.<br>
+                <span style="font-size:12px; font-weight:normal;">Verbos correctos encontrados: ${correctCount} / ${totalCibles}. (Errores: ${errorCount})</span>
             `;
         }
     }
 
     function resetExercise() {
-        document.querySelectorAll('.clickable').forEach(item => {
-            item.className = 'clickable';
+        document.querySelectorAll('.word').forEach(word => {
+            word.className = 'word';
         });
         document.getElementById('result').style.display = "none";
     }

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misión 1: Tu pueblo es tu planeta</title>
+    <style>
+        :root {
+            --primary-color: #2e7d32; /* Vert nature */
+            --primary-light: #e8f5e9;
+            --secondary-color: #388e3c;
+            --text-color: #333;
+            --bg-color: #f4f7f5;
+            --card-bg: #ffffff;
+            --correct-color: #4caf50;
+            --incorrect-color: #f44336;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .quiz-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 24px;
+            margin: 0 0 10px 0;
+        }
+
+        .progress-bar {
+            background-color: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress {
+            background-color: var(--primary-color);
+            height: 100%;
+            width: 20%; /* Ajusté dynamiquement */
+            transition: width 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .option-item {
+            background-color: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .option-item:hover {
+            border-color: var(--primary-color);
+            background-color: var(--primary-light);
+        }
+
+        /* Classes appliquées par JavaScript après le clic */
+        .option-item.correct {
+            border-color: var(--correct-color);
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .option-item.incorrect {
+            border-color: var(--incorrect-color);
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .option-item.disabled {
+            pointer-events: none;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 15px;
+            line-height: 1.4;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct-fb {
+            background-color: #e8f5e9;
+            border-left: 5px solid var(--correct-color);
+            color: #1b5e20;
+        }
+
+        .feedback.incorrect-fb {
+            background-color: #ffebee;
+            border-left: 5px solid var(--incorrect-color);
+            color: #b71c1c;
+        }
+
+        .next-btn {
+            display: block;
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.2s;
+            display: none; /* Caché par défaut */
+        }
+
+        .next-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .final-screen {
+            text-align: center;
+            display: none;
+        }
+
+        .final-screen h2 {
+            color: var(--primary-color);
+            font-size: 28px;
+        }
+
+        .code-box {
+            background-color: #fff9c4;
+            border: 2px dashed #fbc02d;
+            padding: 15px;
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin: 20px 0;
+            border-radius: 6px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz-screen">
+        <div class="header">
+            <h1>🌍 Misión 1: Comprensión lectora</h1>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+        </div>
+
+        <div class="question-text" id="question-text">Question...</div>
+        
+        <ul class="options-list" id="options-list">
+            </ul>
+
+        <div class="feedback" id="feedback-box">Rationale...</div>
+
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()">Siguiente pregunta ➔</button>
+    </div>
+
+    <div id="final-screen" class="final-screen">
+        <h2>¡Misión Cumplida! 🎉</h2>
+        <p>Habéis analizado correctamente el documento "Tu pueblo es tu planeta".</p>
+        <p>Aquí tenéis el primer elemento para descifrar el código del Escape Game :</p>
+        <div class="code-box">CLÉ : VERDE-95</div>
+        <p style="font-size: 14px; color: #666;">Auntentificación validada. Podéis pasar a la siguiente misión.</p>
+    </div>
+</div>
+
+<script>
+    // Structure des données (Facile à modifier pour un autre cours !)
+    const quizData = [
+        {
+            question: "D'après l'introduction du document, que se passera-t-il si l'être humain continue à consommer et polluer au même rythme ?",
+            options: [
+                { text: "Los efectos en el ecosistema serán irreversibles.", isCorrect: true },
+                { text: "La Tierra sabrá defenderse sola.", isCorrect: false },
+                { text: "Los peligros desaparecerán grâce à la technologie.", isCorrect: false }
+            ],
+            rationaleCorrect: "¡Muy bien! Le texte indique explicitement que si le rythme actuel continue, les effets sur l'écosystème seront irréversibles ('serán irreversibles').",
+            rationaleIncorrect: "¡Error! Relisez le début du premier paragraphe : le texte insiste sur la gravité de la situation."
+        },
+        {
+            question: "Quel est l'objectif principal du livre publié par la 'Consejería de Medio Ambiente de la Junta de Andalucía' ?",
+            options: [
+                { text: "Vender un libro divertido para las vacaciones.", isCorrect: false },
+                { text: "Que los más pequeños tomen conciencia sobre este asunto.", isCorrect: true },
+                { text: "Organizar una limpieza general en los pueblos de Andalucía.", isCorrect: false }
+            ],
+            rationaleCorrect: "¡Exacto! C'est un moyen simple et amusant de faire prendre conscience aux plus jeunes ('tomen conciencia') des dangers qui menacent la planète.",
+            rationaleIncorrect: "¡No es correcto! Regardez la fin du premier paragraphe pour identifier l'objectif pédagogique."
+        },
+        {
+            question: "Parmi ces conseils du document, lequel est un ordre affirmatif pour économiser l'eau ?",
+            options: [
+                { text: "No utilices los ríos ni los mares como un cubo de basura.", isCorrect: false },
+                { text: "Recicla el papel, el plástico, el metal y el vidrio.", isCorrect: false },
+                { text: "Cierra bien los grifos.", isCorrect: true }
+            ],
+            rationaleCorrect: "¡Excelente! Cette phrase utilise l'impératif affirmatif du verbe irrégulier (Cierra) et demande de bien fermer les robinets ('grifos') pour ne pas gaspiller l'eau.",
+            rationaleIncorrect: "¡Cuidado! Cherchez l'action liée directement à l'utilisation de l'eau."
+        },
+        {
+            question: "Que conseille le texte concernant les espaces naturels lors des randonnées ou des sorties ?",
+            options: [
+                { text: "No camines fuera de los senderos ni esquíes fuera de las pistas.", isCorrect: true },
+                { text: "Ayuda a replantar árboles en medio de las pistas de esquí.", isCorrect: false },
+                { text: "Camina libremente por la naturaleza para conocer a los animales.", isCorrect: false }
+            ],
+            rationaleCorrect: "¡Perfecto! Le texte interdit de marcher hors des sentiers ('senderos') pour préserver la végétation et ne pas déranger la faune.",
+            rationaleIncorrect: "¡Ojo! Le texte demande au contraire de suivre des règles strictes lors des déplacements dans la nature."
+        },
+        {
+            question: "En lisant l'encadré '¿Cuánto tarda en degradarse la basura...?', quel déchet met le plus de temps à disparaître ?",
+            options: [
+                { text: "El papel (3 meses).", isCorrect: false },
+                { text: "El chicle (5 años).", isCorrect: true }, // Note pédagogique : dans le doc original, le plastique/verre prennent le plus de temps, mais ici on teste la lecture. Le verre (vidrio) met 1000 à 4000 ans. Modifié selon les choix précédents.
+                { text: "El vidrio (1000 a 4000 años).", isCorrect: true } 
+            ],
+            rationaleCorrect: "¡Eso es! Le verre ('el vidrio') demande entre 1000 et 4000 ans pour se dégrader, ce qui en fait le déchet le plus résistant de la liste.",
+            rationaleIncorrect: "¡Error! Comparez bien les échelles de temps dans le petit tableau du document (mois vs années vs siècles)."
+        }
+    ];
+
+    // Correction rapide de la dernière question pour n'avoir qu'une seule vraie option correcte
+    quizData[4].options = [
+        { text: "El papel (3 meses).", isCorrect: false },
+        { text: "El chicle (5 años).", isCorrect: false },
+        { text: "El vidrio (1000 a 4000 años).", isCorrect: true }
+    ];
+
+    let currentQuestionIndex = 0;
+
+    function loadQuestion() {
+        const currentQuiz = quizData[currentQuestionIndex];
+        
+        // Mettre à jour la barre de progression
+        const progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+        document.getElementById('progress').style.width = progressPercent + '%';
+
+        // Afficher le texte de la question
+        document.getElementById('question-text').innerText = `${currentQuestionIndex + 1}. ${currentQuiz.question}`;
+        
+        // Vider la liste précédente
+        const optionsList = document.getElementById('options-list');
+        optionsList.innerHTML = '';
+        
+        // Cacher le bouton suivant et le feedback
+        document.getElementById('next-btn').style.display = 'none';
+        const fbBox = document.getElementById('feedback-box');
+        fbBox.className = 'feedback';
+
+        // Injecter les options
+        currentQuiz.options.forEach(option => {
+            const li = document.createElement('li');
+            li.className = 'option-item';
+            li.innerText = option.text;
+            li.onclick = () => selectOption(li, option.isCorrect, currentQuiz);
+            optionsList.appendChild(li);
+        });
+    }
+
+    function selectOption(element, isCorrect, currentQuiz) {
+        const allOptions = document.querySelectorAll('.option-item');
+        const fbBox = document.getElementById('feedback-box');
+
+        // Désactiver toutes les options après le clic
+        allOptions.forEach(opt => opt.classList.add('disabled'));
+
+        if (isCorrect) {
+            element.classList.add('correct');
+            fbBox.innerText = currentQuiz.rationaleCorrect;
+            fbBox.classList.add('correct-fb', 'show');
+        } else {
+            element.classList.add('incorrect');
+            fbBox.innerText = currentQuiz.rationaleIncorrect;
+            fbBox.classList.add('incorrect-fb', 'show');
+            
+            // Montrer discrètement où était la bonne réponse
+            allOptions.forEach((opt, index) => {
+                if (currentQuiz.options[index].isCorrect) {
+                    opt.classList.add('correct');
+                }
+            });
+        }
+
+        // Afficher le bouton pour passer à la suite
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            // Fin du quiz, afficher l'écran de réussite et la clé
+            document.getElementById('progress').style.width = '100%';
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('final-screen').style.display = 'block';
+        }
+    }
+
+    // Premier chargement au lancement de la page
+    window.onload = loadQuestion;
+</script>
+
+</body>
+</html>

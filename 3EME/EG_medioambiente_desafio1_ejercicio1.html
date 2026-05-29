@@ -274,7 +274,8 @@
     ];
 
     let currentQuestionIndex = 0;
-
+    let correctAnswersCount = 0; // <--- Bien présente ici
+    
     function loadQuestion() {
         const currentQuiz = quizData[currentQuestionIndex];
         
@@ -305,8 +306,7 @@
     }
 
 // Variable pour compter les bonnes réponses
-    let correctAnswersCount = 0;
-
+  
     function selectOption(element, isCorrect, currentQuiz) {
         const allOptions = document.querySelectorAll('.option-item');
         const fbBox = document.getElementById('feedback-box');

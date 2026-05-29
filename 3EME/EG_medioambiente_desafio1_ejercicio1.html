@@ -304,23 +304,25 @@
         });
     }
 
+// Variable pour compter les bonnes réponses
+    let correctAnswersCount = 0;
+
     function selectOption(element, isCorrect, currentQuiz) {
         const allOptions = document.querySelectorAll('.option-item');
         const fbBox = document.getElementById('feedback-box');
 
-        // Désactiver toutes les options après le clic
         allOptions.forEach(opt => opt.classList.add('disabled'));
 
         if (isCorrect) {
             element.classList.add('correct');
             fbBox.innerText = currentQuiz.rationaleCorrect;
             fbBox.classList.add('correct-fb', 'show');
+            correctAnswersCount++; // On incrémente si c'est juste
         } else {
             element.classList.add('incorrect');
             fbBox.innerText = currentQuiz.rationaleIncorrect;
             fbBox.classList.add('incorrect-fb', 'show');
             
-            // Montrer discrètement où était la bonne réponse
             allOptions.forEach((opt, index) => {
                 if (currentQuiz.options[index].isCorrect) {
                     opt.classList.add('correct');
@@ -328,7 +330,6 @@
             });
         }
 
-        // Afficher le bouton pour passer à la suite
         document.getElementById('next-btn').style.display = 'block';
     }
 
@@ -338,11 +339,56 @@
         if (currentQuestionIndex < quizData.length) {
             loadQuestion();
         } else {
-            // Fin du quiz, afficher l'écran de réussite et la clé
+            // Fin du quiz : on calcule le nombre d'erreurs commises
+            const totalQuestions = quizData.length;
+            const errorsCount = totalQuestions - correctAnswersCount;
+            
             document.getElementById('progress').style.width = '100%';
             document.getElementById('quiz-screen').style.display = 'none';
-            document.getElementById('final-screen').style.display = 'block';
+            
+            const finalScreen = document.getElementById('final-screen');
+            
+            // Condition : 0 ou 1 seule faute max autorisée (donc score de 4/5 ou 5/5)
+            if (errorsCount <= 1) {
+                
+                // Petit message personnalisé selon qu'ils ont fait un sans-faute ou une petite erreur
+                let felicitacionesMessage = "";
+                if (errorsCount === 0) {
+                    felicitacionesMessage = "¡Perfecto! Un sinfín de aciertos. Todo un experto ecologista.";
+                } else {
+                    felicitacionesMessage = "¡Casi perfecto! Una pequeña distracción, pero habéis demostrado un gran nivel.";
+                }
+
+                // Écran de victoire avec la clé
+                finalScreen.innerHTML = `
+                    <h2>¡Misión Cumplida! 🎉</h2>
+                    <p style="font-style: italic; color: #555;">${felicitacionesMessage}</p>
+                    <p>Habéis analizado correctamente el documento "Tu pueblo es tu planeta".</p>
+                    <p>Aquí tenéis el primer elemento para descifrar el código del Escape Game :</p>
+                    <div class="code-box">CLÉ : VERDE-95</div>
+                    <p style="font-size: 14px; color: #666;">Autenticación validada. Score : ${correctAnswersCount} / ${totalQuestions}. Podéis pasar a la siguiente misión.</p>
+                `;
+            } else {
+                // Plus d'une faute (2 fautes ou plus) : Écran d'échec
+                finalScreen.innerHTML = `
+                    <h2 style="color: #f44336;">Misión Fallida ❌</h2>
+                    <p>Habéis cometido demasiados errores (${errorsCount} fallos) en la comprensión del documento.</p>
+                    <p>Un buen ecologista debe ser más preciso. Se permite <b>un solo fallo</b> como máximo para validar.</p>
+                    <p>Score : ${correctAnswersCount} / ${totalQuestions}</p>
+                    <button class="next-btn" style="display:block; margin-top:30px;" onclick="restartQuiz()">🔄 Recomenzar la misión</button>
+                `;
+            }
+            finalScreen.style.display = 'block';
         }
+    }
+
+    // Fonction pour réinitialiser le jeu proprement
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        correctAnswersCount = 0;
+        document.getElementById('final-screen').style.display = 'none';
+        document.getElementById('quiz-screen').style.display = 'block';
+        loadQuestion();
     }
 
     // Premier chargement au lancement de la page

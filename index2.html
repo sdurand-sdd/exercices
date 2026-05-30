@@ -1,0 +1,96 @@
+<script>
+    // --- CONFIGURATION REPRISE ---
+    const USER = "sdurand-sdd"; 
+    const REPO = "exercices"; 
+    // ---------------------
+
+    async function init() {
+        const main = document.getElementById('main-container');
+        try {
+            // UNE SEULE REQUÊTE : On demande l'arbre complet du dépôt de manière récursive
+            const url = `https://api.github.com/repos/${USER}/${REPO}/git/trees/main?recursive=1`;
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                throw new Error("Limite de l'API GitHub atteinte ou dépôt inaccessible.");
+            }
+            
+            const data = await response.json();
+            main.innerHTML = ""; 
+
+            // Structure pour organiser nos fichiers par dossier de niveau (3EME, 4EME, 5EME...)
+            const structure = {};
+
+            // On trie tous les fichiers reçus
+            data.tree.forEach(item => {
+                // On ne cherche que les fichiers .html qui sont dans des sous-dossiers (ex: 3EME/mon_exercice.html)
+                if (item.type === "blob" && item.path.endsWith('.html') && item.path.includes('/')) {
+                    const parts = item.path.split('/');
+                    const folderName = parts[0]; // Ex: 3EME
+                    const fileName = parts[1];   // Ex: exercice.html
+
+                    // On ignore les fichiers à la racine comme index.html
+                    if (folderName && fileName && fileName !== "index.html") {
+                        if (!structure[folderName]) {
+                            structure[folderName] = [];
+                        }
+                        structure[folderName].push({
+                            path: item.path,
+                            fileName: fileName,
+                            folderName: folderName
+                        });
+                    }
+                }
+            });
+
+            // Génération dynamique de l'affichage (Dossiers + Cartes d'exercices)
+            for (const folder in structure) {
+                // 1. Création du conteneur de la section (ex: 3EME)
+                const section = document.createElement('div');
+                section.className = 'section-container';
+                
+                const displayFolderName = folder.replace(/_/g, ' ').replace(/-/g, ' ').toUpperCase();
+                const gridId = `grid-${folder.replace(/[^a-z0-9]/gi, '')}`;
+                
+                section.innerHTML = `<h2 class="folder-title">${displayFolderName}</h2><div id="${gridId}" class="grid"></div>`;
+                main.appendChild(section);
+
+                const grid = document.getElementById(gridId);
+
+                // 2. Création des cartes pour chaque fichier HTML trouvé
+                structure[folder].forEach(file => {
+                    const card = document.createElement('a');
+                    card.className = 'card';
+                    
+                    // Lien vers la page GitHub Pages
+                    card.href = `https://${USER}.github.io/${REPO}/${file.path}`;
+                    card.setAttribute('target', '_blank');
+                    
+                    // Nettoyage esthétique du nom du fichier pour le titre de la carte
+                    let tempTitle = file.fileName
+                        .replace('.html', '')
+                        .replace(/_/g, ' ')
+                        .replace(/-/g, ' ');
+                    
+                    // On capitalise la première lettre du titre
+                    tempTitle = tempTitle.charAt(0).toUpperCase() + tempTitle.slice(1);
+
+                    card.innerHTML = `<h3>${tempTitle}</h3>`;
+                    grid.appendChild(card);
+                });
+            }
+
+            // Si le dépôt est vide ou mal configuré
+            if (Object.keys(structure).length === 0) {
+                main.innerHTML = "<p style='text-align:center; color:#666;'>Aucun fichier d'exercice trouvé dans les sous-dossiers.</p>";
+            }
+
+        } catch (error) {
+            main.innerHTML = "<p style='text-align:center; color:red;'>Erreur de chargement ou limite de connexion GitHub atteinte. Réessayez plus tard.</p>";
+            console.error(error);
+        }
+    }
+
+    // Lancement au chargement de la page
+    window.onload = init;
+</script>

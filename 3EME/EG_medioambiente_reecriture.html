@@ -6,132 +6,209 @@
     <title>EG - Medio ambiente - Misión 1 - Ejercicio 3 - Réécriture</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        /* DESIGN TAUPE CHAUD - VERSION FINALE HARMONISÉE */
+        :root {
+            --bg-main: #f4f7f5;
+            --panel-bg: #eaddcf;
+            --panel-border: #6f5f51;
+            --text-dark: #4a3f35;
+            --table-header: #2e7d32; /* Verde bosque armonizado */
+            --table-bg: #fdfaf7;
+            --correct-color: #7a9461;
+            --incorrect-color: #bc6c25;
+        }
+
         body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background-color:#f4f7f5; 
-            margin: 10px; 
-            color: #4a3f35;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--bg-main); 
+            margin: 0; 
+            padding: 15px;
+            color: var(--text-dark);
+            box-sizing: border-box;
         }
         
-        h1 { text-align: center; color: #4a3f35; margin-bottom: 20px; }
+        h1 { 
+            text-align: center; 
+            color: var(--table-header); 
+            margin: 0 0 15px 0; 
+            font-size: 1.6rem;
+        }
 
-        /* LE CONTENEUR FUSIONNÉ (CONSIGNE + BITMOJI) */
-        .header-container {
-            max-width: 1100px;
-            margin: 0 auto 30px auto;
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            background-color: #eaddcf; 
-            border-left: 6px solid #6f5f51; 
-            border-radius: 4px;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-            overflow: hidden;
+        /* DISEÑO LATERAL REORGANIZADO */
+        .main-layout {
+            display: flex;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: flex-start;
+        }
+
+        /* PANEL IZQUIERDO: BITMOJI + CONSIGNA */
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            background-color: var(--panel-bg);
+            border-left: 6px solid var(--panel-border);
+            border-radius: 6px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar img {
+            max-height: 140px;
+            width: auto;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
         }
 
         .consigne-box {
-            padding: 5px 10px;
-            color: #4a3f35;
-            font-size: 1rem;
-            line-height: 1.2;
-            flex-grow: 1;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            line-height: 1.4;
+            text-align: justify;
         }
-        .consigne-box strong { color: #6f5f51; text-transform: uppercase; margin-right: 10px; }
+        
+        .consigne-box strong { 
+            color: var(--panel-border); 
+            text-transform: uppercase; 
+            display: block;
+            margin-bottom: 5px;
+            text-align: center;
+        }
 
-        .header-container img {
-            max-height: 130px; /* Taille ajustée pour ne pas être trop géant */
-            width: auto;
-            margin-right: 10px;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
-            flex-shrink: 0;
+        /* PANEL DERECHO: TABLA Y CONTROLES */
+        .content-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         /* BARRE DE PROGRESSION */
-        .progress-container { width: 80%; background: #ede0d4; height: 15px; border-radius: 10px; margin: 10px auto 25px; overflow: hidden; border: 2px solid #4a3f35; }
-        #progress-bar { width: 0%; height: 100%; background: #8b7355; transition: width 0.3s; }
+        .progress-container { 
+            width: 100%; 
+            background: #ede0d4; 
+            height: 12px; 
+            border-radius: 10px; 
+            margin-bottom: 15px; 
+            overflow: hidden; 
+            border: 2px solid var(--panel-border); 
+        }
+        #progress-bar { width: 0%; height: 100%; background: var(--table-header); transition: width 0.3s; }
 
-        /* TABLEAU LARGE UNIQUE */
-        .container { display: flex; justify-content: center; margin-bottom: 20px; }
-        
+        /* TABLA DE EJERCICIOS */
         table { 
-            width: 90%; 
-            max-width: 1100px; 
+            width: 100%; 
             border-collapse: collapse; 
-            background: #fdfaf7; 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2); 
-            border-radius: 12px; 
+            background: var(--table-bg); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            border-radius: 8px; 
             overflow: hidden; 
         }
 
-        th, td { border: 1px solid #c5b4a2; padding: 10px; }
-        th { background-color: #6f5f51; color: #fdfaf7; text-transform: uppercase; letter-spacing: 1px; }
+        th, td { border: 1px solid #c5b4a2; padding: 8px 12px; font-size: 0.95rem; }
+        th { background-color: var(--table-header); color: #fdfaf7; text-transform: uppercase; letter-spacing: 0.5px; }
         
         td:first-child { 
             width: 40%; 
-            background-color: #eaddcf; 
-            font-weight: normal; 
-            color: #4a3f35; }
+            background-color: #f7f2ec; 
+            color: var(--text-dark); 
+        }
         td:last-child { width: 60%; }
 
         input { 
             border: 2px solid #c5b4a2; 
-            padding: 8px; 
-            border-radius: 8px; 
+            padding: 6px 10px; 
+            border-radius: 6px; 
             width: 100%; 
-            font-size: 1rem; 
-            background-color: #fdfaf7;
-            color: #4a3f35;
+            font-size: 0.95rem; 
+            background-color: var(--table-bg);
+            color: var(--text-dark);
             outline: none; 
             box-sizing: border-box;
+            transition: all 0.2s;
         }
-        input:focus { border-color: #6f5f51; background-color: #fff; }
+        input:focus { border-color: var(--table-header); background-color: #fff; }
 
-        /* CORRECTION */
-        .correct { background-color: #7a9461 !important; color: white !important; }
-        .incorrect { background-color: #bc6c25 !important; color: white !important; }
+        /* RESPUESTAS */
+        .correct { background-color: var(--correct-color) !important; color: white !important; }
+        .incorrect { background-color: var(--incorrect-color) !important; color: white !important; }
 
-        .controls { text-align: center; margin-top: 6px; padding-bottom: 10px; }
-        #resultat { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; color: #4a3f35; }
+        .controls { text-align: center; margin-top: 15px; }
+        #resultat { font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; color: var(--text-dark); }
         
         button { 
-            padding: 8px 40px; font-size: 1.2rem; cursor: pointer; 
-            background: #6f5f51; color: #fdfaf7; border: none; border-radius: 50px;
-            box-shadow: 0 5px 0 #4a3f35; font-weight: bold;
+            padding: 8px 35px; font-size: 1.1rem; cursor: pointer; 
+            background: var(--table-header); color: #fdfaf7; border: none; border-radius: 50px;
+            box-shadow: 0 4px 0 #1b5e20; font-weight: bold; transition: background 0.2s;
         }
-        button:active { transform: translateY(4px); box-shadow: 0 1px 0 #4a3f35; }
+        button:hover { background: #388e3c; }
+        button:active { transform: translateY(3px); box-shadow: 0 1px 0 #1b5e20; }
+
+        /* PANTALLA FINAL DE ÉXITO (>80%) */
+        .code-box {
+            background-color: #fff9c4;
+            border: 2px dashed #fbc02d;
+            padding: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            border-radius: 6px;
+            display: inline-block;
+            color: #333;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        /* Ajustes para pantallas pequeñas */
+        @media (max-width: 850px) {
+            .main-layout { flex-direction: column; }
+            .sidebar { width: 100%; box-sizing: border-box; }
+        }
     </style>
 </head>
 <body>
 
-    <h1>🌟 ¡Impératif - Transposition style direct → style indirect! 🌟</h1>
+    <h1>🌍 Misión 1 - Ejercicio 3: Estilo Directo → Estilo Indirecto</h1>
 
-    <div class="header-container">
-        <div class="consigne-box">
-            <strong>Consigne :</strong> Réécris ces conseils en utilisant les expressions du conseil (aconsejar que ou rec<u>o</u>mendar que) qui nécessitent l'emploi 
-            du mode subjonctif. Tu utiliseras la personnes indiquée entre parenthèses. Chaque phrase doit commencer par "Recomiendan que..." ou "Aconsejan que...") - 
-            Exemple : "Apaga las luces (ellos) → Recomiendan que <U>apaguen</U> las luces
+    <div class="main-layout">
+        
+        <div class="sidebar">
+            <img src="https://sdurand-sdd.github.io/exercices/3EME/bitmoji_planeta.png" alt="Profe">
+            <div class="consigne-box">
+                <strong>Consigna:</strong> Réécris ces conseils en utilisant les expressions du conseil (<em>aconsejar que</em> ou <em>recomendar que</em>) qui nécessitent l'emploi du mode subjonctif. 
+                <br><br>Tu utiliseras la personne indiquée entre parenthèses. Chaque phrase doit commencer par "Recomiendan que..." ou "Aconsejan que...".
+                <br><br>💡 <em>Ejemplo: "Apaga las luces (ellos) → Recomiendan que apaguen las luces"</em>
+            </div>
         </div>
-        <img src="https://sdurand-sdd.github.io/exercices/3EME/bitmoji_planeta.png" alt="Profe">
-    </div>
 
-    <div class="progress-container"><div id="progress-bar"></div></div>
+        <div class="content-area">
+            <div class="progress-container"><div id="progress-bar"></div></div>
 
-    <div class="container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Frase original</th>
-                    <th>Tu transformación</th>
-                </tr>
-            </thead>
-            <tbody id="tbody-unique"></tbody>
-        </table>
-    </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Frase original</th>
+                        <th>Tu transformación</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-unique"></tbody>
+            </table>
 
-    <div class="controls">
-        <div id="resultat"></div>
-        <button onclick="verifier()">¡COMPROBAR!</button>
+            <div class="controls">
+                <div id="resultat"></div>
+                <button onclick="verifier()">¡COMPROBAR!</button>
+            </div>
+        </div>
+        
     </div>
 
     <script>
@@ -139,47 +216,51 @@
             { 
                 q: "No tires nada en los ríos ni los mares. → (nosotros)", 
                 r: "Recomiendan que no tiremos nada en los ríos ni los mares | " + 
-                   "Aconsejan que no tiremos nada en los ríos ni los mares| "
+                   "Aconsejan que no tiremos nada en los ríos ni los mares"
             },
             { 
                 q: "Cierra bien los grifos. → (vosotros)", 
-                r: "Recomiendan que cerréis bien los grifos| " + 
-                   "Aconsejan que cerréis bien los grifos| "
+                r: "Recomiendan que cerréis bien los grifos | " + 
+                   "Aconsejan que cerréis bien los grifos"
             },
             { 
                 q: "Compra productos biodegradables. → (tú)", 
-                r: "Recomiendan que compres productos biodegradables| " + 
-                   "Aconsejan que compres productos biodegradables| "
+                r: "Recomiendan que compres productos biodegradables | " + 
+                   "Aconsejan que compres productos biodegradables"
             },
             { 
                 q: "Recicla el papel y el plástico. → (yo)", 
-                r: "Recomiendan que recicle el papel y el plástico| " + 
-                   "Aconsejan que recicle el papel y el plástico| "
+                r: "Recomiendan que recicle el papel y el plástico | " + 
+                   "Aconsejan que recicle el papel y el plástico"
             },
             { 
                 q: "No camines fuera de los senderos → (ella) ", 
-                r: "Recomiendan que no camine fuera de los senderos| " + 
-                   "Aconsejan que no camine fuera de los senderos| "
+                r: "Recomiendan que no camine fuera de los senderos | " + 
+                   "Aconsejan que no camine fuera de los senderos"
             },
             { 
                 q: "No esquíes fuera de las pistas → (nosotros)", 
-                r: "Recomiendan que no esquíemos fuera de las pistas| " + 
-                   "Aconsejan que no esquíemos fuera de las pistas| "
+                r: "Recomiendan que no esquíemos fuera de las pistas | " + 
+                   "Aconsejan que no esquíemos fuera de las pistas"
             },
             {
-                q: "Di '¡no!' a la matanza de animales → (tu)", 
-                r: "Recomiendan que digas 'no' a la matanza de animales| " + 
-                   "Aconsejan que digas 'no' a la matanza de animales| "
+                q: "Di '¡no!' a la matanza de animales → (tú)", 
+                r: "Recomiendan que digas 'no' a la matanza de animales | " + 
+                   "Aconsejan que digas 'no' a la matanza de animales | " +
+                   "Recomiendan que digas ¡no! a la matanza de animales | " +
+                   "Aconsejan que digas ¡no! a la matanza de animales"
             },
             { 
                 q: "Protege todos los animales → (vosotros)", 
-                r: "Recomiendan que protejáis todos los animales| " + 
-                   "Aconsejan que protejáis todos los animales| "
+                r: "Recomiendan que protejáis todos los animales | " + 
+                   "Aconsejan que protejáis todos los animales"
             },
             { 
-                q: "Ayuda a la conservación de especies protegidas → (yo)", 
-                r:  "Recomiendan que ayude a la conservación de especies protegidas| " + 
-                   "Aconsejan que ayude a la conservación de especies protegidas| "
+                q: "Ayuda a la conservation de especies protegidas → (yo)", 
+                r:  "Recomiendan que ayude a la conservación de especies protegidas | " + 
+                    "Aconsejan que ayude a la conservación de especies protegidas | " +
+                    "Recomiendan que ayude a la conservation de especies protegidas | " +
+                    "Aconsejan que ayude a la conservation de especies protegidas"
             }
         ];
 
@@ -215,10 +296,12 @@
         function verifier() {
             let score = 0;
             const netoyer = (t) => t.trim().toLowerCase().replace(/\s+/g, ' ').replace(/\.$/, '');
+            
             exercices.forEach((ex, index) => {
                 const input = document.getElementById(`input-${index}`);
                 const reponseEleve = netoyer(input.value);
                 const reponsesPossibles = ex.r.split('|').map(res => netoyer(res));
+                
                 if (reponsesPossibles.includes(reponseEleve)) {
                     input.className = "correct";
                     score++;
@@ -226,15 +309,22 @@
                     input.className = "incorrect";
                 }
             });
+            
             const zone = document.getElementById('resultat');
-            zone.innerHTML = `🏆 Score : ${score} / ${exercices.length}`;
-            if (score === exercices.length) {
+            const porcentajeExito = (score / exercices.length) * 100;
+
+            // CONDICIÓN DE ÉXITO: 80% o más (Mínimo 7 buenas respuestas de 9)
+            if (porcentajeExito >= 80) {
                 confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
                 audioPerfect.play();
-                zone.style.color = "#7a9461";
+                zone.style.color = "var(--correct-color)";
+                
+                zone.innerHTML = `🏆 ¡Misión cumplida! Score: ${score} / ${exercices.length} (${Math.round(porcentajeExito)}%)<br>
+                <div class="code-box">🔑 CÓDIGO : SUBJUNTIVO-ECO</div>`;
             } else {
                 audioWin.play();
-                zone.style.color = "#bc6c25";
+                zone.style.color = "var(--incorrect-color)";
+                zone.innerHTML = `⚠️ Sigue intentándolo. Score: ${score} / ${exercices.length} (${Math.round(porcentajeExito)}%). <br><span style="font-size:0.9rem; font-weight:normal;">Necesitas al menos un 80% (7 aciertos) para conseguir el código.</span>`;
             }
         }
         window.onload = genererTableaux;

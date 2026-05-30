@@ -149,14 +149,14 @@
 
     <script>
         const exercices = [
-            { v: "DOBLAR", p: "1", r: "doblo" },
+            { v: "DOBLAR", p: "5", r: "doblo" },
             { v: "BARRER", p: "6", r: "barren" },
             { v: "DIMITIR", p: "2", r: "dimites" },
             { v: "BAILAR", p: "4", r: "bailamos" },
             { v: "APRENDER", p: "2", r: "aprendes" },
-            { v: "CAMBIAR", p: "5", r: "cambiáis" },
-            { v: "OBSERVAR", p: "6", r: "observan" },
-            { v: "CORRER", p: "4", r: "corremos" },
+            { v: "CAMBIAR", p: "6", r: "cambiáis" },
+            { v: "OBSERVAR", p: "4", r: "observan" },
+            { v: "CORRER", p: "3", r: "corremos" },
             { v: "VIVIR", p: "3", r: "vive" },
             { v: "LAVAR", p: "3", r: "lava" },
             // Table 2
@@ -165,10 +165,10 @@
             { v: "APRECIAR", p: "6", r: "aprecian" },
             { v: "ACCEDER", p: "3", r: "accede" },
             { v: "LEER", p: "6", r: "leen" },
-            { v: "INSISTIR", p: "4", r: "insistimos" },
+            { v: "INSISTIR", p: "5", r: "insistimos" },
             { v: "EXISTIR", p: "6", r: "existen" },
             { v: "BEBER", p: "2", r: "bebes" },
-            { v: "PASEAR", p: "5", r: "paseáis" },
+            { v: "PASEAR", p: "3", r: "paseáis" },
             { v: "ESCRIBIR", p: "1", r: "escribo" }
         ];
 
@@ -246,7 +246,7 @@
                 
                 zoneScore.style.color = "#27ae60";
                 zoneScore.innerHTML = `🏆 Score : ${score} / ${exercices.length} - ¡Excelente! 🎉<br>
-                <div class="code-escape-game">🔑 CODE SECRET : VERBOS-INDICATIVO</div>`;
+                <div class="code-escape-game">🔑 CODE SECRET : VERBOS-IMPERATIVO</div>`;
             } else {
                 zoneScore.style.color = "#c0392b";
                 zoneScore.innerHTML = `Score : ${score} / ${exercices.length} <br><span style="font-size: 1.1rem; font-weight: normal;">Corrige las casillas rojas para desbloquear el código secreto.</span>`;

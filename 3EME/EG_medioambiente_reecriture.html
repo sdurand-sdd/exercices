@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EG - Medio ambiente - Misión 1 - Ejercicio 3 - Réécriture</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        /* DESIGN TAUPE CHAUD - VERSION FINALE HARMONISÉE */
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: #d2b48c; 
+            margin: 20px; 
+            color: #4a3f35;
+        }
+        
+        h1 { text-align: center; color: #4a3f35; margin-bottom: 20px; }
+
+        /* LE CONTENEUR FUSIONNÉ (CONSIGNE + BITMOJI) */
+        .header-container {
+            max-width: 1100px;
+            margin: 0 auto 30px auto;
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            background-color: #eaddcf; 
+            border-left: 6px solid #6f5f51; 
+            border-radius: 4px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .consigne-box {
+            padding: 20px 30px;
+            color: #4a3f35;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+        .consigne-box strong { color: #6f5f51; text-transform: uppercase; margin-right: 10px; }
+
+        .header-container img {
+            max-height: 150px; /* Taille ajustée pour ne pas être trop géant */
+            width: auto;
+            margin-right: 20px;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
+            flex-shrink: 0;
+        }
+
+        /* BARRE DE PROGRESSION */
+        .progress-container { width: 80%; background: #ede0d4; height: 15px; border-radius: 10px; margin: 10px auto 25px; overflow: hidden; border: 2px solid #4a3f35; }
+        #progress-bar { width: 0%; height: 100%; background: #8b7355; transition: width 0.3s; }
+
+        /* TABLEAU LARGE UNIQUE */
+        .container { display: flex; justify-content: center; margin-bottom: 20px; }
+        
+        table { 
+            width: 95%; 
+            max-width: 1100px; 
+            border-collapse: collapse; 
+            background: #fdfaf7; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2); 
+            border-radius: 12px; 
+            overflow: hidden; 
+        }
+
+        th, td { border: 1px solid #c5b4a2; padding: 15px; }
+        th { background-color: #6f5f51; color: #fdfaf7; text-transform: uppercase; letter-spacing: 1px; }
+        
+        td:first-child { 
+            width: 40%; 
+            background-color: #eaddcf; 
+            font-weight: normal; 
+            color: #4a3f35; }
+        td:last-child { width: 60%; }
+
+        input { 
+            border: 2px solid #c5b4a2; 
+            padding: 12px; 
+            border-radius: 8px; 
+            width: 100%; 
+            font-size: 1.1rem; 
+            background-color: #fdfaf7;
+            color: #4a3f35;
+            outline: none; 
+            box-sizing: border-box;
+        }
+        input:focus { border-color: #6f5f51; background-color: #fff; }
+
+        /* CORRECTION */
+        .correct { background-color: #7a9461 !important; color: white !important; }
+        .incorrect { background-color: #bc6c25 !important; color: white !important; }
+
+        .controls { text-align: center; margin-top: 10px; padding-bottom: 50px; }
+        #resultat { font-size: 2rem; font-weight: bold; margin-bottom: 15px; color: #4a3f35; }
+        
+        button { 
+            padding: 18px 60px; font-size: 1.5rem; cursor: pointer; 
+            background: #6f5f51; color: #fdfaf7; border: none; border-radius: 50px;
+            box-shadow: 0 5px 0 #4a3f35; font-weight: bold;
+        }
+        button:active { transform: translateY(4px); box-shadow: 0 1px 0 #4a3f35; }
+    </style>
+</head>
+<body>
+
+    <h1>🌟 ¡Impératif - Transposition style direct → style indirect! 🌟</h1>
+
+    <div class="header-container">
+        <div class="consigne-box">
+            <strong>Consigna:</strong> Transforme ces simples phrases en utilisant les structures d'obligations personnelles et impersonnelles vues en classe. Pour bien t'entraîner utilise les 7 structures (voir doc.1). Fais attention à la conjugaison et aux accents.
+        </div>
+        <img src="https://sdurand-sdd.github.io/exercices/3EME/bitmoji_planeta.png" alt="Profe">
+    </div>
+
+    <div class="progress-container"><div id="progress-bar"></div></div>
+
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Frase original</th>
+                    <th>Tu transformación</th>
+                </tr>
+            </thead>
+            <tbody id="tbody-unique"></tbody>
+        </table>
+    </div>
+
+    <div class="controls">
+        <div id="resultat"></div>
+        <button onclick="verifier()">¡COMPROBAR!</button>
+    </div>
+
+    <script>
+        const exercices = [
+            { 
+                q: "Plantáis árboles → obligation impersonnelle", 
+                r: "hay que plantar árboles | " + 
+                   "es necesario plantar árboles | " + 
+                   "hace falta plantar árboles" 
+            },
+            { 
+                q: "Explican las normas ecológicas → obligation personnelle", 
+                r: "tienen que explicar las normas ecológicas | " + 
+                   "deben explicar las normas ecológicas | " + 
+                   "es necesario que expliquen las normas ecológicas | " + 
+                   "hace falta que expliquen las normas ecológicas" 
+            },
+            { 
+                q: "Ahorramos agua en casa → obligation impersonnelle", 
+                r: "Hay que ahorrar agua en casa | " + 
+                   "hace falta ahorrar agua en casa | " + 
+                   "es necesario ahorrar agua en casa" 
+            },
+            { 
+                q: "Protege la naturaleza → obligation impersonnelle", 
+                r: "hay que proteger la naturaleza | " + 
+                   "es necesario proteger la naturaleza | " + 
+                   "hace falta proteger la naturaleza"
+            },
+            { 
+                q: "Reciclo el papel y el cartón → obligation personnelle ", 
+                r: "tengo que reciclar el papel y el cartón | " + 
+                   "debo reciclar el papel y el cartón | " + 
+                   "es necesario que recicle el papel y el cartón | " +
+                   "hace falta que recicle el papel y el cartón" 
+            },
+            { 
+                q: "Consumís menos energía → obligation personnelle", 
+                r: "tenéis que consumir menos energía | " + 
+                   "debéis consumir menos energía | " + 
+                   "es necesario que consumáis menos energía | " +
+                   "hace falta que consumáis menos energía"         
+            },
+            {
+                q: "Tiran la basura al contenedor → obligation personnelle", 
+                r: "tienen que tirar la basura al contenedor | " + 
+                   "deben tirar la basura al contenedor | " + 
+                   "es necesario que tiren la basura al contenedor | " +
+                   "hace falta que tiren la basura al contenedor"  
+            },
+            { 
+                q: "Cerrar el grifo → obligation impersonnelle", 
+                r: "hay que cerrar el grifo | " + 
+                   "es necesario cerrar el grifo | " + 
+                   "hace falta cerrar el grifo" 
+            },
+            { 
+                q: "Usas los transportes públicos → obligation personnelle", 
+                r: "tienes que usar los transportes públicos | " + 
+                   "debes usar los transportes públicos | " + 
+                   "es necesario que uses los transportes públicos | " +
+                   "hace falta que uses los transportes públicos" 
+            },
+            { 
+                q: "Preservar los océanos → obligation impersonnelle", 
+                r: "hay que preservar los océanos | " + 
+                    "es necesario preservar los océanos | " + 
+                    "hace falta preservar los océanos" 
+            }
+        ];
+
+        const audioWin = new Audio('https://actions.google.com/sounds/v1/foley/success_chime.ogg');
+        const audioPerfect = new Audio('https://actions.google.com/sounds/v1/human_voices/applause.ogg');
+
+        function genererTableaux() {
+            const tbody = document.getElementById('tbody-unique');
+            exercices.forEach((ex, index) => {
+                const parts = ex.q.split("→");
+                const questionGras = parts[1] ? `<strong>${parts[0]}</strong> →${parts[1]}` : ex.q;
+
+                const row = `<tr>
+                    <td>${questionGras}</td>
+                    <td><input type="text" id="input-${index}" placeholder="Escribe aquí..." oninput="updateProgress()" onkeydown="if(event.key==='Enter') passerSuivant(${index})"></td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function updateProgress() {
+            const inputs = document.querySelectorAll('input');
+            let remplis = 0;
+            inputs.forEach(i => { if(i.value.trim() !== "") remplis++; });
+            document.getElementById('progress-bar').style.width = (remplis / exercices.length * 100) + "%";
+        }
+
+        function passerSuivant(index) {
+            const suivant = document.getElementById(`input-${index + 1}`);
+            if (suivant) suivant.focus();
+        }
+
+        function verifier() {
+            let score = 0;
+            const netoyer = (t) => t.trim().toLowerCase().replace(/\s+/g, ' ').replace(/\.$/, '');
+            exercices.forEach((ex, index) => {
+                const input = document.getElementById(`input-${index}`);
+                const reponseEleve = netoyer(input.value);
+                const reponsesPossibles = ex.r.split('|').map(res => netoyer(res));
+                if (reponsesPossibles.includes(reponseEleve)) {
+                    input.className = "correct";
+                    score++;
+                } else {
+                    input.className = "incorrect";
+                }
+            });
+            const zone = document.getElementById('resultat');
+            zone.innerHTML = `🏆 Score : ${score} / ${exercices.length}`;
+            if (score === exercices.length) {
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                audioPerfect.play();
+                zone.style.color = "#7a9461";
+            } else {
+                audioWin.play();
+                zone.style.color = "#bc6c25";
+            }
+        }
+        window.onload = genererTableaux;
+    </script>
+</body>
+</html>

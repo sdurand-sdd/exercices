@@ -254,23 +254,22 @@
             rationaleCorrect: "¡Perfecto! Le texte interdit de marcher hors des sentiers ('senderos') pour préserver la végétation et ne pas déranger la faune.",
             rationaleIncorrect: "¡Ojo! Le texte demande au contraire de suivre des règles strictes lors des déplacements dans la nature."
         },
-        {
-            question: "En lisant l'encadré '¿Cuánto tarda en degradarse la basura...?', quel déchet met le plus de temps à disparaître ?",
+       {
+            question: "Quel conseil dénonce le prix fort que paient les animaux juste pour le confort ou la mode humaine ?",
             options: [
-                { text: "El papel (3 meses).", isCorrect: false },
-                { text: "El chicle (5 años).", isCorrect: true }, // Note pédagogique : dans le doc original, le plastique/verre prennent le plus de temps, mais ici on teste la lecture. Le verre (vidrio) met 1000 à 4000 ans. Modifié selon les choix précédents.
-                { text: "El vidrio (1000 a 4000 años).", isCorrect: true } 
+                { text: "Di « ¡no! » a la matanza de animales para confeccionar abrigos.", isCorrect: true },
+                { text: "No molestarás a los animales.", isCorrect: false },
+                { text: "Ayuda a la conservación de las especies en peligro.", isCorrect: false }
             ],
-            rationaleCorrect: "¡Eso es! Le verre ('el vidrio') demande entre 1000 et 4000 ans pour se dégrader, ce qui en fait le déchet le plus résistant de la liste.",
-            rationaleIncorrect: "¡Error! Comparez bien les échelles de temps dans le petit tableau du document (mois vs années vs siècles)."
+            rationaleCorrect: "¡Excelente! 'La matanza' signifie le massacre/la tuerie, et 'los abrigos de piel' sont les manteaux de fourrure.",
+            rationaleIncorrect: "¡Error! Relisez bien les derniers conseils du document pour trouver celui qui parle explicitement des vêtements."
         }
-    ];
 
     // Correction rapide de la dernière question pour n'avoir qu'une seule vraie option correcte
     quizData[4].options = [
-        { text: "El papel (3 meses).", isCorrect: false },
-        { text: "El chicle (5 años).", isCorrect: false },
-        { text: "El vidrio (1000 a 4000 años).", isCorrect: true }
+        { text: "Di « ¡no! » a la matanza de animales para confeccionar abrigos.", isCorrect: true },
+        { text: "No molestarás a los animales.", isCorrect: false },
+        { text: "Ayuda a la conservación de las especies en peligro.", isCorrect: false }
     ];
 
     let currentQuestionIndex = 0;

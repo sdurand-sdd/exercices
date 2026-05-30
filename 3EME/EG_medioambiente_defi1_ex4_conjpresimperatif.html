@@ -46,21 +46,21 @@
             font-size: 0.9rem;
         }
 
-        /* Style des cases de saisie (Plus grandes) */
+        /* Style des cases de saisie */
         input { 
             border: 2px solid #bdc3c7; 
             padding: 4px; 
             border-radius: 5px;
             width: 180px;
-            font-size: 1.2rem; /* Police agrandie pour l'élève */
+            font-size: 1.2rem; 
             font-weight: bold;
             outline: none;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
         }
 
         input:focus { border-color: #4a69bd; background-color: #f8f9fa; }
 
-        /* Couleurs de correction */
+        /* Couleurs de correction instantanée */
         .correct { background-color: #d4edda !important; border-color: #28a745 !important; color: #155724; }
         .incorrect { background-color: #f8d7da !important; border-color: #dc3545 !important; color: #721c24; }
 
@@ -75,7 +75,7 @@
         }
 
         button { 
-            padding: 5px 20px; 
+            padding: 8px 25px; 
             font-size: 1.1rem; 
             cursor: pointer; 
             background-color: #2ecc71; 
@@ -84,15 +84,15 @@
             border-radius: 30px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: transform 0.2s, background-color 0.2s;
+            font-weight: bold;
         }
 
         button:hover { background-color: #27ae60; transform: translateY(-2px); }
         button:active { transform: translateY(0); }
 
-        /* Soulignement spécifique pour les rappels orthographiques */
         u { text-decoration-color: #e74c3c; text-decoration-thickness: 2px; }
 
-        /* Encadré spécial pour le code secret de l'escape game */
+        /* Encadré code secret */
         .code-escape-game {
             background-color: #fff9c4;
             border: 2px dashed #fbc02d;
@@ -144,11 +144,10 @@
 
     <div class="controls">
         <div id="resultat"></div>
-        <button onclick="verifier()">Vérifier mes réponses</button>
+        <button onclick="verifierTout()">¡VERIFICAR MISIÓN!</button>
     </div>
 
     <script>
-        // --- MODÈLE DE DONNÉES (À modifier pour vos futurs exercices) ---
         const exercices = [
             { v: "DOBLAR", p: "1", r: "doblo" },
             { v: "BARRER", p: "6", r: "barren" },
@@ -160,7 +159,7 @@
             { v: "CORRER", p: "4", r: "corremos" },
             { v: "VIVIR", p: "3", r: "vive" },
             { v: "LAVAR", p: "3", r: "lava" },
-            // Suite pour le tableau 2
+            // Table 2
             { v: "VENDER", p: "2", r: "vendes" },
             { v: "OMITIR", p: "5", r: "omitís" },
             { v: "APRECIAR", p: "6", r: "aprecian" },
@@ -173,10 +172,10 @@
             { v: "ESCRIBIR", p: "1", r: "escribo" }
         ];
 
-        // Sons optionnels (identiques à l'exercice de réécriture si besoin)
         const audioPerfect = new Audio('https://actions.google.com/sounds/v1/human_voices/applause.ogg');
+        const nettoyer = (text) => text.trim().toLowerCase().replace(/\s+/g, ' ');
 
-        // Génération des tableaux à l'ouverture
+        // Génération des tableaux
         function genererTableaux() {
             const t1 = document.getElementById('table1');
             const t2 = document.getElementById('table2');
@@ -190,6 +189,7 @@
                                id="input-${index}" 
                                autocomplete="off" 
                                spellcheck="false"
+                               onblur="corrigerCase(${index})"
                                onkeydown="if(event.key==='Enter') passerSuivant(${index})">
                     </td>
                 </tr>`;
@@ -198,48 +198,58 @@
             });
         }
 
-        // Fonction pour passer à la ligne suivante avec Entrée
+        // Fonction de correction individuelle (déclenchée dès qu'on quitte la case)
+        function corrigerCase(index) {
+            const input = document.getElementById(`input-${index}`);
+            const valeurEleve = nettoyer(input.value);
+            
+            // Si la case est vide, on retire les couleurs de correction
+            if (valeurEleve === "") {
+                input.className = "";
+                return;
+            }
+
+            if (valeurEleve === nettoyer(exercices[index].r)) {
+                input.className = "correct";
+            } else {
+                input.className = "incorrect";
+            }
+        }
+
         function passerSuivant(index) {
+            const actuel = document.getElementById(`input-${index}`);
+            // Forcer la correction de la case actuelle avant de passer à la suite
+            corrigerCase(index); 
+            
             const suivant = document.getElementById(`input-${index + 1}`);
             if (suivant) suivant.focus();
         }
 
-        // Fonction de vérification et calcul du score
-        function verifier() {
+        // Fonction globale finale pour le bouton
+        function verifierTout() {
             let score = 0;
-            
-            // Nettoyage standard des espaces superflus
-            const nettoyer = (text) => text.trim().toLowerCase().replace(/\s+/g, ' ');
 
             exercices.forEach((ex, index) => {
                 const input = document.getElementById(`input-${index}`);
-                const reponseEleve = nettoyer(input.value);
-                const reponseAttendue = nettoyer(ex.r);
-
-                if (reponseEleve === reponseAttendue) {
-                    input.className = "correct";
+                // On recalcule proprement au cas où
+                corrigerCase(index);
+                if (input.classList.contains("correct")) {
                     score++;
-                } else {
-                    input.className = "incorrect";
                 }
             });
 
             const zoneScore = document.getElementById('resultat');
             
-            // Si l'exercice est parfaitement réussi (100%)
             if (score === exercices.length) {
                 confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-                try { audioPerfect.play(); } catch(e) {} // Évite un blocage si le navigateur refuse le son sans interaction préalable
+                try { audioPerfect.play(); } catch(e) {}
                 
                 zoneScore.style.color = "#27ae60";
                 zoneScore.innerHTML = `🏆 Score : ${score} / ${exercices.length} - ¡Excelente! 🎉<br>
-                <div class="code-escape-game">🔑 CODE SECRET : VERBOS-IMPERATIVO</div>`;
-            } else if (score >= exercices.length / 2) {
-                zoneScore.style.color = "#d35400";
-                zoneScore.innerHTML = `Score : ${score} / ${exercices.length} <br><span style="font-size: 1.1rem; font-weight: normal;">¡Ánimo! Te faltan algunas respuestas correctas para desbloquear el código.</span>`;
+                <div class="code-escape-game">🔑 CODE SECRET : VERBOS-INDICATIVO</div>`;
             } else {
                 zoneScore.style.color = "#c0392b";
-                zoneScore.innerHTML = `Score : ${score} / ${exercices.length} <br><span style="font-size: 1.1rem; font-weight: normal;">Revisa bien las terminaciones e inténtalo de nuevo.</span>`;
+                zoneScore.innerHTML = `Score : ${score} / ${exercices.length} <br><span style="font-size: 1.1rem; font-weight: normal;">Corrige las casillas rojas para desbloquear el código secreto.</span>`;
             }
         }
 

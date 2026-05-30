@@ -341,3 +341,40 @@
                 if (errorsCount === 0) {
                     felicitacionesMessage = "¡Perfecto! Un sinfín de aciertos. Todo un experto ecologista.";
                 } else {
+                    felicitacionesMessage = "¡Casi perfecto! Una pequeña distracción, pero habéis demostrado un gran nivel.";
+                }
+
+                finalScreen.innerHTML = `
+                    <h2>¡Misión Cumplida! 🎉</h2>
+                    <p style="font-style: italic; color: #555;">${felicitacionesMessage}</p>
+                    <p>Habéis analizado correctamente el documento "Tu pueblo es tu planeta".</p>
+                    <p>Aquí tenéis el primer elemento para descifrar el código del Escape Game :</p>
+                    <div class="code-box">CLÉ : VERDE-95</div>
+                    <p style="font-size: 14px; color: #666;">Autenticación validada. Score : ${correctAnswersCount} / ${totalQuestions}. Podéis pasar a la siguiente misión.</p>
+                `;
+            } else {
+                finalScreen.innerHTML = `
+                    <h2 style="color: #f44336;">Misión Fallida ❌</h2>
+                    <p>Habéis cometido demasiados errores (${errorsCount} fallos) en la comprensión del document.</p>
+                    <p>Un buen ecologista debe ser más preciso. Se permite <b>un solo fallo</b> como máximo para validar.</p>
+                    <p>Score : ${correctAnswersCount} / ${totalQuestions}</p>
+                    <button class="next-btn" style="display:block; margin-top:30px;" onclick="restartQuiz()">🔄 Recomenzar la misión</button>
+                `;
+            }
+            finalScreen.style.display = 'block';
+        }
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        correctAnswersCount = 0;
+        document.getElementById('final-screen').style.display = 'none';
+        document.getElementById('quiz-screen').style.display = 'block';
+        loadQuestion();
+    }
+
+    window.onload = loadQuestion;
+</script>
+
+</body>
+</html>

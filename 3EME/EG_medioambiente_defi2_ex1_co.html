@@ -225,7 +225,6 @@
     // ==========================================
     const decoder = (str) => decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
 
-    // TOUTES LES DONNÉES SENSIBLES SONT MAINTENANT CHIFFRÉES EN BASE64
     const quizData = [
         {
             question: "De quelle ville parle la locutrice?",
@@ -284,7 +283,7 @@
                 { text: decoder("aWxzIHBvcnRlbnQgdW4gbWFzcXVlIGxvcnNxdSdpbHMgc29ydGVudA=="), isCorrect: "ZmFsc2U=" },
                 { text: decoder("aWxzIHBhcnRlbnQgYSAgbGEgbW9udGFnbmUgcG91ciByZXNwaXJlciBkZSBsJ2FpciBwdXIu"), isCorrect: "dHJ1ZQ==" }
             ],
-            rationaleCorrect: "wqVFeGNlbGVudGUhIEVuIGVmZmVdfSBwYXJ0aXIgw6AgbGEgbW9udGFnbmUgcGVybWV0IGQnYXZvaXIgdW4gYWlyIHBsdXMgZnJhaXMgZXQgc3VydG91dCBtb2lucyBwb2xsdcOpIHBhciBsZSB0cmFmaWMsIGxlcyB1c2luZXMsIGV0IGxlcyBjbGltYXRpc2F0aW9ucw==",
+            rationaleCorrect: "wqVFeGNlbGVudGUhIEVuIGVmZmV0IHBhcnRpciDDoCBsYSBtb2mnYWduZSBwZXJtZXQgZCdhdm9pciB1biBhaXIgcGx1cyBmcmFpcyBldCBzdXJ0b3V0IG1vaW5zIHBvbGx1w6kgcGFyIGxlIHRyYWZpYywgbGVzIHVzaW5lcywgZXQgbGVzIGNsaW1hdGlzYXRpb25z",
             rationaleIncorrect: "wqFFcnJvciEgUsOpw6WNvdXRleiBsJ2VucmVnaXN0cmVtZW50Lg=="
         }
     ];
@@ -356,14 +355,14 @@
             
             if (errorsCount <= 1) {
                 let felicitacionesMessage = errorsCount === 0 
-                    ? "¡Perfecto! Un sinfín de aciertos. Todo un experto ecologista." 
+                    ? "¡Perfecto! Un sinfín de aciertos. Todo un expert ecologista." 
                     : "¡Casi perfecto! Una pequeña distracción, pero habéis demostrado un gran nivel.";
                 
                 finalScreen.innerHTML = `
                     <h2>¡Misión Cumplida! 🎉</h2>
                     <p style="font-style: italic; color: #555;">${felicitacionesMessage}</p>
-                    <p>Habéis analizado correctamente el documento "Tu pueblo es tu planeta".</p>
-                    <p>Aquí tenéis el primer elemento para descifrar el código del Escape Game :</p>
+                    <p>Habéis analizado correctamente le document "Tu pueblo es tu planeta".</p>
+                    <p>Aquí tenéis le premier élément pour décoder le code de l'Escape Game :</p>
                     <div class="code-box">CLÉ : ${decoder(secretKeyEncoded)}</div>
                     <p style="font-size: 14px; color: #666;">Autenticación validada. Score : ${correctAnswersCount} / ${totalQuestions}. Vous pouvez passer à la suite.</p>
                 `;
@@ -390,6 +389,5 @@
 
     window.onload = loadQuestion;
 </script>
-
 </body>
 </html>

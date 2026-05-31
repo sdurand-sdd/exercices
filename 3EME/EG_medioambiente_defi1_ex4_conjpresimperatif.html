@@ -148,13 +148,11 @@
     </div>
 
     <script>
-// ==========================================
+    // ==========================================
     // 1. SÉCURITÉ ANTI-TRICHE (CLIC DROIT & CLAVIER)
     // ==========================================
-    // Bloque le clic droit à l'intérieur de l'exercice
     document.addEventListener('contextmenu', event => event.preventDefault());
 
-    // Bloque les raccourcis claviers de triche (F12, Ctrl+Maj+I, Ctrl+Maj+J, Ctrl+U)
     document.addEventListener('keydown', function(e) {
         if (
             e.key === "F12" ||
@@ -167,129 +165,121 @@
     });
 
     // ==========================================
-    // 2. VOS OUTILS ET DONNÉES EXISTANTS
+    // 2. LOGIQUE ET DONNÉES SÉCURISÉES
     // ==========================================
-    // Décodeur gérant parfaitement les caractères accentués
     const decoder = (str) => decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
 
-    // Structure des données (chiffrées)
-    const quizData = [
-        // ... vos questions chiffrées ici
+    // Toutes les réponses attendues cachées en Base64
+    const exercices = [
+        { v: "PRESERVAR", p: "5", r: decoder("cHJlc2VydmFk") },
+        { v: "PROTEGER", p: "6", r: decoder("cHJvdGVqYW4=") },
+        { v: "P<i>E</i>DIR*", p: "2", r: decoder("cGlkZQ==") },
+        
+        { v: "RESPETAR", p: "5", r: decoder("cmVzcGV0YWQ=") },
+        { v: "CONOCER", p: "3", r: decoder("Y29ub3pjYQ==") },
+        { v: "VIVIR", p: "6", r: decoder("dml2YW4=") },
+        
+        { v: "UTILIZAR", p: "6", r: decoder("dXRpbGljZW4=") },
+        { v: "CORRER", p: "4", r: decoder("Y29ycmFtb3M=") },
+        { v: "S<i>E</i>GUIR", p: "3", r: decoder("c2lnYQ==") },
+        
+        { v: "RECICLAR", p: "3", r: decoder("cmVjaWNsZQ==") },
+        // Table 2
+        { v: "APRENDER", p: "5", r: decoder("YXByZW5kZWQ=") },
+        { v: "DESTRUÍR", p: "4", r: decoder("ZGVzdHJ1eWFtb3M=") },
+        
+        { v: "EXPLICAR", p: "6", r: decoder("ZXhwbGlxdWVu") },
+        { v: "ACCEDER", p: "6", r: decoder("YWNjZWRhbg==") },
+        { v: "DIRIGIR", p: "4", r: decoder("ZGlyaWphbW9z") },
+        
+        { v: "C<u>E</u>RRAR", p: "6", r: decoder("Y2llcnJlbg==") },            
+        { v: "EXISTIR", p: "5", r: decoder("ZXhpc3RpZA==") },
+        { v: "RECOGER", p: "2", r: decoder("cmVjb2dl") },
+        
+        { v: "APAGAR", p: "3", r: decoder("YXBhZ3Vl") },
+        { v: "DISTINGUIR", p: "2", r: decoder("ZGlzdGluZ3Vl") }
     ];
 
+    const audioPerfect = new Audio('https://actions.google.com/sounds/v1/human_voices/applause.ogg');
+    const nettoyer = (text) => text.trim().toLowerCase().replace(/\s+/g, ' ');
+
+    // Génération des tableaux
+    function genererTableaux() {
+        const t1 = document.getElementById('table1');
+        const t2 = document.getElementById('table2');
+
+        exercices.forEach((ex, index) => {
+            const row = `<tr>
+                <td>${ex.v}</td>
+                <td>${ex.p}</td>
+                <td>
+                    <input type="text" 
+                           id="input-${index}" 
+                           autocomplete="off" 
+                           spellcheck="false"
+                           onblur="corrigerCase(${index})"
+                           onkeydown="if(event.key==='Enter') passerSuivant(${index})">
+                </td>
+            </tr>`;
+            if (index < 10) t1.innerHTML += row;
+            else t2.innerHTML += row;
+        });
+    }
+
+    // Fonction de correction individuelle (déclenchée dès qu'on quitte la case)
+    function corrigerCase(index) {
+        const input = document.getElementById(`input-${index}`);
+        const valeurEleve = nettoyer(input.value);
         
-        const exercices = [
-            { v: "PRESERVAR", p: "5", r: "preservad" },
-            { v: "PROTEGER", p: "6", r: "protejan" },
-            { v: "P<i>E</i>DIR*", p: "2", r: "pide" },
-            
-            { v: "RESPETAR", p: "5", r: "respetad" },
-            { v: "CONOCER", p: "3", r: "conozca" },
-            { v: "VIVIR", p: "6", r: "vivan" },
-            
-            { v: "UTILIZAR", p: "6", r: "utilicen" },
-            { v: "CORRER", p: "4", r: "corramos" },
-            { v: "S<i>E</i>GUIR", p: "3", r: "siga" },
-            
-            { v: "RECICLAR", p: "3", r: "recicle" },
-            // Table 2
-            { v: "APRENDER", p: "5", r: "aprended" },
-            { v: "DESTRUÍR", p: "4", r: "destruyamos" },
-            
-            { v: "EXPLICAR", p: "6", r: "expliquen" },
-            { v: "ACCEDER", p: "6", r: "accedan" },
-            { v: "DIRIGIR", p: "4", r: "dirijamos" },
-            
-            { v: "C<u>E</u>RRAR", p: "6", r: "cierren" },            
-            { v: "EXISTIR", p: "5", r: "existid" },
-            { v: "RECOGER", p: "2", r: "recoge" },
-            
-            { v: "APAGAR", p: "3", r: "apague" },
-            { v: "DISTINGUIR", p: "2", r: "distingue" }
-        ];
-
-        const audioPerfect = new Audio('https://actions.google.com/sounds/v1/human_voices/applause.ogg');
-        const nettoyer = (text) => text.trim().toLowerCase().replace(/\s+/g, ' ');
-
-        // Génération des tableaux
-        function genererTableaux() {
-            const t1 = document.getElementById('table1');
-            const t2 = document.getElementById('table2');
-
-            exercices.forEach((ex, index) => {
-                const row = `<tr>
-                    <td>${ex.v}</td>
-                    <td>${ex.p}</td>
-                    <td>
-                        <input type="text" 
-                               id="input-${index}" 
-                               autocomplete="off" 
-                               spellcheck="false"
-                               onblur="corrigerCase(${index})"
-                               onkeydown="if(event.key==='Enter') passerSuivant(${index})">
-                    </td>
-                </tr>`;
-                if (index < 10) t1.innerHTML += row;
-                else t2.innerHTML += row;
-            });
+        if (valeurEleve === "") {
+            input.className = "";
+            return;
         }
 
-        // Fonction de correction individuelle (déclenchée dès qu'on quitte la case)
-        function corrigerCase(index) {
+        // Comparaison avec la réponse décodée de manière transparente
+        if (valeurEleve === nettoyer(exercices[index].r)) {
+            input.className = "correct";
+        } else {
+            input.className = "incorrect";
+        }
+    }
+
+    function passerSuivant(index) {
+        corrigerCase(index); 
+        
+        const suivant = document.getElementById(`input-${index + 1}`);
+        if (suivant) suivant.focus();
+    }
+
+    // Fonction globale finale pour le bouton
+    function verifierTout() {
+        let score = 0;
+
+        exercices.forEach((ex, index) => {
             const input = document.getElementById(`input-${index}`);
-            const valeurEleve = nettoyer(input.value);
-            
-            // Si la case est vide, on retire les couleurs de correction
-            if (valeurEleve === "") {
-                input.className = "";
-                return;
+            corrigerCase(index);
+            if (input.classList.contains("correct")) {
+                score++;
             }
+        });
 
-            if (valeurEleve === nettoyer(exercices[index].r)) {
-                input.className = "correct";
-            } else {
-                input.className = "incorrect";
-            }
-        }
-
-        function passerSuivant(index) {
-            const actuel = document.getElementById(`input-${index}`);
-            // Forcer la correction de la case actuelle avant de passer à la suite
-            corrigerCase(index); 
+        const zoneScore = document.getElementById('resultat');
+        
+        if (score === exercices.length) {
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+            try { audioPerfect.play(); } catch(e) {}
             
-            const suivant = document.getElementById(`input-${index + 1}`);
-            if (suivant) suivant.focus();
+            zoneScore.style.color = "#27ae60";
+            // Code secret décodé à la volée ("VkVSQk9TLVBNUEVSQVRJVk8=" -> VERBOS-IMPERATIVO)
+            zoneScore.innerHTML = `🏆 Score : ${score} / ${exercices.length} - ¡Excelente! 🎉<br>
+            <div class="code-escape-game">🔑 CODE SECRET : ${decoder("VkVSQk9TLVBNUEVSQVRJVk8=")}</div>`;
+        } else {
+            zoneScore.style.color = "#c0392b";
+            zoneScore.innerHTML = `Score : ${score} / ${exercices.length} <br><span style="font-size: 1.1rem; font-weight: normal;">Corrige las casillas rojas para desbloquear el código secreto.</span>`;
         }
+    }
 
-        // Fonction globale finale pour le bouton
-        function verifierTout() {
-            let score = 0;
-
-            exercices.forEach((ex, index) => {
-                const input = document.getElementById(`input-${index}`);
-                // On recalcule proprement au cas où
-                corrigerCase(index);
-                if (input.classList.contains("correct")) {
-                    score++;
-                }
-            });
-
-            const zoneScore = document.getElementById('resultat');
-            
-            if (score === exercices.length) {
-                confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-                try { audioPerfect.play(); } catch(e) {}
-                
-                zoneScore.style.color = "#27ae60";
-                zoneScore.innerHTML = `🏆 Score : ${score} / ${exercices.length} - ¡Excelente! 🎉<br>
-                <div class="code-escape-game">🔑 CODE SECRET : VERBOS-IMPERATIVO</div>`;
-            } else {
-                zoneScore.style.color = "#c0392b";
-                zoneScore.innerHTML = `Score : ${score} / ${exercices.length} <br><span style="font-size: 1.1rem; font-weight: normal;">Corrige las casillas rojas para desbloquear el código secreto.</span>`;
-            }
-        }
-
-        window.onload = genererTableaux;
-    </script>
+    window.onload = genererTableaux;
+</script>
 </body>
 </html>

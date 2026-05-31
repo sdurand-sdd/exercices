@@ -62,7 +62,7 @@
         .progress {
             background-color: var(--primary-color);
             height: 100%;
-            width: 20%; /* Ajusté dynamiquement */
+            width: 0%; 
             transition: width 0.3s ease;
         }
 
@@ -96,7 +96,6 @@
             background-color: var(--primary-light);
         }
 
-        /* Classes appliquées par JavaScript après le clic */
         .option-item.correct {
             border-color: var(--correct-color);
             background-color: #e8f5e9;
@@ -139,7 +138,7 @@
         }
 
         .next-btn {
-            display: none; /* Géré par le JS */
+            display: none;
             width: 100%;
             background-color: var(--primary-color);
             color: white;
@@ -201,22 +200,15 @@
     </div>
 
     <div id="final-screen" class="final-screen">
-        <h2>¡Misión Cumplida! 🎉</h2>
-        <p>Habéis analizado correctamente el documento "Tu pueblo es tu planeta".</p>
-        <p>Aquí tenéis el primer element para descifrar el código del Escape Game :</p>
-        <div class="code-box">CLÉ : VERDE-95</div>
-        <p style="font-size: 14px; color: #666;">Autenticación validada. Podéis pasar a la siguiente misión.</p>
-    </div>
+        </div>
 </div>
 
 <script>
     // ==========================================
     // 1. SÉCURITÉ ANTI-TRICHE (CLIC DROIT & CLAVIER)
     // ==========================================
-    // Bloque le clic droit à l'intérieur de l'exercice
     document.addEventListener('contextmenu', event => event.preventDefault());
 
-    // Bloque les raccourcis claviers de triche (F12, Ctrl+Maj+I, Ctrl+Maj+J, Ctrl+U)
     document.addEventListener('keydown', function(e) {
         if (
             e.key === "F12" ||
@@ -229,175 +221,74 @@
     });
 
     // ==========================================
-    // 2. VOS OUTILS ET DONNÉES EXISTANTS
+    // 2. LOGIQUE DE DÉCODAGE ET TABLEAU SÉCURISÉ
     // ==========================================
-    // Décodeur gérant parfaitement les caractères accentués
     const decoder = (str) => decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
     
-    // Structure des données
+    // Structure invisible : Options, Feedbacks et Index masqués en Base64
     const quizData = [
         {
             question: "D'après l'introduction du document, que se passera-t-il si l'être humain continue à consommer et polluer au même rythme ?",
             options: [
-                { text: "Los efectos en el ecosistema serán irreversibles.", isCorrect: true },
-                { text: "La Tierra sabrá defenderse sola.", isCorrect: false },
-                { text: "Los peligros desaparecerán grâce à la technologie.", isCorrect: false }
+                decoder("TG9zIGVmZWN0b3MgZW4gZWwgZWNvc2lzdGVtYSBzZXLDoW4gaXJyZXZlcnNpYmxlcy4="),
+                decoder("TEEgVGllcnJhIHNhYnXLIGRlZmVuZGVyc2Ugc29sYS4="),
+                decoder("TG9zIHBlbGlncm9zIGRlc2FwYXJhY2Vyw6FuIGdyw6FjZSDDoCBsYSB0ZWNobm9sb2dpZS4=")
             ],
-            rationaleCorrect: "¡Muy bien! Le texte indique explicitement que si le rythme actuel continue, les effets sur l'écosystème seront irréversibles ('serán irreversibles').",
-            rationaleIncorrect: "¡Error! Relisez le début du premier paragraphe : le texte insiste sur la gravité de la situation."
+            rationaleCorrect: decoder("wqFNdXkgYmllbiEgTGUgdGV4dGUgaW5kaXF1ZSBleHBsaWNpdGVtZW50IHF1ZSBzaSBsZSByeXRobWUgYWN0dWVsIGNvbnRpbnVlLCBsZXMgZWZmZXRzIHN1ciBsJ8OpY29zeXN0w6htZSBzZXJvbnQgaXJyw6Z2ZXJzaWJsZXMgKCdzZXLDoW4gaXJyZXZlcnNpYmxlcycpLg=="),
+            rationaleIncorrect: decoder("wqFFcnJvciEgUmVsaXNleiBsZSBkw6VidXQgZHUgcHJlbWllciBwYXJhZ3JhcGhlIDogbGUgdGV4dGUgaW5zaXN0ZSBzdXIgbGEgZ3Jhdml0w6kgZGUgbGEgc2l0dWF0aW9uLg=="),
+            correctIndex: "MA==" // Index 0 (Option 1)
         },
         {
             question: "Quel est l'objectif principal du livre publié par la 'Consejería de Medio Ambiente de la Junta de Andalucía' ?",
             options: [
-                { text: "Vender un libro divertido para las vacances.", isCorrect: false },
-                { text: "Que los más pequeños tomen conciencia sobre este asunto.", isCorrect: true },
-                { text: "Organizar una limpieza general en los pueblos de Andalucía.", isCorrect: false }
+                decoder("VmVuZGVyIHVuIGxpYnJvIGRpdmVydGlkbyBwYXJhIGxhcyB2YWNhbmNlcy4="),
+                decoder("UXVlIGxvcyBtw6FzIHBlcXVlw7FvcyB0b21lbiBjb25jaWVuY2lhIHNvYnJlIGVzdGUgYXN1bnRvLg=="),
+                decoder("T3JnYW5pemFyIHVuYSBsaW1waWV6YSBnZW5lcmFsIGVuIGxvcyBwdWVibG9zIGRlIEFuZGFsdWNpYS4=")
             ],
-            rationaleCorrect: "¡Exacto! C'est un moyen simple et amusant de faire prendre conscience aux plus jeunes ('tomen conciencia') des dangers qui menacent la planète.",
-            rationaleIncorrect: "¡No es correcto! Regardez la fin du premier paragraphe pour identifier l'objectif pédagogique."
+            rationaleCorrect: decoder("wqFFeGFjdG8hIEMnZXN0IHVuIG1veWVuIHNpbXBsZSBldCBhbXVzYW50IGRlIGZhaXJlIHByZW5kcmUgY29uY2llbmNlIGF1eCBwbHVzIGpldW5lcyAoJ3RvbWVuIGNvbmNpZW5jaWEnKSBkZXMgZGFuZ2VycyBxdWkgbWVuYWNlbnQgbGEgcGxhbsOodGUu"),
+            rationaleIncorrect: decoder("wqFObyBlcyBjb3JyZWN0byEgUmVnYXJkZXogbGEgZmluIGR1IHByZW1pZXIgcGFyYWdyYXBoZSBwb3VyIGlkZW50aWZpZXIgbCdvYmplY3RpZiBwX2VkYWdvZ2lxdWUu"),
+            correctIndex: "MQ==" // Index 1 (Option 2)
         },
         {
             question: "Parmi ces conseils du document, lequel est un ordre affirmatif pour économiser l'eau ?",
             options: [
-                { text: "No utilices los ríos ni los mares como un cubo de basura.", isCorrect: false },
-                { text: "Recicla el papel, el plástico, el metal y el vidrio.", isCorrect: false },
-                { text: "Cierra bien los grifos.", isCorrect: true }
+                decoder("Tm8gdXRpbGljZXMgbG9zIHLDrW9zIG5pIGxvcyBtYXJlcyBjb21vIHVuIGN1Ym8gZGUgYmFzdXJhLg=="),
+                decoder("UmVjaWNsYSBlbCBwYXBlbCwgZWwgcGzDoXN0aWNvLCBlbCBtZXRhbCB5IGVsIHZpZHJpby4="),
+                decoder("Q2llcnJhIGJpZW4gbG9zIGdyaWZvcy4=")
             ],
-            rationaleCorrect: "¡Excelente! Cette phrase utilise l'impératif affirmatif du verbe irrégulier (Cierra) et demande de bien fermer les robinets ('grifos') pour ne pas gaspiller l'eau.",
-            rationaleIncorrect: "¡Cuidado! Cherchez l'action liée directement à l'utilisation de l'eau."
+            rationaleCorrect: decoder("wqFFeGNlbGVudGUhIENldHRlIHBocmFzZSB1dGlsaXNlIGwnaW1ww6lyYXRpZiBhZmZpcm1hdGlmIGR1IHZlcmJlIGlycsOpZ3VsaWVyIChDaWVycmEpIGV0IGRlbWFuZGUgZGUgYmllbiBmZXJtZXIgbGVzIHJvYmluZXRzICgnZ3JpZm9zJykgcG91ciBuZSBwYXMgZ2FzcGlsbGVyIGwnZWF1Lg=="),
+            rationaleIncorrect: decoder("wqFDdWlkYWRvISBDaGVyY2hleiBsJ2FjdGlvbiBsaリアw6llIGRpcmVjdGVtZW50IMOgIGwndXRpbGlzYXRpb24gZGUgbCdlYXUu"),
+            correctIndex: "Mg==" // Index 2 (Option 3)
         },
         {
             question: "Que conseille le texte concernant les espaces naturels lors des randonnées ou des sorties ?",
             options: [
-                { text: "No camines fuera de los senderos ni esquíes fuera de las pistas.", isCorrect: true },
-                { text: "Ayuda a replantar árboles en medio de las pistas de esquí.", isCorrect: false },
-                { text: "Camina libremente por la naturaleza para conocer a los animales.", isCorrect: false }
+                decoder("Tm8gY2FtaW5lcyBmdWVyYSBkZSBsb3Mgc2VuZGVyb3MgbmkgZXNxdcOAdvancedZXMgZnVlcmEgZGUgbGFzIHBpc3Rhcy4="),
+                decoder("QXl1ZGEgYSByZXBsYW50YXIgw6FyYm9sZXMgZW4gbWVkaW8gZGUgbGFzIHBpc3RhcyBkZSBlc3F1w60u"),
+                decoder("Q2FtaW5hIGxpYnJlbWVudGUgcG9yIGxhIG5hdHVyYWxlemEgcGFyYSBjb25vY2VyIGEgbG9zIGFuaW1hbGVzLg==")
             ],
-            rationaleCorrect: "¡Perfecto! Le texte interdit de marcher hors des sentiers ('senderos') pour préserver la végétation et ne pas déranger la faune.",
-            rationaleIncorrect: "¡Ojo! Le texte demande au contraire de suivre des règles strictes lors des déplacements dans la nature."
+            rationaleCorrect: decoder("wqFQZXJmZWN0byEgTGUgdGV4dGUgaW50ZXJkaXQgZGUgbWFyY2hlciBob3JzIGRlcyBzZW50aWVycyAoJ3NlbmRlcm9zJykgcG91ciBwcsOpc2VydmVyIGxhIHbDqWfDqXRhdGlvbiBldCBuZSBwYXMgZMOpcmFuZ2VyIGxhIGZhdW5lLg=="),
+            rationaleIncorrect: decoder("wqFPam8hIExlIHRleHRlIGRlbWFuZGUgYXUgY29udHJhaXJlIGRlIHN1aXZyZSBkZXMgcsOoZ2xlcyBzdHJpY3RlcyBsb3JzIGRlcyBkw6VwbGFjZW1lbnRzIGRhbnMgbGEgbmF0dXVyZS4="),
+            correctIndex: "MA==" // Index 0 (Option 1)
         },
         {
             question: "Quel conseil dénonce le prix fort que paient les animaux juste pour le confort ou la mode humaine ?",
             options: [
-                { text: "Di « ¡no! » a la matanza de animales para confeccionar abrigos.", isCorrect: true },
-                { text: "No molestarás a los animales.", isCorrect: false },
-                { text: "Ayuda a la conservación de las especies en peligro.", isCorrect: false }
+                decoder("RGkgwqsKwqFubyEgwrsuIGEgbGEgbWF0YW56YSBkZSBhbmltYWxlcyBwYXJhIGNvbmZlY2Npb25hciBhYnJpZ29zLg=="),
+                decoder("Tm8gbW9sZXN0YXLDoXMgYSBsb3MgYW5pbWFsZXMu"),
+                decoder("QXl1ZGEgYSBsYSBjb25zZXJ2YWNpw7NuIGRlIGxhcyBlc3BlY2llcyBlbiBwZWxpZ3JvLg==")
             ],
-            rationaleCorrect: "¡Excelente! 'La matanza' signifie le massacre/la tuerie, et 'los abrigos de piel' sont les manteaux de fourrure.",
-            rationaleIncorrect: "¡Error! Relisez bien les derniers conseils du document pour trouver celui qui parle explicitement des vêtements."
+            rationaleCorrect: decoder("wqFFeGNlbGVudGUhICdMYSBtYXRhbHphJyBzaWduaWZpZSBsZSBtYXNzYWNyZS9sYSB0dWVyaWUsIGV0ICdsb3MgYWJyaWdvcyBkZSBwaWVsJyBzb250IGxlcyBtYW50ZWF1eCBkZSBmb3VycnVyZS4="),
+            rationaleIncorrect: decoder("wqFFcnJvciEgUmVsaXNleiBiaWVuIGxlcyBkZXJuaWVycyBjb25zZWlscyBkdSBkb2N1bWVudCBwb3VyIHRyb3V2ZXIgY2VsdWkgcXVpIHBhcmxlIGV4cGxpY2l0ZW1lbnQgZGVzIHbDqnRlbWVudHMu"),
+            correctIndex: "MA==" // Index 0 (Option 1)
         }
-    ]; // <--- Les crochets et accolades manquants ont été rajoutés ici !
+    ];
+
     let currentQuestionIndex = 0;
     let correctAnswersCount = 0; 
     
     function loadQuestion() {
         const currentQuiz = quizData[currentQuestionIndex];
         
-        // Mettre à jour la barre de progression
-        const progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
-        document.getElementById('progress').style.width = progressPercent + '%';
-
-        // Afficher le texte de la question
-        document.getElementById('question-text').innerText = `${currentQuestionIndex + 1}. ${currentQuiz.question}`;
-        
-        // Vider la liste précédente
-        const optionsList = document.getElementById('options-list');
-        optionsList.innerHTML = '';
-        
-        // Cacher le bouton suivant et le feedback
-        document.getElementById('next-btn').style.display = 'none';
-        const fbBox = document.getElementById('feedback-box');
-        fbBox.className = 'feedback';
-
-        // Injecter les options
-        currentQuiz.options.forEach(option => {
-            const li = document.createElement('li');
-            li.className = 'option-item';
-            li.innerText = option.text;
-            li.onclick = () => selectOption(li, option.isCorrect, currentQuiz);
-            optionsList.appendChild(li);
-        });
-    }
-  
-    function selectOption(element, isCorrect, currentQuiz) {
-        const allOptions = document.querySelectorAll('.option-item');
-        const fbBox = document.getElementById('feedback-box');
-
-        allOptions.forEach(opt => opt.classList.add('disabled'));
-
-        if (isCorrect) {
-            element.classList.add('correct');
-            fbBox.innerText = currentQuiz.rationaleCorrect;
-            fbBox.classList.add('correct-fb', 'show');
-            correctAnswersCount++; 
-        } else {
-            element.classList.add('incorrect');
-            fbBox.innerText = currentQuiz.rationaleIncorrect;
-            fbBox.classList.add('incorrect-fb', 'show');
-            
-            allOptions.forEach((opt, index) => {
-                if (currentQuiz.options[index].isCorrect) {
-                    opt.classList.add('correct');
-                }
-            });
-        }
-
-        document.getElementById('next-btn').style.display = 'block';
-    }
-
-    function nextQuestion() {
-        currentQuestionIndex++;
-        
-        if (currentQuestionIndex < quizData.length) {
-            loadQuestion();
-        } else {
-            const totalQuestions = quizData.length;
-            const errorsCount = totalQuestions - correctAnswersCount;
-            
-            document.getElementById('progress').style.width = '100%';
-            document.getElementById('quiz-screen').style.display = 'none';
-            
-            const finalScreen = document.getElementById('final-screen');
-            
-            if (errorsCount <= 1) {
-                let felicitacionesMessage = "";
-                if (errorsCount === 0) {
-                    felicitacionesMessage = "¡Perfecto! Un sinfín de aciertos. Todo un experto ecologista.";
-                } else {
-                    felicitacionesMessage = "¡Casi perfecto! Una pequeña distracción, pero habéis demostrado un gran nivel.";
-                }
-
-                finalScreen.innerHTML = `
-                    <h2>¡Misión Cumplida! 🎉</h2>
-                    <p style="font-style: italic; color: #555;">${felicitacionesMessage}</p>
-                    <p>Habéis analizado correctamente el documento "Tu pueblo es tu planeta".</p>
-                    <p>Aquí tenéis el primer elemento para descifrar el código del Escape Game :</p>
-                    <div class="code-box">CLÉ : VERDE-95</div>
-                    <p style="font-size: 14px; color: #666;">Autenticación validada. Score : ${correctAnswersCount} / ${totalQuestions}. Podéis pasar a la siguiente misión.</p>
-                `;
-            } else {
-                finalScreen.innerHTML = `
-                    <h2 style="color: #f44336;">Misión Fallida ❌</h2>
-                    <p>Habéis cometido demasiados errores (${errorsCount} fallos) en la comprensión del document.</p>
-                    <p>Un buen ecologista debe ser más preciso. Se permite <b>un solo fallo</b> como máximo para validar.</p>
-                    <p>Score : ${correctAnswersCount} / ${totalQuestions}</p>
-                    <button class="next-btn" style="display:block; margin-top:30px;" onclick="restartQuiz()">🔄 Recomenzar la misión</button>
-                `;
-            }
-            finalScreen.style.display = 'block';
-        }
-    }
-
-    function restartQuiz() {
-        currentQuestionIndex = 0;
-        correctAnswersCount = 0;
-        document.getElementById('final-screen').style.display = 'none';
-        document.getElementById('quiz-screen').style.display = 'block';
-        loadQuestion();
-    }
-
-    window.onload = loadQuestion;
-</script>
-
-</body>
-</html>
+        // Progression calculée dynamiquement
+        const

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EG - Medio ambiente : Misión 1 -  CE : Tu pueblo es tu planeta</title>
+    <style>
+        :root {
+            --primary-color: #2e7d32; /* Vert nature */
+            --primary-light: #e8f5e9;
+            --secondary-color: #388e3c;
+            --text-color: #333;
+            --bg-color: #f4f7f5;
+            --card-bg: #ffffff;
+            --correct-color: #4caf50;
+            --incorrect-color: #f44336;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+
+        .quiz-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 24px;
+            margin: 0 0 10px 0;
+        }
+
+        .progress-bar {
+            background-color: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress {
+            background-color: var(--primary-color);
+            height: 100%;
+            width: 20%; /* Ajusté dynamiquement */
+            transition: width 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .option-item {
+            background-color: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .option-item:hover {
+            border-color: var(--primary-color);
+            background-color: var(--primary-light);
+        }
+
+        /* Classes appliquées par JavaScript après le clic */
+        .option-item.correct {
+            border-color: var(--correct-color);
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .option-item.incorrect {
+            border-color: var(--incorrect-color);
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .option-item.disabled {
+            pointer-events: none;
+        }
+
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.3;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct-fb {
+            background-color: #e8f5e9;
+            border-left: 5px solid var(--correct-color);
+            color: #1b5e20;
+        }
+
+        .feedback.incorrect-fb {
+            background-color: #ffebee;
+            border-left: 5px solid var(--incorrect-color);
+            color: #b71c1c;
+        }
+
+        .next-btn {
+            display: none; /* Géré par le JS */
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 7px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        .next-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .final-screen {
+            text-align: center;
+            display: none;
+        }
+
+        .final-screen h2 {
+            color: var(--primary-color);
+            font-size: 28px;
+        }
+
+        .code-box {
+            background-color: #fff9c4;
+            border: 2px dashed #fbc02d;
+            padding: 8px;
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin: 20px 0;
+            border-radius: 6px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz-screen">
+        <div class="header">
+            <h1>🌍 Misión 1: Comprensión lectora</h1>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+        </div>
+
+        <div class="question-text" id="question-text">Question...</div>
+         
+        <ul class="options-list" id="options-list"></ul>
+
+        <div class="feedback" id="feedback-box">Rationale...</div>
+
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()">Siguiente pregunta ➔</button>
+    </div>
+
+    <div id="final-screen" class="final-screen">
+        <h2>¡Misión Cumplida! 🎉</h2>
+        <p>Habéis analizado correctamente el documento "Tu pueblo es tu planeta".</p>
+        <p>Aquí tenéis el primer element para descifrar el código del Escape Game :</p>
+        <div class="code-box">CLÉ : VERDE-95</div>
+        <p style="font-size: 14px; color: #666;">Autenticación validada. Podéis pasar a la siguiente misión.</p>
+    </div>
+</div>
+
+<script>
+    // Structure des données
+    const quizData = [
+        {
+            question: "De quelle ville parle la locutrice?",
+            options: [
+                { text: "Sevilla.", isCorrect: false },
+                { text: "Madrid.", isCorrect: true },
+                { text: "Barcelona.", isCorrect: false }
+            ],
+            rationaleCorrect: "¡Muy bien! La locutrice parle effectivement de la ville de Madrid en Espagne.",
+            rationaleIncorrect: "¡Error! Réécoutez le début de l'enregistrement."
+        },
+        {
+            question: "Quel est le problème que rencontre Madrid ?",
+            options: [
+                { text: "un problema de turismo importante", isCorrect: false },
+                { text: "un problema de contaminación del agua.", isCorrect: false },
+                { text: "un problema de contaminación del aire.", isCorrect: true }
+            ],
+            rationaleCorrect: "¡Exacto! C'est effectivement la pollution atmosphérique (de l'air).",
+            rationaleIncorrect: "¡No es correcto! Réécoute l'enregistrement."
+        },
+        {
+            question: "Quelle sont les causes de ce problème ?",
+            options: [
+                { text: "la présence de l'aéroport trop proche du centre.", isCorrect: false },
+                { text: "le traffic routier et les entreprises qui utilisent la climatisation", isCorrect: true },
+                { text: "les usines et industries trop proche du centre.", isCorrect: false }
+            ],
+            rationaleCorrect: "¡Excelente! effectivement, Madrid a un traffic routier très important et à cela s'ajoutent les nombreux dispositifs de climatisation",
+            rationaleIncorrect: "¡No es correcto! Réécoute l'enregistrement."
+        },
+        {
+            question: "Que se passe-t-il en été ?",
+            options: [
+                { text: "il y a trop de nuages qui empêchent la pollution de s'évacuer.", isCorrect: false },
+                { text: "la pollution augmente car il ne pleut pas et les températures sont très chaudes.", isCorrect: true },
+                { text: "il y a trop de touristes.", isCorrect: false }
+            ],
+            rationaleCorrect: "¡Perfecto! En effet comme il faut très sec et chaud, cela accentue le phénomène de pollution,
+            rationaleIncorrect: "¡Ojo! Réécoute l'enregistrement."
+        },
+        {
+            question: "Qui sont les personnes les plus affectées par cette pollution",
+            options: [
+                { text: "Ce sont les personnes allergiques et asthmatiques", isCorrect: true },
+                { text: "Ce sont les vieilles personnes et les enfants", isCorrect: false },
+                { text: "Ce sont les animaux.", isCorrect: false }
+            ],
+            rationaleCorrect: "¡Excelente! 'La matanza' signifie le massacre/la tuerie, et 'los abrigos de piel' sont les manteaux de fourrure.",
+            rationaleIncorrect: "¡Error! Relisez bien les derniers conseils du document pour trouver celui qui parle explicitement des vêtements."
+        },
+        {
+            question: "Quelles solutions ont les gens et pourquoi?",
+            options: [
+                { text: "ils restent enfermés dedans avec les fenêtres fermées", isCorrect: false },
+                { text: "ils portent un masque lorsqu'ils sortent", isCorrect: false },
+                { text: "ils partent à la montagne pour respirer de l'air pur.", isCorrect: false }
+            ],
+            rationaleCorrect: "¡Excelente! 'La matanza' signifie le massacre/la tuerie, et 'los abrigos de piel' sont les manteaux de fourrure.",
+            rationaleIncorrect: "¡Error! Relisez bien les derniers conseils du document pour trouver celui qui parle explicitement des vêtements."
+        }
+    ]; // <--- Les crochets et accolades manquants ont été rajoutés ici !
+
+    let currentQuestionIndex = 0;
+    let correctAnswersCount = 0; 
+    
+    function loadQuestion() {
+        const currentQuiz = quizData[currentQuestionIndex];
+        
+        // Mettre à jour la barre de progression
+        const progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+        document.getElementById('progress').style.width = progressPercent + '%';
+
+        // Afficher le texte de la question
+        document.getElementById('question-text').innerText = `${currentQuestionIndex + 1}. ${currentQuiz.question}`;
+        
+        // Vider la liste précédente
+        const optionsList = document.getElementById('options-list');
+        optionsList.innerHTML = '';
+        
+        // Cacher le bouton suivant et le feedback
+        document.getElementById('next-btn').style.display = 'none';
+        const fbBox = document.getElementById('feedback-box');
+        fbBox.className = 'feedback';
+
+        // Injecter les options
+        currentQuiz.options.forEach(option => {
+            const li = document.createElement('li');
+            li.className = 'option-item';
+            li.innerText = option.text;
+            li.onclick = () => selectOption(li, option.isCorrect, currentQuiz);
+            optionsList.appendChild(li);
+        });
+    }
+  
+    function selectOption(element, isCorrect, currentQuiz) {
+        const allOptions = document.querySelectorAll('.option-item');
+        const fbBox = document.getElementById('feedback-box');
+
+        allOptions.forEach(opt => opt.classList.add('disabled'));
+
+        if (isCorrect) {
+            element.classList.add('correct');
+            fbBox.innerText = currentQuiz.rationaleCorrect;
+            fbBox.classList.add('correct-fb', 'show');
+            correctAnswersCount++; 
+        } else {
+            element.classList.add('incorrect');
+            fbBox.innerText = currentQuiz.rationaleIncorrect;
+            fbBox.classList.add('incorrect-fb', 'show');
+            
+            allOptions.forEach((opt, index) => {
+                if (currentQuiz.options[index].isCorrect) {
+                    opt.classList.add('correct');
+                }
+            });
+        }
+
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            const totalQuestions = quizData.length;
+            const errorsCount = totalQuestions - correctAnswersCount;
+            
+            document.getElementById('progress').style.width = '100%';
+            document.getElementById('quiz-screen').style.display = 'none';
+            
+            const finalScreen = document.getElementById('final-screen');
+            
+            if (errorsCount <= 1) {
+                let felicitacionesMessage = "";
+                if (errorsCount === 0) {
+                    felicitacionesMessage = "¡Perfecto! Un sinfín de aciertos. Todo un experto ecologista.";
+                } else {
+                    felicitacionesMessage = "¡Casi perfecto! Una pequeña distracción, pero habéis demostrado un gran nivel.";
+                }
+
+                finalScreen.innerHTML = `
+                    <h2>¡Misión Cumplida! 🎉</h2>
+                    <p style="font-style: italic; color: #555;">${felicitacionesMessage}</p>
+                    <p>Habéis analizado correctamente el documento "Tu pueblo es tu planeta".</p>
+                    <p>Aquí tenéis el primer elemento para descifrar el código del Escape Game :</p>
+                    <div class="code-box">CLÉ : VERDE-95</div>
+                    <p style="font-size: 14px; color: #666;">Autenticación validada. Score : ${correctAnswersCount} / ${totalQuestions}. Podéis pasar a la siguiente misión.</p>
+                `;
+            } else {
+                finalScreen.innerHTML = `
+                    <h2 style="color: #f44336;">Misión Fallida ❌</h2>
+                    <p>Habéis cometido demasiados errores (${errorsCount} fallos) en la comprensión del document.</p>
+                    <p>Un buen ecologista debe ser más preciso. Se permite <b>un solo fallo</b> como máximo para validar.</p>
+                    <p>Score : ${correctAnswersCount} / ${totalQuestions}</p>
+                    <button class="next-btn" style="display:block; margin-top:30px;" onclick="restartQuiz()">🔄 Recomenzar la misión</button>
+                `;
+            }
+            finalScreen.style.display = 'block';
+        }
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        correctAnswersCount = 0;
+        document.getElementById('final-screen').style.display = 'none';
+        document.getElementById('quiz-screen').style.display = 'block';
+        loadQuestion();
+    }
+
+    window.onload = loadQuestion;
+</script>
+
+</body>
+</html>

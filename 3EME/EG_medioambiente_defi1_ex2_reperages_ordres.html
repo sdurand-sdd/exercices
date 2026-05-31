@@ -54,7 +54,6 @@
             line-height: 1.1;
         }
 
-        /* Zone de texte */
         .text-box {
             font-size: 18px;
             line-height: 1.4;
@@ -62,11 +61,10 @@
             padding: 5px;
             border-radius: 8px;
             border: 1px solid #e0e0e0;
-            margin-bottom: 06px;
+            margin-bottom: 6px;
             text-align: justify;
         }
 
-        /* Style de CHAQUE mot cliquable */
         .word {
             cursor: pointer;
             border-radius: 3px;
@@ -79,7 +77,6 @@
             background-color: #e0e0e0;
         }
 
-        /* Sélection Étape 1 : Ordre (Orange) */
         .word.selected-orden {
             background-color: var(--orden-bg) !important;
             color: var(--orden-color) !important;
@@ -87,7 +84,6 @@
             font-weight: bold;
         }
 
-        /* Sélection Étape 2 : Interdiction (Rouge) */
         .word.selected-interdiction {
             background-color: var(--interdiction-bg) !important;
             color: var(--interdiction-color) !important;
@@ -182,13 +178,11 @@
 </div>
 
 <script>
-// ==========================================
-    // 1. SÉCURITÉ ANTI-TRICHE (CLIC DROIT & CLAVIER)
     // ==========================================
-    // Bloque le clic droit à l'intérieur de l'exercice
+    // 1. SÉCURITÉ ANTI-TRICHE
+    // ==========================================
     document.addEventListener('contextmenu', event => event.preventDefault());
 
-    // Bloque les raccourcis claviers de triche (F12, Ctrl+Maj+I, Ctrl+Maj+J, Ctrl+U)
     document.addEventListener('keydown', function(e) {
         if (
             e.key === "F12" ||
@@ -201,36 +195,40 @@
     });
 
     // ==========================================
-    // 2. VOS OUTILS ET DONNÉES EXISTANTS
+    // 2. LOGIQUE ET VERBES SÉCURISÉS (Base64)
     // ==========================================
-    // Décodeur gérant parfaitement les caractères accentués
     const decoder = (str) => decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
 
+    const targetOrdres = [
+        decoder("Y2llcnJh"),
+        decoder("YWNvbnNlamE="),
+        decoder("cmVjaWNsYQ=="),
+        decoder("YXl1ZGE="),
+        decoder("ZGk="),
+        decoder("cHJvdGVnZQ==")
+    ];
     
-    // Liste exacte des mots cibles à trouver (sans majuscules ni ponctuation, géré par le script)
-    const targetOrdres = ["cierra", "aconseja", "recicla", "ayuda", "di", "protege", "ayuda"];
-    const targetInterdictions = ["utilices", "camines", "esquíes"];
+    const targetInterdictions = [
+        decoder("dXRpbGljZXM="),
+        decoder("Y2FtaW5lcw=="),
+        decoder("ZXNxdcOtcw==")
+    ];
 
     const textContainer = document.getElementById('text-container');
     const rawText = textContainer.innerText;
-    textContainer.innerHTML = ''; // On vide pour reconstruire mot par mot
+    textContainer.innerHTML = '';
 
-    // Découpage automatique du texte par les espaces
     const wordsArray = rawText.split(/\s+/);
 
     wordsArray.forEach((word, index) => {
-        // Nettoyage du mot pour l'analyse en coulisses (retrait de la ponctuation et minuscules)
         const cleanWord = word.toLowerCase().replace(/[.,:;«»¡!]/g, '');
 
-        // Création de l'élément cliquable pour le mot
         const span = document.createElement('span');
         span.className = 'word';
         span.innerText = word;
         
-        // On stocke le mot nettoyé dans un attribut pour la comparaison finale
         span.setAttribute('data-clean', cleanWord);
 
-        // Définir si ce mot est une cible attendue
         if (targetOrdres.includes(cleanWord)) {
             span.setAttribute('data-target', 'orden');
         } else if (targetInterdictions.includes(cleanWord)) {
@@ -239,7 +237,6 @@
             span.setAttribute('data-target', 'none');
         }
 
-        // Événement au clic (cycle : Neutre -> Orange -> Rouge -> Neutre)
         span.addEventListener('click', () => {
             if (!span.classList.contains('selected-orden') && !span.classList.contains('selected-interdiction')) {
                 span.classList.add('selected-orden');
@@ -253,7 +250,6 @@
 
         textContainer.appendChild(span);
         
-        // Ajouter un espace après chaque mot (sauf le dernier)
         if (index < wordsArray.length - 1) {
             textContainer.appendChild(document.createTextNode(' '));
         }
@@ -261,10 +257,17 @@
 
     function validateExercise() {
         const allWords = document.querySelectorAll('.word');
-        const totalCibles = targetOrdres.length + targetInterdictions.length; // Égal à 9
         
         let correctCount = 0;
         let errorCount = 0;
+        let totalCibles = 0;
+
+        allWords.forEach(word => {
+            const targetType = word.getAttribute('data-target');
+            if (targetType === 'orden' || targetType === 'interdiction') {
+                totalCibles++;
+            }
+        });
 
         allWords.forEach(word => {
             const targetType = word.getAttribute('data-target');
@@ -276,7 +279,6 @@
             } else if (targetType === 'interdiction' && isSelectedInterdiction) {
                 correctCount++;
             } else if (isSelectedOrden || isSelectedInterdiction) {
-                // L'élève a sélectionné un mauvais mot OU s'est trompé de couleur (ex: rouge au lieu d'orange)
                 errorCount++;
             }
         });
@@ -284,7 +286,6 @@
         const resultBox = document.getElementById('result');
         resultBox.style.display = "block";
 
-        // CORRECTION : Strictement égal au total (9/9) et AUCUNE erreur (0)
         if (correctCount === totalCibles && errorCount === 0) {
             resultBox.className = "result-box success";
             resultBox.innerHTML = `

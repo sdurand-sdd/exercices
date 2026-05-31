@@ -219,11 +219,10 @@
         }
     });
 
-   // ==========================================
-    // 2. LOGIQUE ET DONNÉES CHIFFRÉES (SÉCURISÉES UTF-8)
+    // ==========================================
+    // 2. LOGIQUE ET DECODAGE SECURISÉ (UTF-8)
     // ==========================================
     const decoder = (str) => {
-        // Le .replace(/\s/g, '') élimine les sauts de ligne ou espaces invisibles cachés dans le Base64
         const binaryString = atob(str.replace(/\s/g, ''));
         const bytes = new Uint8Array(binaryString.length);
         for (let i = 0; i < binaryString.length; i++) {
@@ -238,7 +237,7 @@
             options: [
                 { text: decoder("TG9zIGVmZWN0b3MgZW4gZWwgZWNvc2lzdGVtYSBzZXLDoW4gaXJyZXZlcnNpYmxlcy4="), isCorrect: "dHJ1ZQ==" },
                 { text: decoder("TEEgVGllcnJhIHNhYnXLIGRlZmVuZGVyc2Ugc29sYS4="), isCorrect: "ZmFsc2U=" },
-                { text: decoder("TG9zIHBlbGlncm9zIGRlc2FwYXJhY2Vyw6FuIGdyw6FjZSDDoCBsYSB0ZWNobm9sb2dpZS4="), isCorrect: "ZmFsc2U=" }
+                { text: decoder("TG9zIHBlbGlncm9zIGRlc2FwYXJhY2Vyw6FuIGdyw6FjaWVzIGEgbGEgdGVjbm9sb2fDrGEu"), isCorrect: "ZmFsc2U=" }
             ],
             rationaleCorrect: "¡Muy bien! Le texte indique explicitement que si le rythme actuel continue, les effets sur l'écosystème seront irréversibles ('serán irreversibles').",
             rationaleIncorrect: "¡Error! Relisez le début du premier paragraphe : le texte insiste sur la gravité de la situation.",
@@ -269,7 +268,7 @@
         {
             question: "Que conseille le texte concernant les espaces naturels lors des randonnées ou des sorties ?",
             options: [
-                { text: decoder("Tm8gY2FtaW5lcyBmdWVyYSBkZSBsb3Mgc2VuZGVyb3MgbmkgZXNxdcOAdvancedZXMgZnVlcmEgZGUgbGFzIHBpc3Rhcy4="), isCorrect: "dHJ1ZQ==" },
+                { text: decoder("Tm8gY2FtaW5lcyBmdWVyYSBkZSBsb3Mgc2VuZGVyb3MgbmkgZXNxdcOtc2VzIGZ1ZXJhIGRlIGxhcyBwaXN0YXMu"), isCorrect: "dHJ1ZQ==" },
                 { text: decoder("QXl1ZGEgYSByZXBsYW50YXIgw6FyYm9sZXMgZW4gbWVkaW8gZGUgbGFzIHBpc3RhcyBkZSBlc3F1w60u"), isCorrect: "ZmFsc2U=" },
                 { text: decoder("Q2FtaW5hIGxpYnJlbWVudGUgcG9yIGxhIG5hdHVyYWxlemEgcGFyYSBjb25vY2VyIGEgbG9zIGFuaW1hbGVzLg=="), isCorrect: "ZmFsc2U=" }
             ],
@@ -280,11 +279,11 @@
         {
             question: "Quel conseil dénonce le prix fort que paient les animaux juste pour le confort ou la mode humaine ?",
             options: [
-                { text: decoder("RGkgwqsKwqFubyEgwrsuIGEgbGEgbWF0YW56YSBkZSBhbmltYWxlcyBwYXJhIGNvbmZlY2Npb25hciBhYnJpZ29zLg=="), isCorrect: "dHJ1ZQ==" },
+                { text: decoder("RGkgwqFubyEgYSBsYSBtYXRhbnphIGRlIGFuaW1hbGVzIHBhcmEgY29uZmVjY2lvbmFyIGFicmlnb3Mu"), isCorrect: "dHJ1ZQ==" },
                 { text: decoder("Tm8gbW9sZXN0YXLDoXMgYSBsb3MgYW5pbWFsZXMu"), isCorrect: "ZmFsc2U=" },
                 { text: decoder("QXl1ZGEgYSBsYSBjb25zZXJ2YWNpw7NuIGRlIGxhcyBlc3BlY2llcyBlbiBwZWxpZ3JvLg=="), isCorrect: "ZmFsc2U=" }
             ],
-            rationaleCorrect: "¡Excelente! 'La matanza' signifie le massacre/la tuerie, et 'los abrigos de piel' sont les manteaux de fourrure.",
+            rationaleCorrect: "¡Excelente! 'La matanza' désigne le massacre/la tuerie, et 'los abrigos' fait référence aux vêtements/manteaux de fourrure.",
             rationaleIncorrect: "¡Error! Relisez bien les derniers conseils du document pour trouver celui qui parle explicitement des vêtements.",
             correctIndex: 0
         }
@@ -354,24 +353,24 @@
             if (errorsCount <= 1) {
                 let felicitacionesMessage = "";
                 if (errorsCount === 0) {
-                    felicitacionesMessage = "¡Perfecto! Un sinfín de aciertos. Todo un experto ecologista.";
+                    felicitacionesMessage = "¡Perfecto! Un sinfín de aciertos. Todo un expert ecologista.";
                 } else {
-                    felicitacionesMessage = "¡Casi perfecto! Una pequeña distracción, pero habéis demostrado un gran nivel.";
+                    felicitacionesMessage = "¡Casi perfecto! Una pequeña distracción, mais vous avez démontré un grand niveau.";
                 }
 
                 finalScreen.innerHTML = `
                     <h2>¡Misión Cumplida! 🎉</h2>
                     <p style="font-style: italic; color: #555;">${felicitacionesMessage}</p>
                     <p>Habéis analizado correctamente el documento "Tu pueblo es tu planeta".</p>
-                    <p>Aquí tenéis el primer élément pour décoder le code de l'Escape Game :</p>
+                    <p>Aquí tenéis el premier élément pour décoder le code de l'Escape Game :</p>
                     <div class="code-box">CLÉ : VERDE-95</div>
-                    <p style="font-size: 14px; color: #666;">Autenticación validada. Score : ${correctAnswersCount} / ${totalQuestions}. Podéis pasar a la siguiente misión.</p>
+                    <p style="font-size: 14px; color: #666;">Autenticación validada. Score : ${correctAnswersCount} / ${totalQuestions}. Vous pouvez passer à la suite.</p>
                 `;
             } else {
                 finalScreen.innerHTML = `
                     <h2 style="color: #f44336;">Misión Fallida ❌</h2>
-                    <p>Habéis cometido demasiados errores (${errorsCount} fallos) en la compréhension del documento.</p>
-                    <p>Un buen ecologista debe ser más précis. Se permite <b>un solo fallo</b> como máximo para validar.</p>
+                    <p>Habéis cometido demasiados errores (${errorsCount} fallos) en la comprensión del documento.</p>
+                    <p>Un buen ecologista debe ser más preciso. Se permite <b>un solo fallo</b> como máximo para validar.</p>
                     <p>Score : ${correctAnswersCount} / ${totalQuestions}</p>
                     <button class="next-btn" style="display:block; margin-top:30px;" onclick="restartQuiz()">🔄 Recomenzar la misión</button>
                 `;

@@ -11,7 +11,7 @@
             --panel-bg: #eaddcf;
             --panel-border: #6f5f51;
             --text-dark: #4a3f35;
-            --table-header: #2e7d32; /* Verde bosque armonizado */
+            --table-header: #2e7d32;
             --table-bg: #fdfaf7;
             --correct-color: #7a9461;
             --incorrect-color: #bc6c25;
@@ -33,7 +33,6 @@
             font-size: 1.3rem;
         }
 
-        /* DISEÑO LATERAL REORGANIZADO */
         .main-layout {
             display: flex;
             gap: 18px;
@@ -42,7 +41,6 @@
             align-items: flex-start;
         }
 
-        /* PANEL IZQUIERDO: BITMOJI + CONSIGNA */
         .sidebar {
             width: 320px;
             flex-shrink: 0;
@@ -50,7 +48,7 @@
             border-left: 6px solid var(--panel-border);
             border-radius: 6px;
             padding: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12 rgba(0,0,0,0.08);
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -79,14 +77,12 @@
             text-align: center;
         }
 
-        /* PANEL DERECHO: TABLA Y CONTROLES */
         .content-area {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
 
-        /* BARRE DE PROGRESSION */
         .progress-container { 
             width: 100%; 
             background: #ede0d4; 
@@ -98,7 +94,6 @@
         }
         #progress-bar { width: 0%; height: 100%; background: var(--table-header); transition: width 0.3s; }
 
-        /* TABLA DE EJERCICIOS */
         table { 
             width: 100%; 
             border-collapse: collapse; 
@@ -132,7 +127,6 @@
         }
         input:focus { border-color: var(--table-header); background-color: #fff; }
 
-        /* RESPUESTAS */
         .correct { background-color: var(--correct-color) !important; color: white !important; }
         .incorrect { background-color: var(--incorrect-color) !important; color: white !important; }
 
@@ -147,15 +141,14 @@
         button:hover { background: #388e3c; }
         button:active { transform: translateY(3px); box-shadow: 0 1px 0 #1b5e20; }
 
-        /* PANTALLA FINAL DE ÉXITO (>80%) */
         .code-box {
             background-color: #fff9c4;
             border: 2px dashed #fbc02d;
-            padding: 08px;
+            padding: 8px;
             font-size: 18px;
             font-weight: bold;
             letter-spacing: 2px;
-            margin-top: 05px;
+            margin-top: 5px;
             border-radius: 6px;
             display: inline-block;
             color: #333;
@@ -168,7 +161,6 @@
             100% { transform: scale(1); }
         }
 
-        /* Ajustes para pantallas pequeñas */
         @media (max-width: 850px) {
             .main-layout { flex-direction: column; }
             .sidebar { width: 100%; box-sizing: border-box; }
@@ -213,12 +205,10 @@
 
     <script>
     // ==========================================
-    // 1. SÉCURITÉ ANTI-TRICHE (CLIC DROIT & CLAVIER)
+    // 1. SÉCURITÉ ANTI-TRICHE
     // ==========================================
-    // Bloque le clic droit à l'intérieur de l'exercice
     document.addEventListener('contextmenu', event => event.preventDefault());
 
-    // Bloque les raccourcis claviers de triche (F12, Ctrl+Maj+I, Ctrl+Maj+J, Ctrl+U)
     document.addEventListener('keydown', function(e) {
         if (
             e.key === "F12" ||
@@ -231,132 +221,121 @@
     });
 
     // ==========================================
-    // 2. VOS OUTILS ET DONNÉES EXISTANTS
+    // 2. LOGIQUE ET DONNÉES SÉCURISÉES
     // ==========================================
-    // Décodeur gérant parfaitement les caractères accentués
     const decoder = (str) => decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
 
-    // Structure des données (chiffrées)
-    const quizData = [
-        // ... vos questions chiffrées ici
+    const exercices = [
+        { 
+            q: "No tires nada en los ríos ni los mares. → (nosotros)", 
+            r: [decoder("cmVjb21pZW5kYW4gcXVlIG5vIHRpcmVtb3MgbmFkYSBlbiBsb3MgcsOwb3MgbmkgbG9zIG1hcmVz"), decoder("YWNvbnNlamFuIHF1ZSBubyB0aXJlbW9zIG5hZGEgZW4gbG9zIHLDrW9zIG5pIGxvcyBtYXJlcw==")]
+        },
+        { 
+            q: "Cierra bien los grifos. → (vosotros)", 
+            r: [decoder("cmVjb21pZW5kYW4gcXVlIGNlcnLDqWlzIGJpZW4gbG9zIGdyaWZvcw=="), decoder("YWNvbnNlamFuIHF1ZSBjZXJyw6lpcyBiaWVuIGxvcyBncmlmb3M=")]
+        },
+        { 
+            q: "Compra productos biodegradables. → (tú)", 
+            r: [decoder("cmVjb21pZW5kYW4gcXVlIGNvbXByZXMgcHJvZHVjdG9zIGJpb2RlZ3JhZGFibGVz"), decoder("YWNvbnNlamFuIHF1ZSBjb21wcmVzIHByb2R1Y3RvcyBiaW9kZWdyYWRhYmxlcw==")]
+        },
+        { 
+            q: "Recicla el papel y el plástico. → (yo)", 
+            r: [decoder("cmVjb21pZW5kYW4gcXVlIHJlY2ljbGUgZWwgcGFwZWwgeSBlbCBwbMOhc3RpY28="), decoder("YWNvbnNlamFuIHF1ZSByZWNpY2xlIGVsIHBhcGVsIHkgZWwgcGzDoXN0aWNv")]
+        },
+        { 
+            q: "No camines fuera de los senderos → (ella) ", 
+            r: [decoder("cmVjb21pZW5kYW4gcXVlIG5vIGNhbWluZSBmdWVyYSBkZSBsb3Mgc2VuZGVyb3M="), decoder("YWNvbnNlamFuIHF1ZSBubyBjYW1pbmUgZnVlcmEgZGUgbG9zIHNlbmRlcm9z")]
+        },
+        { 
+            q: "No esquíes fuera de las pistas → (nosotros)", 
+            r: [decoder("cmVjb21pZW5kYW4gcXVlIG5vIGVzcXXDrWVtb3MgZnVlcmEgZGUgbGFzIHBpc3Rhcw=="), decoder("YWNvbnNlamFuIHF1ZSBubyBlc3F1w6llbW9zIGZ1ZXJhIGRlIGxhcyBwaXN0YXM=")]
+        },
+        {
+            q: "Di '¡no!' a la matanza de animales → (tú)", 
+            r: [
+                decoder("cmVjb21pZW5kYW4gcXVlIGRpZ2FzICdubycgYSBsYSBtYXRhbnphIGRlIGFuaW1hbGVz"), 
+                decoder("YWNvbnNlamFuIHF1ZSBkaWdhcyAnbm8nIGEgbGEgbWF0YW56YSBkZSBhbmltYWxlcw=="), 
+                decoder("cmVjb21pZW5kYW4gcXVlIGRpZ2FzIMKhbm8hIGEgbGEgbWF0YW56YSBkZSBhbmltYWxlcw=="), 
+                decoder("YWNvbnNlamFuIHF1ZSBkaWdhcyDCoW5vISBhIGxhIG1hdGFuemEgZGUgYW5pbWFsZXM=")
+            ]
+        },
+        { 
+            q: "Protege todos los animales → (vosotros)", 
+            r: [decoder("cmVjb21pZW5kYW4gcXVlIHByb3RlasOhaXMgdG9kb3MgbG9zIGFuaW1hbGVz"), decoder("YWNvbnNlamFuIHF1ZSBwcm90ZWrDoWlzIHRvZG9zIGxvcyBhbmltYWxlcw==")]
+        },
+        { 
+            q: "Ayuda a la conservation de especies protegidas → (yo)", 
+            r: [
+                decoder("cmVjb21pZW5kYW4gcXVlIGF5dWRlIGEgbGEgY29uc2VydmFjacOzbiBkZSBlc3BlY2llcyBwcm90ZWdpZGFz"), 
+                decoder("YWNvbnNlamFuIHF1ZSBheXVkZSBhIGxhIGNvbnNlcnZhY2nDs24gZGUgZXNwZWNpZXMgcHJvdGVnaWRhcw=="), 
+                decoder("cmVjb21pZW5kYW4gcXVlIGF5dWRlIGEgbGEgY29uc2VydmF0aW9uIGRlIGVzcGVjaWVzIHByb3RlZ2lkYXM="), 
+                decoder("YWNvbnNlamFuIHF1ZSBheXVkZSBhIGxhIGNvbnNlcnZhdGlvbiBkZSBlc3BlY2llcyBwcm90ZWdpZGFz")
+            ]
+        }
     ];
 
-    const exercices = [
-            { 
-                q: "No tires nada en los ríos ni los mares. → (nosotros)", 
-                r: "Recomiendan que no tiremos nada en los ríos ni los mares | " + 
-                   "Aconsejan que no tiremos nada en los ríos ni los mares"
-            },
-            { 
-                q: "Cierra bien los grifos. → (vosotros)", 
-                r: "Recomiendan que cerréis bien los grifos | " + 
-                   "Aconsejan que cerréis bien los grifos"
-            },
-            { 
-                q: "Compra productos biodegradables. → (tú)", 
-                r: "Recomiendan que compres productos biodegradables | " + 
-                   "Aconsejan que compres productos biodegradables"
-            },
-            { 
-                q: "Recicla el papel y el plástico. → (yo)", 
-                r: "Recomiendan que recicle el papel y el plástico | " + 
-                   "Aconsejan que recicle el papel y el plástico"
-            },
-            { 
-                q: "No camines fuera de los senderos → (ella) ", 
-                r: "Recomiendan que no camine fuera de los senderos | " + 
-                   "Aconsejan que no camine fuera de los senderos"
-            },
-            { 
-                q: "No esquíes fuera de las pistas → (nosotros)", 
-                r: "Recomiendan que no esquíemos fuera de las pistas | " + 
-                   "Aconsejan que no esquíemos fuera de las pistas"
-            },
-            {
-                q: "Di '¡no!' a la matanza de animales → (tú)", 
-                r: "Recomiendan que digas 'no' a la matanza de animales | " + 
-                   "Aconsejan que digas 'no' a la matanza de animales | " +
-                   "Recomiendan que digas ¡no! a la matanza de animales | " +
-                   "Aconsejan que digas ¡no! a la matanza de animales"
-            },
-            { 
-                q: "Protege todos los animales → (vosotros)", 
-                r: "Recomiendan que protejáis todos los animales | " + 
-                   "Aconsejan que protejáis todos los animales"
-            },
-            { 
-                q: "Ayuda a la conservación de especies protegidas → (yo)", 
-                r:  "Recomiendan que ayude a la conservación de especies protegidas | " + 
-                    "Aconsejan que ayude a la conservación de especies protegidas | " +
-                    "Recomiendan que ayude a la conservation de especies protegidas | " +
-                    "Aconsejan que ayude a la conservation de especies protegidas"
-            }
-        ];
+    const audioWin = new Audio('https://actions.google.com/sounds/v1/foley/success_chime.ogg');
+    const audioPerfect = new Audio('https://actions.google.com/sounds/v1/human_voices/applause.ogg');
 
-        const audioWin = new Audio('https://actions.google.com/sounds/v1/foley/success_chime.ogg');
-        const audioPerfect = new Audio('https://actions.google.com/sounds/v1/human_voices/applause.ogg');
+    function genererTableaux() {
+        const tbody = document.getElementById('tbody-unique');
+        exercices.forEach((ex, index) => {
+            const parts = ex.q.split("→");
+            const questionGras = parts[1] ? `<strong>${parts[0]}</strong> →${parts[1]}` : ex.q;
 
-        function genererTableaux() {
-            const tbody = document.getElementById('tbody-unique');
-            exercices.forEach((ex, index) => {
-                const parts = ex.q.split("→");
-                const questionGras = parts[1] ? `<strong>${parts[0]}</strong> →${parts[1]}` : ex.q;
+            const row = `<tr>
+                <td>${questionGras}</td>
+                <td><input type="text" id="input-${index}" placeholder="Escribe aquí..." oninput="updateProgress()" onkeydown="if(event.key==='Enter') passerSuivant(${index})"></td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+    }
 
-                const row = `<tr>
-                    <td>${questionGras}</td>
-                    <td><input type="text" id="input-${index}" placeholder="Escribe aquí..." oninput="updateProgress()" onkeydown="if(event.key==='Enter') passerSuivant(${index})"></td>
-                </tr>`;
-                tbody.innerHTML += row;
-            });
-        }
+    function updateProgress() {
+        const inputs = document.querySelectorAll('input');
+        let remplis = 0;
+        inputs.forEach(i => { if(i.value.trim() !== "") remplis++; });
+        document.getElementById('progress-bar').style.width = (remplis / exercices.length * 100) + "%";
+    }
 
-        function updateProgress() {
-            const inputs = document.querySelectorAll('input');
-            let remplis = 0;
-            inputs.forEach(i => { if(i.value.trim() !== "") remplis++; });
-            document.getElementById('progress-bar').style.width = (remplis / exercices.length * 100) + "%";
-        }
+    function passerSuivant(index) {
+        const suivant = document.getElementById(`input-${index + 1}`);
+        if (suivant) suivant.focus();
+    }
 
-        function passerSuivant(index) {
-            const suivant = document.getElementById(`input-${index + 1}`);
-            if (suivant) suivant.focus();
-        }
-
-        function verifier() {
-            let score = 0;
-            const netoyer = (t) => t.trim().toLowerCase().replace(/\s+/g, ' ').replace(/\.$/, '');
+    function verifier() {
+        let score = 0;
+        const netoyer = (t) => t.trim().toLowerCase().replace(/\s+/g, ' ').replace(/\.$/, '');
+        
+        exercices.forEach((ex, index) => {
+            const input = document.getElementById(`input-${index}`);
+            const reponseEleve = netoyer(input.value);
+            const reponsesPossibles = ex.r.map(res => netoyer(res));
             
-            exercices.forEach((ex, index) => {
-                const input = document.getElementById(`input-${index}`);
-                const reponseEleve = netoyer(input.value);
-                const reponsesPossibles = ex.r.split('|').map(res => netoyer(res));
-                
-                if (reponsesPossibles.includes(reponseEleve)) {
-                    input.className = "correct";
-                    score++;
-                } else {
-                    input.className = "incorrect";
-                }
-            });
-            
-            const zone = document.getElementById('resultat');
-            const porcentajeExito = (score / exercices.length) * 100;
-
-            // CONDICIÓN DE ÉXITO: 80% o más (Mínimo 7 buenas respuestas de 9)
-            if (porcentajeExito >= 80) {
-                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-                audioPerfect.play();
-                zone.style.color = "var(--correct-color)";
-                
-                zone.innerHTML = `🏆 ¡Misión cumplida! Score: ${score} / ${exercices.length} (${Math.round(porcentajeExito)}%)<br>
-                <div class="code-box">🔑 CÓDIGO : SUBJUNTIVO-ECO</div>`;
+            if (reponsesPossibles.includes(reponseEleve)) {
+                input.className = "correct";
+                score++;
             } else {
-                audioWin.play();
-                zone.style.color = "var(--incorrect-color)";
-                zone.innerHTML = `⚠️ Sigue intentándolo. Score: ${score} / ${exercices.length} (${Math.round(porcentajeExito)}%). <br><span style="font-size:0.9rem; font-weight:normal;">Necesitas al menos un 80% (7 aciertos) para conseguir el código.</span>`;
+                input.className = "incorrect";
             }
+        });
+        
+        const zone = document.getElementById('resultat');
+        const porcentajeExito = (score / exercices.length) * 100;
+
+        if (porcentajeExito >= 80) {
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            audioPerfect.play();
+            zone.style.color = "var(--correct-color)";
+            zone.innerHTML = `🏆 ¡Misión cumplida! Score: ${score} / ${exercices.length} (${Math.round(porcentajeExito)}%)<br>
+            <div class="code-box">🔑 CÓDIGO : SUBJUNTIVO-ECO</div>`;
+        } else {
+            audioWin.play();
+            zone.style.color = "var(--incorrect-color)";
+            zone.innerHTML = `⚠️ Sigue intentándolo. Score: ${score} / ${exercices.length} (${Math.round(porcentajeExito)}%). <br><span style="font-size:0.9rem; font-weight:normal;">Necesitas al menos un 80% (7 aciertos) para conseguir el código.</span>`;
         }
-        window.onload = genererTableaux;
-    </script>
+    }
+    window.onload = genererTableaux;
+</script>
 </body>
 </html>

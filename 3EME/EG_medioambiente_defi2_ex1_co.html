@@ -284,4 +284,112 @@
                 { text: decoder("aWxzIHBvcnRlbnQgdW4gbWFzcXVlIGxvcnNxdSdpbHMgc29ydGVudA=="), isCorrect: "ZmFsc2U=" },
                 { text: decoder("aWxzIHBhcnRlbnQgYSAgbGEgbW9udGFnbmUgcG91ciByZXNwaXJlciBkZSBsJ2FpciBwdXIu"), isCorrect: "dHJ1ZQ==" }
             ],
-            rationaleCorrect: "wqVFeGNlbGVudGUhIEVuIGVmZmVdfSBwYXJ0aXIgw6AgbGEgbW9udGFnbmUgcGVybWV0IGQnYXZvaXIgdW4gYWlyIHBsdXMgZnJhaXMgZXQgc3VydG91dCBtb2lucyBwb2xsdcOpIHBhciBsZ
+            rationaleCorrect: "wqVFeGNlbGVudGUhIEVuIGVmZmVdfSBwYXJ0aXIgw6AgbGEgbW9udGFnbmUgcGVybWV0IGQnYXZvaXIgdW4gYWlyIHBsdXMgZnJhaXMgZXQgc3VydG91dCBtb2lucyBwb2xsdcOpIHBhciBsZSB0cmFmaWMsIGxlcyB1c2luZXMsIGV0IGxlcyBjbGltYXRpc2F0aW9ucw==",
+            rationaleIncorrect: "wqFFcnJvciEgUsOpw6WNvdXRleiBsJ2VucmVnaXN0cmVtZW50Lg=="
+        }
+    ];
+
+    const secretKeyEncoded = "Q09OVEFNSU5BQ0lPTg==";
+
+    let currentQuestionIndex = 0;
+    let correctAnswersCount = 0; 
+    
+    function loadQuestion() {
+        const currentQuiz = quizData[currentQuestionIndex];
+        const progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+        document.getElementById('progress').style.width = progressPercent + '%';
+        document.getElementById('question-text').innerText = `${currentQuestionIndex + 1}. ${currentQuiz.question}`;
+        
+        const optionsList = document.getElementById('options-list');
+        optionsList.innerHTML = '';
+        document.getElementById('next-btn').style.display = 'none';
+        
+        const fbBox = document.getElementById('feedback-box');
+        fbBox.className = 'feedback';
+
+        currentQuiz.options.forEach((option, index) => {
+            const li = document.createElement('li');
+            li.className = 'option-item';
+            li.innerText = option.text;
+            li.onclick = () => selectOption(li, option.isCorrect, currentQuiz);
+            optionsList.appendChild(li);
+        });
+    }
+  
+    function selectOption(element, encodedIsCorrect, currentQuiz) {
+        const allOptions = document.querySelectorAll('.option-item');
+        const fbBox = document.getElementById('feedback-box');
+        const isCorrect = atob(encodedIsCorrect) === 'true';
+
+        allOptions.forEach(opt => opt.classList.add('disabled'));
+
+        if (isCorrect) {
+            element.classList.add('correct');
+            fbBox.innerHTML = decoder(currentQuiz.rationaleCorrect);
+            fbBox.classList.add('correct-fb', 'show');
+            correctAnswersCount++; 
+        } else {
+            element.classList.add('incorrect');
+            fbBox.innerHTML = decoder(currentQuiz.rationaleIncorrect);
+            fbBox.classList.add('incorrect-fb', 'show');
+            
+            allOptions.forEach((opt, index) => {
+                if (atob(currentQuiz.options[index].isCorrect) === 'true') {
+                    opt.classList.add('correct');
+                }
+            });
+        }
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            const totalQuestions = quizData.length;
+            const errorsCount = totalQuestions - correctAnswersCount;
+            document.getElementById('progress').style.width = '100%';
+            document.getElementById('quiz-screen').style.display = 'none';
+            
+            const finalScreen = document.getElementById('final-screen');
+            
+            if (errorsCount <= 1) {
+                let felicitacionesMessage = errorsCount === 0 
+                    ? "¡Perfecto! Un sinfín de aciertos. Todo un experto ecologista." 
+                    : "¡Casi perfecto! Una pequeña distracción, pero habéis demostrado un gran nivel.";
+                
+                finalScreen.innerHTML = `
+                    <h2>¡Misión Cumplida! 🎉</h2>
+                    <p style="font-style: italic; color: #555;">${felicitacionesMessage}</p>
+                    <p>Habéis analizado correctamente el documento "Tu pueblo es tu planeta".</p>
+                    <p>Aquí tenéis el primer elemento para descifrar el código del Escape Game :</p>
+                    <div class="code-box">CLÉ : ${decoder(secretKeyEncoded)}</div>
+                    <p style="font-size: 14px; color: #666;">Autenticación validada. Score : ${correctAnswersCount} / ${totalQuestions}. Vous pouvez passer à la suite.</p>
+                `;
+            } else {
+                finalScreen.innerHTML = `
+                    <h2 style="color: #f44336;">Misión Fallida ❌</h2>
+                    <p>Habéis cometido demasiados errores (${errorsCount} fallos) en la comprensión del documento.</p>
+                    <p>Un buen ecologista debe ser más preciso. Se permite <b>un solo fallo</b> al máximo para validar.</p>
+                    <p>Score : ${correctAnswersCount} / ${totalQuestions}</p>
+                    <button class="next-btn" style="display:block; margin-top:30px;" onclick="restartQuiz()">🔄 Recomenzar la misión</button>
+                `;
+            }
+            finalScreen.style.display = 'block';
+        }
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        correctAnswersCount = 0;
+        document.getElementById('final-screen').style.display = 'none';
+        document.getElementById('quiz-screen').style.display = 'block';
+        loadQuestion();
+    }
+
+    window.onload = loadQuestion;
+</script>
+
+</body>
+</html>

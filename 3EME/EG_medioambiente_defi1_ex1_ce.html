@@ -220,9 +220,16 @@
     });
 
     // ==========================================
-    // 2. LOGIQUE ET DONNÉES CHIFFRÉES
+    // 2. LOGIQUE ET DONNÉES CHIFFRÉES (SÉCURISÉES UTF-8)
     // ==========================================
-    const decoder = (str) => decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+    const decoder = (str) => {
+        const binaryString = atob(str);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return new TextDecoder('utf-8').decode(bytes);
+    };
     
     const quizData = [
         {
@@ -355,15 +362,15 @@
                     <h2>¡Misión Cumplida! 🎉</h2>
                     <p style="font-style: italic; color: #555;">${felicitacionesMessage}</p>
                     <p>Habéis analizado correctamente el documento "Tu pueblo es tu planeta".</p>
-                    <p>Aquí tenéis el premier élément pour décoder le code de l'Escape Game :</p>
+                    <p>Aquí tenéis el primer élément pour décoder le code de l'Escape Game :</p>
                     <div class="code-box">CLÉ : VERDE-95</div>
                     <p style="font-size: 14px; color: #666;">Autenticación validada. Score : ${correctAnswersCount} / ${totalQuestions}. Podéis pasar a la siguiente misión.</p>
                 `;
             } else {
                 finalScreen.innerHTML = `
                     <h2 style="color: #f44336;">Misión Fallida ❌</h2>
-                    <p>Habéis cometido demasiados errores (${errorsCount} fallos) en la comprensión del documento.</p>
-                    <p>Un buen ecologista debe ser mais précis. Se permite <b>un solo fallo</b> como máximo para validar.</p>
+                    <p>Habéis cometido demasiados errores (${errorsCount} fallos) en la compréhension del documento.</p>
+                    <p>Un buen ecologista debe ser más précis. Se permite <b>un solo fallo</b> como máximo para validar.</p>
                     <p>Score : ${correctAnswersCount} / ${totalQuestions}</p>
                     <button class="next-btn" style="display:block; margin-top:30px;" onclick="restartQuiz()">🔄 Recomenzar la misión</button>
                 `;

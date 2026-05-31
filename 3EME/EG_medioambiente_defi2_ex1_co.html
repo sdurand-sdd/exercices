@@ -62,7 +62,7 @@
         .progress {
             background-color: var(--primary-color);
             height: 100%;
-            width: 20%; /* Ajusté dynamiquement */
+            width: 0%; /* Ajusté dynamiquement */
             transition: width 0.3s ease;
         }
 
@@ -96,7 +96,6 @@
             background-color: var(--primary-light);
         }
 
-        /* Classes appliquées par JavaScript après le clic */
         .option-item.correct {
             border-color: var(--correct-color);
             background-color: #e8f5e9;
@@ -139,7 +138,7 @@
         }
 
         .next-btn {
-            display: none; /* Géré par le JS */
+            display: none;
             width: 100%;
             background-color: var(--primary-color);
             color: white;
@@ -205,7 +204,7 @@
 
 <script>
     // ==========================================
-    // 1. SÉCURITÉ ANTI-TRICHE (CLIC DROIT & CLAVIER)
+    // 1. SÉCURITÉ ANTI-TRICHE
     // ==========================================
     document.addEventListener('contextmenu', event => event.preventDefault());
 
@@ -233,8 +232,8 @@
                 { text: decoder("TWFkcmlkLg=="), isCorrect: "dHJ1ZQ==" },
                 { text: decoder("QmFyY2Vsb25hLg=="), isCorrect: "ZmFsc2U=" }
             ],
-            rationaleCorrect: "wqVNdXkgYmllbiEgTGFfIGxvY3V0cmljZSBwYXJsZSBlZmZlY3RpdmVtZW50IGRlIGxhIHZpbGxlIGRlIE1hZHJpZCBlbiBFc3BhZ25lLg==",
-            rationaleIncorrect: "wqFFcnJvciEgUsOpw6WNvdXRleiBsZSBkw6VidXQgZGUgbCdlbnJlZ2lzdHJlbWVudC4="
+            rationaleCorrect: "¡Muy bien! La locutrice parle effectivement de la ville de Madrid en Espagne.",
+            rationaleIncorrect: "¡Error! Réécoutez le début de l'enregistrement."
         },
         {
             question: "Quel est le problème que rencontre Madrid ?",
@@ -243,18 +242,18 @@
                 { text: decoder("dW4gcHJvYmxlbWEgZGUgY29udGFtaW5hY2nDs24gZGVsIGFndWEu"), isCorrect: "ZmFsc2U=" },
                 { text: decoder("dW4gcHJvYmxlbWEgZGUgY29udGFtaW5hY2nDs24gZGVsIGFpcmUu"), isCorrect: "dHJ1ZQ==" }
             ],
-            rationaleCorrect: "wqVFeGFjdG8hIEMnZXN0IGVmZmVjdGl2ZW1lbnQgbGEgcG9sbHV0aW9uIGF0bW9zcGjDqXRpcXVlIChkZSBsJ2Fpciku",
-            rationaleIncorrect: "wqVObyBlcyBjb3JyZWN0byEgUsOpw6WNvdXRlIGwnZW5yZWdpc3RyZW1lbnQu"
+            rationaleCorrect: "¡Exacto! C'est effectivement la pollution atmosphérique (de l'air).",
+            rationaleIncorrect: "¡No es correcto! Réécoute l'enregistrement."
         },
         {
-            question: "Quelle sont les causes de ce problème ?",
+            question: "Quelles sont les causes de ce problème ?",
             options: [
                 { text: decoder("bGEgcHLDqXNlbmNlIGRlIGwnYcOpcm9wb3J0IHRyb3AgcHJvY2hlIGR1IGNlbnRyZS4="), isCorrect: "ZmFsc2U=" },
                 { text: decoder("bGUgdHJhZmZpYyByb3V0aWVyIGV0IGxlcyBlbnRyZXByaXNlcyBxdWkgdXRpbGlzZW50IGxhIGNsaW1hdGlzYXRpb24="), isCorrect: "dHJ1ZQ==" },
                 { text: decoder("bGVzIHVzaW5lcyBldCBpbmR1c3RyaWVzIHRyb3AgcHJvY2hlIGR1IGNlbnRyZS4="), isCorrect: "ZmFsc2U=" }
             ],
-            rationaleCorrect: "wqVFeGNlbGVudGUhIGVmZmVjdGl2ZW1lbnQsIE1hZHJpZCBhIHVuIHRyYWZmaWMgcm91dGllciB0csOocyBpbXBvcnRhbnQgZXQgYwogY2VsYSBzJ2Fqb3V0ZW50IGxlcyBub21icmV1eCBkaXNwb3NpdGlmcyBkZSBjbGltYXRpc2F0aW9u",
-            rationaleIncorrect: "wqVObyBlcyBjb3JyZWN0byEgUsOpw6WNvdXRlIGwnZW5yZWdpc3RyZW1lbnQu"
+            rationaleCorrect: "¡Excelente! Effectivement, Madrid a un trafic routier très important et à cela s'ajoutent les nombreux dispositifs de climatisation.",
+            rationaleIncorrect: "¡No es correcto! Réoute l'enregistrement."
         },
         {
             question: "Que se passe-t-il en été ?",
@@ -263,28 +262,28 @@
                 { text: decoder("bGEgcG9sbHV0aW9uIGF1Z21lbnRlIGNhciBpbCBuZSBwbGV1dCBwYXMgZXQgbGVzIHRlbXDDqXJhdHVyZXMgc29udCB0csOocyBjaGF1ZGVzLg=="), isCorrect: "dHJ1ZQ==" },
                 { text: decoder("aWwgeSBhIHRyb3AgZGUgdG91cmlzdGVzLg=="), isCorrect: "ZmFsc2U=" }
             ],
-            rationaleCorrect: "wqVQZXJmZWN0byEgRW4gZWZmZXQgY29tbWUgaWwgZmFpdCB0csOocyBzZWMgZXQgY2hhdWQsIGNlbGEgYWNjZW50dWUgbGUgcGjDqW5vbcOgbmUgZGUgcGjDqW5vbcOgbmUgZGUgcG9sbHV0aW9uLg==",
-            rationaleIncorrect: "wqVPam8hIFLDqcOpY291dGUgbCdlbnJlZ2lzdHJlbWVudC4="
+            rationaleCorrect: "¡Perfecto! En effet comme il fait très sec et chaud, cela accentue le phénomène de pollution.",
+            rationaleIncorrect: "¡Ojo! Réécoute l'enregistrement."
         },
         {
-            question: "Qui sont les personnes les plus affectées par cette pollution",
+            question: "Qui sont les personnes les plus affectées par cette pollution ?",
             options: [
                 { text: decoder("Q2Ugc29udCBsZXMgcGVyc29ubmVzIGFsbGVyZ2lxdWVzIGV0IGFzdGhtYXRpcXVlcw=="), isCorrect: "dHJ1ZQ==" },
                 { text: decoder("Q2Ugc29udCBsZXMgdmllbGxlcyBwZXJzb25uZXMgZXQgbGVzIGVuZmFudHM="), isCorrect: "ZmFsc2U=" },
                 { text: decoder("Q2Ugc29udCBsZXMgYW5pbWF1eC4="), isCorrect: "ZmFsc2U=" }
             ],
-            rationaleCorrect: "wqVFeGNlbGVudGUhIEJvbm5lIHLDqXBvbnNlLCBjZSBzb250IGxlcyBwZXJzb25uZXMgcXVpIG9udCBkZXMgcHJvYmzDqG1lcyBub3RhbW1lbnQgcmVzcGlyYXRvaXJlcy4=",
-            rationaleIncorrect: "wqFFcnJvciEgUsOpw6WNvdXRleiBsJ2VucmVnaXN0cmVtZW50Lg=="
+            rationaleCorrect: "¡Excelente! Bonne réponse, ce sont les personnes qui ont des problèmes notamment respiratoires.",
+            rationaleIncorrect: "¡Error! Réécoutez l'enregistrement."
         },
         {
-            question: "Quelles solutions ont les gens et pourquoi?",
+            question: "Quelles solutions ont les gens et pourquoi ?",
             options: [
                 { text: decoder("aWxzIHJlc3RlbnQgZW5mZXJtw6VzIGRlZGFucyBhdmVjIGxlcyBmZW7DqnRyZXMgZmVybcOpZXM="), isCorrect: "ZmFsc2U=" },
                 { text: decoder("aWxzIHBvcnRlbnQgdW4gbWFzcXVlIGxvcnNxdSdpbHMgc29ydGVudA=="), isCorrect: "ZmFsc2U=" },
                 { text: decoder("aWxzIHBhcnRlbnQgYSAgbGEgbW9udGFnbmUgcG91ciByZXNwaXJlciBkZSBsJ2FpciBwdXIu"), isCorrect: "dHJ1ZQ==" }
             ],
-            rationaleCorrect: "wqVFeGNlbGVudGUhIEVuIGVmZmV0IHBhcnRpciDDoCBsYSBtb2mnYWduZSBwZXJtZXQgZCdhdm9pciB1biBhaXIgcGx1cyBmcmFpcyBldCBzdXJ0b3V0IG1vaW5zIHBvbGx1w6kgcGFyIGxlIHRyYWZpYywgbGVzIHVzaW5lcywgZXQgbGVzIGNsaW1hdGlzYXRpb25z",
-            rationaleIncorrect: "wqFFcnJvciEgUsOpw6WNvdXRleiBsJ2VucmVnaXN0cmVtZW50Lg=="
+            rationaleCorrect: "¡Excelente! En effet partir à la montagne permet d'avoir un air plus frais et surtout moins pollué par le trafic et les climatisations.",
+            rationaleIncorrect: "¡Error! Réécoutez l'enregistrement."
         }
     ];
 
@@ -295,7 +294,7 @@
     
     function loadQuestion() {
         const currentQuiz = quizData[currentQuestionIndex];
-        const progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+        const progressPercent = (currentQuestionIndex / quizData.length) * 100;
         document.getElementById('progress').style.width = progressPercent + '%';
         document.getElementById('question-text').innerText = `${currentQuestionIndex + 1}. ${currentQuiz.question}`;
         
@@ -306,7 +305,7 @@
         const fbBox = document.getElementById('feedback-box');
         fbBox.className = 'feedback';
 
-        currentQuiz.options.forEach((option, index) => {
+        currentQuiz.options.forEach((option) => {
             const li = document.createElement('li');
             li.className = 'option-item';
             li.innerText = option.text;
@@ -324,12 +323,12 @@
 
         if (isCorrect) {
             element.classList.add('correct');
-            fbBox.innerHTML = decoder(currentQuiz.rationaleCorrect);
+            fbBox.innerHTML = currentQuiz.rationaleCorrect;
             fbBox.classList.add('correct-fb', 'show');
             correctAnswersCount++; 
         } else {
             element.classList.add('incorrect');
-            fbBox.innerHTML = decoder(currentQuiz.rationaleIncorrect);
+            fbBox.innerHTML = currentQuiz.rationaleIncorrect;
             fbBox.classList.add('incorrect-fb', 'show');
             
             allOptions.forEach((opt, index) => {
@@ -355,22 +354,22 @@
             
             if (errorsCount <= 1) {
                 let felicitacionesMessage = errorsCount === 0 
-                    ? "¡Perfecto! Un sinfín de aciertos. Todo un expert ecologista." 
+                    ? "¡Perfecto! Un sinfín de aciertos. Todo un experto ecologista." 
                     : "¡Casi perfecto! Una pequeña distracción, pero habéis demostrado un gran nivel.";
                 
                 finalScreen.innerHTML = `
                     <h2>¡Misión Cumplida! 🎉</h2>
                     <p style="font-style: italic; color: #555;">${felicitacionesMessage}</p>
-                    <p>Habéis analizado correctamente le document "Tu pueblo es tu planeta".</p>
-                    <p>Aquí tenéis le premier élément pour décoder le code de l'Escape Game :</p>
+                    <p>Habéis analizado correctamente el documento.</p>
+                    <p>Aquí tenéis el elemento para descifrar el código de l'Escape Game :</p>
                     <div class="code-box">CLÉ : ${decoder(secretKeyEncoded)}</div>
                     <p style="font-size: 14px; color: #666;">Autenticación validada. Score : ${correctAnswersCount} / ${totalQuestions}. Vous pouvez passer à la suite.</p>
                 `;
             } else {
                 finalScreen.innerHTML = `
                     <h2 style="color: #f44336;">Misión Fallida ❌</h2>
-                    <p>Habéis cometido demasiados errores (${errorsCount} fallos) en la comprensión del documento.</p>
-                    <p>Un buen ecologista debe ser más preciso. Se permite <b>un solo fallo</b> al máximo para validar.</p>
+                    <p>Habéis cometido demasiados errores (${errorsCount} fallos) en la comprensión du document.</p>
+                    <p>Un buen ecologista debe ser más preciso. Se permite <b>un solo fallo</b> como máximo para validar.</p>
                     <p>Score : ${correctAnswersCount} / ${totalQuestions}</p>
                     <button class="next-btn" style="display:block; margin-top:30px;" onclick="restartQuiz()">🔄 Recomenzar la misión</button>
                 `;

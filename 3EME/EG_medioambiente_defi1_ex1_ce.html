@@ -210,6 +210,30 @@
 </div>
 
 <script>
+    // ==========================================
+    // 1. SÉCURITÉ ANTI-TRICHE (CLIC DROIT & CLAVIER)
+    // ==========================================
+    // Bloque le clic droit à l'intérieur de l'exercice
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    // Bloque les raccourcis claviers de triche (F12, Ctrl+Maj+I, Ctrl+Maj+J, Ctrl+U)
+    document.addEventListener('keydown', function(e) {
+        if (
+            e.key === "F12" ||
+            (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) ||
+            (e.ctrlKey && e.key === "u")
+        ) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // ==========================================
+    // 2. VOS OUTILS ET DONNÉES EXISTANTS
+    // ==========================================
+    // Décodeur gérant parfaitement les caractères accentués
+    const decoder = (str) => decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+    
     // Structure des données
     const quizData = [
         {

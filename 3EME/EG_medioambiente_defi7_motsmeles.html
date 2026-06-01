@@ -7,7 +7,7 @@
             font-family: 'Segoe UI', Arial, sans-serif;
             background: transparent;
             margin: 0;
-            padding: 5px; /* Réduit pour gagner de la hauteur */
+            padding: 5px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -15,10 +15,17 @@
         .game-wrapper {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 12px;
-            padding: 12px; /* Réduit */
-            max-width: 780px;
+            padding: 15px;
+            max-width: 750px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             text-align: center;
+            box-sizing: border-box;
+        }
+        .instructions {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 12px;
+            font-style: italic;
         }
         .game-layout {
             display: flex;
@@ -26,17 +33,17 @@
             align-items: flex-start;
             justify-content: center;
             gap: 15px;
-            margin-bottom: 10px; /* Réduit */
+            margin-bottom: 12px;
         }
         .word-list {
             display: flex;
             flex-direction: column;
-            gap: 4px;
-            padding: 8px;
+            gap: 5px;
+            padding: 10px;
             background: #f1f8e9;
             border-radius: 8px;
-            width: 175px;
-            height: 440px; /* Légèrement réduit pour compacter */
+            width: 180px;
+            height: 445px; /* Fixé pour correspondre à la grille */
             overflow-y: auto;
             box-sizing: border-box;
             text-align: left;
@@ -46,13 +53,11 @@
             font-weight: bold;
             color: #555;
             background: #fff;
-            padding: 4px 8px;
+            padding: 5px 8px;
             border-radius: 6px;
             border: 1px solid #c8e6c9;
             text-transform: uppercase;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
         .word-item.found {
             text-decoration: line-through;
@@ -62,11 +67,11 @@
         }
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(16, 26px); /* Cellules à 26px au lieu de 27px */
-            grid-template-rows: repeat(16, 26px);
-            gap: 2.5px;
+            grid-template-columns: repeat(16, 25px); /* Dimensions stables */
+            grid-template-rows: repeat(16, 25px);
+            gap: 3px;
             background: #e0e0e0;
-            padding: 5px;
+            padding: 6px;
             border-radius: 8px;
         }
         .cell {
@@ -86,27 +91,9 @@
         .cell.hover-selected { background: #ffe082; color: #000; }
         .cell.found-word { background: #b2dfdb !important; color: #00695c !important; }
         
-        .instructions {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 10px;
-            font-style: italic;
-        }
-        .btn-check {
-            background: #2e7d32;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 15px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            width: 100%;
-        }
-        .btn-check:hover { background: #388e3c; }
-        
+        /* Zone de résultat placée au-dessus du bouton pour la visibilité */
         .resultado {
-            margin-top: 10px;
+            margin-bottom: 10px;
             padding: 10px;
             border-radius: 6px;
             font-weight: bold;
@@ -123,6 +110,18 @@
             letter-spacing: 2px;
             color: #333;
         }
+        .btn-check {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-check:hover { background: #388e3c; }
     </style>
 </head>
 <body>
@@ -136,8 +135,9 @@
         <div class="grid-container" id="grid-ui"></div>
     </div>
     
-    <button class="btn-check" onclick="verificarFinal()">Comprobar Sopa de Letras</button>
     <div id="resultado-box" class="resultado"></div>
+    
+    <button class="btn-check" onclick="verificarFinal()">Comprobar Sopa de Letras</button>
 </div>
 
 <script>
@@ -157,14 +157,14 @@
         ['F','R','I','D','D','I','I','I','X','S','I','O','E','L','N','I'],
         ['O','R','A','I','E','N','A','P','N','C','E','W','P','A','E','O'],
         ['R','A','U','X','A','G','I','R','N','C','X','C','X','R','T','A'],
-        ['E','C','M','M','C','F','R','O','E','B','I','U','H','X','A','M'],
-        ['S','H','U','C','K','B','C','A','P','N','A','O','K','O','I','B'],
-        ['T','H','F','M','J','R','P','S','D','E','O','S','N','J','S','I'],
-        ['A','M','A','T','A','N','Z','A','A','A','L','V','U','O','S','E'],
-        ['C','O','G','M','B','U','E','O','U','Z','B','I','A','R','N','N'],
-        ['I','F','O','A','T','U','R','M','O','P','A','L','G','B','A','T'],
-        ['O','T','E','C','O','L','O','G','I','A','C','O','E','R','L','E'],
-        ['N','C','O','N','T','A','M','I','N','A','C','I','O','N','O','E']
+        ['E','C','M','M','C','F','R','O','E','O','I','U','H','X','A','M'],
+        ['S','H','U','C','K','B','A','S','U','R','A','O','K','O','I','B'],
+        ['T','H','F','M','J','R','P','S','D','E','O','E','N','J','S','I'],
+        ['A','M','A','T','A','N','Z','A','A','A','L','V','N','O','S','E'],
+        ['C','O','G','M','W','U','E','O','U','Z','B','I','A','H','N','N'],
+        ['I','F','O','A','T','U','R','M','O','P','A','L','G','B','W','T'],
+        ['O','T','O','X','T','Z','L','D','R','E','C','O','L','O','G','I'],
+        ['N','C','O','N','T','A','M','I','N','A','C','I','O','N','A','E']
     ];
 
     let palabrasEncontradas = new Set();
@@ -206,4 +206,98 @@
             startCell = { r, c };
             cellElements[r][c].classList.add('start-selected');
         } else {
-            let cellsSelected = getLineCells(startCell.r, startCell.
+            let cellsSelected = getLineCells(startCell.r, startCell.c, r, c);
+            let palabra = cellsSelected.map(cell => cell.innerText).join('');
+            let palabraInversa = palabra.split('').reverse().join('');
+
+            let palabraValida = "";
+            if (palabrasObjetivo.includes(palabra)) palabraValida = palabra;
+            else if (palabrasObjetivo.includes(palabraInversa)) palabraValida = palabraInversa;
+
+            if (palabraValida && !palabrasEncontradas.has(palabraValida)) {
+                palabrasEncontradas.add(palabraValida);
+                cellsSelected.forEach(cell => cell.classList.add('found-word'));
+                document.getElementById(`word-${palabraValida}`).classList.add('found');
+            }
+
+            cellElements[startCell.r][startCell.c].classList.remove('start-selected');
+            startCell = null;
+            clearHoverStyles();
+        }
+    }
+
+    function handleCellHover(r, c) {
+        if (!startCell) return;
+        clearHoverStyles();
+        let cellsSelected = getLineCells(startCell.r, startCell.c, r, c);
+        cellsSelected.forEach(cell => cell.classList.add('hover-selected'));
+    }
+
+    function getLineCells(r1, c1, r2, c2) {
+        let dr = r2 - r1;
+        let dc = c2 - c1;
+        
+        let stepR = dr === 0 ? 0 : dr / Math.abs(dr);
+        let stepC = dc === 0 ? 0 : dc / Math.abs(dc);
+        
+        if (dr !== 0 && dc !== 0) {
+            let steps = Math.min(Math.abs(dr), Math.abs(dc));
+            r2 = r1 + stepR * steps;
+            c2 = c1 + stepC * steps;
+        }
+
+        let currentR = r1;
+        let currentC = c1;
+        let results = [];
+
+        while (true) {
+            results.push(cellElements[currentR][currentC]);
+            if (currentR === r2 && currentC === c2) break;
+            currentR += stepR;
+            currentC += stepC;
+            if (currentR < 0 || currentR >= 16 || currentC < 0 || currentC >= 16) break;
+        }
+        return results;
+    }
+
+    function clearHoverStyles() {
+        for (let r = 0; r < 16; r++) {
+            for (let c = 0; c < 16; c++) {
+                cellElements[r][c].classList.remove('hover-selected');
+            }
+        }
+    }
+
+    function obtenerCleOculte() {
+        const secret = [86, 73, 67, 84, 79, 82, 73, 65]; 
+        return secret.map(code => String.fromCharCode(code)).join('');
+    }
+
+    function verificarFinal() {
+        const resBox = document.getElementById('resultado-box');
+        resBox.style.display = 'block';
+
+        if (palabrasEncontradas.size === palabrasObjetivo.length) {
+            resBox.style.backgroundColor = '#e8f5e9';
+            resBox.style.color = '#2e7d32';
+            resBox.style.border = '1px solid #4caf50';
+            
+            const laCleSecrete = obtenerCleOculte();
+            
+            resBox.innerHTML = `
+                <div>¡Felicidades! Habéis encontrado todas las palabras. 🌍</div>
+                <div class="code-box">CLÉ : ${laCleSecrete}</div>
+            `;
+        } else {
+            resBox.style.backgroundColor = '#ffebee';
+            resBox.style.color = '#c62828';
+            resBox.style.border = '1px solid #f44336';
+            resBox.innerHTML = `Lleváis ${palabrasEncontradas.size} de ${palabrasObjetivo.length} palabras. ¡Seguid buscando en la sopa! 🔍`;
+        }
+    }
+
+    iniciarJuego();
+</script>
+
+</body>
+</html>

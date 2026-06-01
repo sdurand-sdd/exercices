@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: transparent;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .game-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 15px;
+            max-width: 780px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+        .word-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f1f8e9;
+            border-radius: 8px;
+            max-height: 95px;
+            overflow-y: auto;
+        }
+        .word-item {
+            font-size: 11px;
+            font-weight: bold;
+            color: #555;
+            background: #fff;
+            padding: 3px 8px;
+            border-radius: 12px;
+            border: 1px solid #c8e6c9;
+            text-transform: uppercase;
+        }
+        .word-item.found {
+            text-decoration: line-through;
+            background: #c8e6c9;
+            color: #2e7d32;
+            border-color: #a5d6a7;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(16, 27px);
+            grid-template-rows: repeat(16, 27px);
+            gap: 3px;
+            background: #e0e0e0;
+            padding: 6px;
+            border-radius: 8px;
+            display: inline-grid;
+        }
+        .cell {
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 13.5px;
+            color: #333;
+            cursor: pointer;
+            user-select: none;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .cell.start-selected { background: #ffb74d !important; color: #000; }
+        .cell.hover-selected { background: #ffe082; color: #000; }
+        .cell.found-word { background: #b2dfdb !important; color: #00695c !important; }
+        
+        .instructions {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+        .btn-check {
+            margin-top: 15px;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-check:hover { background: #388e3c; }
+        
+        .resultado {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            display: none;
+        }
+        .code-box {
+            background-color: #fff9c4;
+            border: 2px dashed #fbc02d;
+            padding: 8px;
+            font-size: 20px;
+            margin-top: 8px;
+            border-radius: 6px;
+            display: inline-block;
+            letter-spacing: 2px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-wrapper">
+    <h3 style="margin:0 0 5px 0; color:#2e7d32;">🔍 Misión: Sopa de Letras del Medio Ambiente</h3>
+    <div class="instructions">Instrucciones: Haz clic en la <b>primera letra</b> de una palabra y luego en la <b>última letra</b> para validarla.</div>
+    
+    <div class="word-list" id="words-ui"></div>
+    <div class="grid-container" id="grid-ui"></div>
+    
+    <button class="btn-check" onclick="verificarFinal()">Comprobar Sopa de Letras</button>
+    <div id="resultado-box" class="resultado"></div>
+</div>
+
+<script>
+    const palabrasObjetivo = [
+        "MEDIOAMBIENTE", "CONTAMINACION", "PRESERVAR", "EXTINCION", "PLANETA", 
+        "RECICLAR", "CUIDAR", "DESTRUIR", "BIODEGRADABLE", "ENERGIARENOVABLE", 
+        "DEFORESTACION", "DESECHOS", "MATANZA", "PELIGRO", "TIERRA", 
+        "HUMANIDAD", "TOMARCONCIENCIA", "ECOLOGIA", "BASURA"
+    ];
+
+    const matrizLetras = [
+        ['E','U','M','O','Q','P','R','E','S','E','R','V','A','R','Z','A'],
+        ['G','N','A','I','X','D','E','S','T','R','U','I','R','E','I','J'],
+        ['B','T','E','A','E','P','A','N','I','D','X','Q','B','C','P','M'],
+        ['D','I','N','R','U','X','R','D','A','T','K','G','N','I','L','E'],
+        ['E','E','O','E','G','A','T','D','E','A','I','E','H','C','A','D'],
+        ['F','R','I','D','D','I','I','I','X','S','I','O','E','L','N','I'],
+        ['O','R','A','I','E','N','A','P','N','C','E','W','P','A','E','O'],
+        ['R','A','U','X','A','G','I','R','N','C','X','C','X','R','T','A'],
+        ['E','C','M','M','C','F','R','O','E','B','I','U','H','X','A','M'],
+        ['S','H','U','C','K','B','C','A','P','N','A','O','K','O','I','B'],
+        ['T','H','F','M','J','R','P','S','D','E','O','S','N','J','S','I'],
+        ['A','M','A','T','A','N','Z','A','A','A','L','V','U','O','S','E'],
+        ['C','O','G','M','B','U','E','O','U','Z','B','I','A','R','N','N'],
+        ['I','F','O','A','T','U','R','M','O','P','A','L','G','B','A','T'],
+        ['O','T','E','C','O','L','O','G','I','A','C','O','E','R','L','E'],
+        ['N','C','O','N','T','A','M','I','N','A','C','I','O','N','O','E']
+    ];
+
+
+    let palabrasEncontradas = new Set();
+    let startCell = null;
+    let cellElements = [];
+
+    function iniciarJuego() {
+        const gridUi = document.getElementById('grid-ui');
+        const wordsUi = document.getElementById('words-ui');
+        
+        palabrasObjetivo.sort().forEach(word => {
+            const span = document.createElement('span');
+            span.className = 'word-item';
+            span.id = `word-${word}`;
+            span.innerText = word === "ENERGIARENOVABLE" ? "ENERGÍA RENOVABLE" : word === "TOMARCONCIENCIA" ? "TOMAR CONCIENCIA" : word === "CONTAMINACION" ? "CONTAMINACIÓN" : word === "EXTINCION" ? "EXTINCIÓN" : word === "ECOLOGIA" ? "ECOLOGÍA" : word === "DEFORESTACION" ? "DEFORESTACIÓN" : word;
+            wordsUi.appendChild(span);
+        });
+
+        for (let r = 0; r < 16; r++) {
+            cellElements[r] = [];
+            for (let c = 0; c < 16; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.innerText = matrizLetras[r][c];
+                cell.dataset.row = r;
+                cell.dataset.col = c;
+                
+                cell.onclick = () => handleCellClick(r, c);
+                cell.onmouseenter = () => handleCellHover(r, c);
+                
+                gridUi.appendChild(cell);
+                cellElements[r][c] = cell;
+            }
+        }
+    }
+
+    function handleCellClick(r, c) {
+        if (!startCell) {
+            startCell = { r, c };
+            cellElements[r][c].classList.add('start-selected');
+        } else {
+            let cellsSelected = getLineCells(startCell.r, startCell.c, r, c);
+            let palabra = cellsSelected.map(cell => cell.innerText).join('');
+            let palabraInversa = palabra.split('').reverse().join('');
+
+            let palabraValida = "";
+            if (palabrasObjetivo.includes(palabra)) palabraValida = palabra;
+            else if (palabrasObjetivo.includes(palabraInversa)) palabraValida = palabraInversa;
+
+            if (palabraValida && !palabrasEncontradas.has(palabraValida)) {
+                palabrasEncontradas.add(palabraValida);
+                cellsSelected.forEach(cell => cell.classList.add('found-word'));
+                document.getElementById(`word-${palabraValida}`).classList.add('found');
+            }
+
+            cellElements[startCell.r][startCell.c].classList.remove('start-selected');
+            startCell = null;
+            clearHoverStyles();
+        }
+    }
+
+    function handleCellHover(r, c) {
+        if (!startCell) return;
+        clearHoverStyles();
+        let cellsSelected = getLineCells(startCell.r, startCell.c, r, c);
+        cellsSelected.forEach(cell => cell.classList.add('hover-selected'));
+    }
+
+    function getLineCells(r1, c1, r2, c2) {
+        let dr = r2 - r1;
+        let dc = c2 - c1;
+        
+        let stepR = dr === 0 ? 0 : dr / Math.abs(dr);
+        let stepC = dc === 0 ? 0 : dc / Math.abs(dc);
+        
+        if (dr !== 0 && dc !== 0) {
+            let steps = Math.min(Math.abs(dr), Math.abs(dc));
+            r2 = r1 + stepR * steps;
+            c2 = c1 + stepC * steps;
+        }
+
+        let currentR = r1;
+        let currentC = c1;
+        let results = [];
+
+        while (true) {
+            results.push(cellElements[currentR][currentC]);
+            if (currentR === r2 && currentC === c2) break;
+            currentR += stepR;
+            currentC += stepC;
+            if (currentR < 0 || currentR >= 16 || currentC < 0 || currentC >= 16) break;
+        }
+        return results;
+    }
+
+    function clearHoverStyles() {
+        for (let r = 0; r < 16; r++) {
+            for (let c = 0; c < 16; c++) {
+                cellElements[r][c].classList.remove('hover-selected');
+            }
+        }
+    }
+
+    // Nouvelle suite numérique masquant le mot secret "VICTORIA"
+    function obtenirCleOculte() {
+        const secret = [86, 73, 67, 84, 79, 82, 73, 65];
+        return secret.map(code => String.fromCharCode(code)).join('');
+    }
+
+    function verificarFinal() {
+        const resBox = document.getElementById('resultado-box');
+        resBox.style.display = 'block';
+
+        if (palabrasEncontradas.size === palabrasObjetivo.length) {
+            resBox.style.backgroundColor = '#e8f5e9';
+            resBox.style.color = '#2e7d32';
+            resBox.style.border = '1px solid #4caf50';
+            
+            const laCleSecrete = obtenirCleOculte();
+            
+            resBox.innerHTML = `
+                <div>¡Felicidades! Habéis encontrado todas las palabras. 🌍</div>
+                <div class="code-box">CLÉ : ${laCleSecrete}</div>
+            `;
+        } else {
+            resBox.style.backgroundColor = '#ffebee';
+            resBox.style.color = '#c62828';
+            resBox.style.border = '1px solid #f44336';
+            resBox.innerHTML = `Lleváis ${palabrasEncontradas.size} de ${palabrasObjetivo.length} palabras. ¡Seguid buscando en la sopa! 🔍`;
+        }
+    }
+
+    iniciarJuego();
+</script>
+
+</body>
+</html>

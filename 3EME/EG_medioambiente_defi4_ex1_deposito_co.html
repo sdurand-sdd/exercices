@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: transparent;
+            color: #333;
+            padding: 5px;
+            margin: 0;
+        }
+        .cancion-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 750px;
+            margin: auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .titulo {
+            color: #2e7d32;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+        /* Système à deux colonnes */
+        .columnas-letra {
+            display: flex;
+            gap: 25px;
+            justify-content: space-between;
+        }
+        .columna {
+            flex: 1;
+            line-height: 2.3;
+            font-size: 14.5px;
+            white-space: pre-line;
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #2e7d32;
+        }
+        select {
+            padding: 2px 4px;
+            font-size: 13px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            background-color: #fff;
+            color: #333;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        select.correct {
+            border-color: #4caf50;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        select.incorrect {
+            border-color: #f44336;
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .btn-validar {
+            display: block;
+            width: 100%;
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.2s;
+        }
+        .btn-validar:hover { background-color: #388e3c; }
+        .resultado {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+            line-height: 1.4;
+        }
+        .code-box {
+            background-color: #fff9c4;
+            border: 2px dashed #fbc02d;
+            padding: 10px;
+            font-size: 22px;
+            margin-top: 10px;
+            border-radius: 6px;
+            display: inline-block;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="cancion-container">
+    <h2 class="titulo">🎵 Misión: Completa la canción del reciclaje</h2>
+    
+    <div class="columnas-letra">
+        <!-- COLONNE GAUCHE (Début de la chanson) -->
+        <div class="columna">
+            Sí, sabes que llevo un rato mirándote
+            <select id="trou0"><option value="">--?--</option><option value="mira">mira</option><option value="tira">tira</option><option value="deja">deja</option></select> eso al <select id="trou1"><option value="">--?--</option><option value="contenedor">contenedor</option><option value="cubo">cubo</option><option value="suelo">suelo</option></select>
+            Vi que tu mirada ya estaba evitándome,
+            no te hagas el loco que te doy.
+            
+            Tú puedes divertirte sin <select id="trou2"><option value="">--?--</option><option value="intención">intención</option><option value="necesidad">necesidad</option><option value="obligación">obligación</option></select>
+            de dejar tirada toda la <select id="trou3"><option value="">--?--</option><option value="calle">calle</option><option value="naturaleza">naturaleza</option><option value="ciudad">ciudad</option></select>
+            que eso para mí no es nada divertido,
+            ya que no tienes intención de <select id="trou4"><option value="">--?--</option><option value="reciclar">reciclar</option><option value="limpiar">limpiar</option><option value="reutilizar">reutilizar</option></select>
+            
+            <select id="trou5"><option value="">--?--</option><option value="ayúdame">ayúdame</option><option value="mírame">mírame</option><option value="escúchame">escúchame</option></select> bien que te voy a explicar
+            lo que hago yo con todo los <select id="trou6"><option value="">--?--</option><option value="residuos">residuos</option><option value="papeles">papeles</option><option value="plásticos">plásticos</option></select>,
+            
+            <select id="trou7"><option value="">--?--</option><option value="Deposito">Deposito</option><option value="Tiro">Tiro</option><option value="Llevo">Llevo</option></select>, 
+            cada cosa en su sitio <select id="trou8"><option value="">--?--</option><option value="limpio">limpio</option><option value="deposito">deposito</option><option value="recojo">recojo</option></select>
+            <select id="trou9"><option value="">--?--</option><option value="plásticos">plásticos</option><option value="papeles">papeles</option><option value="vidrios">vidrios</option></select> y latas al <select id="trou10"><option value="">--?--</option><option value="cubo azul">cubo azul</option><option value="cubo amarillo">cubo amarillo</option><option value="contenedor verde">contenedor verde</option></select>
+            y el <select id="trou11"><option value="">--?--</option><option value="cubo azul">cubo azul</option><option value="cubo amarillo">cubo amarillo</option><option value="contenedor verde">contenedor verde</option></select> solo pal <select id="trou12"><option value="">--?--</option><option value="vidrio">vidrio</option><option value="plástico">plástico</option><option value="papel">papel</option></select>
+        </div>
+        
+        <!-- COLONNE DROITE (Fin de la chanson) -->
+        <div class="columna">
+            <select id="trou13"><option value="">--?--</option><option value="Deposito">Deposito</option><option value="Tiro">Tiro</option><option value="Pongo">Pongo</option></select>
+            en el <select id="trou14"><option value="">--?--</option><option value="cubo amarillo">cubo amarillo</option><option value="cubo azul">cubo azul</option><option value="contenedor gris">contenedor gris</option></select> todos los papelitos
+            y como yo vea que no haces lo mismo
+            te voy a obligar a <select id="trou15"><option value="">--?--</option><option value="limpiar">limpiar</option><option value="tirar">tirar</option><option value="recoger">recoger</option></select> trocitos.
+            
+            Si tiras algo al suelo cógelo
+            ¿No ves que es estoy <select id="trou16"><option value="">--?--</option><option value="limpiándolo">limpiándolo</option><option value="ensuciándolo">ensuciándolo</option><option value="recogiéndolo">recogiéndolo</option></select>?
+            Y tú estás <select id="trou17"><option value="">--?--</option><option value="limpiándolo">limpiándolo</option><option value="ensuciándolo">ensuciándolo</option><option value="tirándolo">tirándolo</option></select>, 
+            <select id="trou18"><option value="">--?--</option><option value="basura">basura</option><option value="contaminación">contaminación</option><option value="limpieza">limpieza</option></select> acumulándose
+            
+            Mira que te doy con la palmera y te hago ¡Pam!¡Pam!
+            <select id="trou19"><option value="">--?--</option><option value="limpia">limpia</option><option value="cuida">cuida</option><option value="haz">haz</option></select> bien la calle en Carnaval o te hago ¡Pam!¡Pam!
+            
+            Pal sitio, pal sitio, llévalo a su sitio
+            <select id="trou20"><option value="">--?--</option><option value="Botellas">Botellas</option><option value="Pilas">Pilas</option><option value="Latas">Latas</option></select> desechables, <select id="trou21"><option value="">--?--</option><option value="baterías">baterías</option><option value="pilas">pilas</option><option value="bombillas">bombillas</option></select> de litio
+            para que <select id="trou22"><option value="">--?--</option><option value="cuides">cuides</option><option value="limpies">limpies</option><option value="protejas">protejas</option></select> la <select id="trou23"><option value="">--?--</option><option value="Naturaleza">Naturaleza</option><option value="ciudad">ciudad</option><option value="calle">calle</option></select>
+            y así no se <select id="trou24"><option value="">--?--</option><option value="dejan">dejan</option><option value="tiran">tiran</option><option value="olvidan">olvidan</option></select> desperdicios.
+             
+            <select id="trou25"><option value="">--?--</option><option value="limpia">limpia</option><option value="cuida">cuida</option><option value="haz">haz</option></select> bien las calles de tu <select id="trou26"><option value="">--?--</option><option value="pueblo">pueblo</option><option value="planeta">planeta</option><option value="ciudad">ciudad</option></select>
+            <select id="trou27"><option value="">--?--</option><option value="cuida">cuida</option><option value="haz">haz</option><option value="permite">permite</option></select> que nuestro Carnaval no tenga <select id="trou28"><option value="">--?--</option><option value="basura">basura</option><option value="contaminación">contaminación</option><option value="desperdicios">desperdicios</option></select>.
+        </div>
+    </div>
+
+    <button class="btn-validar" onclick="verificarRespuestas()">Comprobar respuestas</button>
+    
+    <div id="resultado-box" class="resultado"></div>
+</div>
+
+<script>
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('keydown', e => {
+        if (e.key === "F12" || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) || (e.ctrlKey && e.key === "u")) {
+            e.preventDefault();
+        }
+    });
+
+    const decoder = (str) => {
+        const binaryString = atob(str.replace(/\s/g, ''));
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return new TextDecoder('utf-8').decode(bytes);
+    };
+
+    const respuestasEncodes = [
+        "dGlyYQ==", "Y29udGVuZWRvcg==", "bmVjZXNpZGFk", "Y2l1ZGFk", "cmVjaWNsYXI=",
+        "ZXNjw7pjaGFtZQ==", "cmVzaWR1b3M=", "RGVwb3NpdG8=", "ZGVwb3NpdG8=", "cGzDoXN0aWNvcw==",
+        "Y3VibyBhbWFyaWxsbw==", "Y29udGVuZWRvciB2ZXJkZQ==", "dmlkcmlv", "RGVwb3NpdG8=", "Y3VibyBhenVs",
+        "cmVjb2dlcg==", "bGltcGnDoW5kb2xv", "ZW5zdWNpw6FuZG9sbw==", "YmFzdXJh", "Y3VpZGE=",
+        "UGlsYXM=", "YmF0ZXLDrWFz", "cHJvdGVqYXM=", "TmF0dXJhbGV6YQ==", "ZGVqYW4=",
+        "Y3VpZGE=", "Y2l1ZGFk", "aGF6", "ZGVzcGVyZGljaW9z"
+    ];
+
+    const claveEncoded = "UklUTU8tRUNPLTIwMjY=";
+
+    function verificarRespuestas() {
+        let aciertos = 0;
+        let total = respuestasEncodes.length;
+
+        for (let i = 0; i < total; i++) {
+            const selectEl = document.getElementById(`trou${i}`);
+            if (!selectEl) continue;
+
+            const respuestaCorrecta = decoder(respuestasEncodes[i]);
+
+            if (selectEl.value.toLowerCase() === respuestaCorrecta.toLowerCase()) {
+                selectEl.className = 'correct';
+                aciertos++;
+            } else {
+                selectEl.className = 'incorrect';
+            }
+        }
+
+        const resBox = document.getElementById('resultado-box');
+        resBox.style.display = 'block';
+
+        if (aciertos === total) {
+            resBox.style.backgroundColor = '#e8f5e9';
+            resBox.style.color = '#2e7d32';
+            resBox.style.border = '1px solid #4caf50';
+            resBox.innerHTML = `
+                <div>¡Excelente! Habéis completado la canción perfectamente. 🌟</div>
+                <div class="code-box">CLÉ : ${decoder(claveEncoded)}</div>
+            `;
+        } else {
+            resBox.style.backgroundColor = '#ffebee';
+            resBox.style.color = '#c62828';
+            resBox.style.border = '1px solid #f44336';
+            resBox.innerHTML = `Tenéis ${aciertos} de ${total} respuestas correctas. ¡Escuchad con atención e intentadlo de nuevo! 🔄`;
+        }
+    }
+</script>
+
+</body>
+</html>

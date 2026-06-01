@@ -25,7 +25,6 @@
             margin-bottom: 15px;
             font-size: 22px;
         }
-        /* Système à deux colonnes */
         .columnas-letra {
             display: flex;
             gap: 25px;
@@ -104,7 +103,6 @@
     <h2 class="titulo">🎵 Misión: Completa la canción del reciclaje</h2>
     
     <div class="columnas-letra">
-        <!-- COLONNE GAUCHE (Début de la chanson) -->
         <div class="columna">
             Sí, sabes que llevo un rato mirándote
             <select id="trou0"><option value="">--?--</option><option value="mira">mira</option><option value="tira">tira</option><option value="deja">deja</option></select> eso al <select id="trou1"><option value="">--?--</option><option value="contenedor">contenedor</option><option value="cubo">cubo</option><option value="suelo">suelo</option></select>
@@ -123,15 +121,14 @@
             cada cosa en su sitio <select id="trou8"><option value="">--?--</option><option value="limpio">limpio</option><option value="deposito">deposito</option><option value="recojo">recojo</option></select>
             <select id="trou9"><option value="">--?--</option><option value="plásticos">plásticos</option><option value="papeles">papeles</option><option value="vidrios">vidrios</option></select> y latas al <select id="trou10"><option value="">--?--</option><option value="cubo azul">cubo azul</option><option value="cubo amarillo">cubo amarillo</option><option value="contenedor verde">contenedor verde</option></select>
             y el <select id="trou11"><option value="">--?--</option><option value="cubo azul">cubo azul</option><option value="cubo amarillo">cubo amarillo</option><option value="contenedor verde">contenedor verde</option></select> solo pal <select id="trou12"><option value="">--?--</option><option value="vidrio">vidrio</option><option value="plástico">plástico</option><option value="papel">papel</option></select>
-        </div>
-        
-        <!-- COLONNE DROITE (Fin de la chanson) -->
-        <div class="columna">
+            
             <select id="trou13"><option value="">--?--</option><option value="Deposito">Deposito</option><option value="Tiro">Tiro</option><option value="Pongo">Pongo</option></select>
             en el <select id="trou14"><option value="">--?--</option><option value="cubo amarillo">cubo amarillo</option><option value="cubo azul">cubo azul</option><option value="contenedor gris">contenedor gris</option></select> todos los papelitos
             y como yo vea que no haces lo mismo
             te voy a obligar a <select id="trou15"><option value="">--?--</option><option value="limpiar">limpiar</option><option value="tirar">tirar</option><option value="recoger">recoger</option></select> trocitos.
-            
+        </div>
+        
+        <div class="columna">
             Si tiras algo al suelo cógelo
             ¿No ves que es estoy <select id="trou16"><option value="">--?--</option><option value="limpiándolo">limpiándolo</option><option value="ensuciándolo">ensuciándolo</option><option value="recogiéndolo">recogiéndolo</option></select>?
             Y tú estás <select id="trou17"><option value="">--?--</option><option value="limpiándolo">limpiándolo</option><option value="ensuciándolo">ensuciándolo</option><option value="tirándolo">tirándolo</option></select>, 
@@ -172,6 +169,7 @@
         return new TextDecoder('utf-8').decode(bytes);
     };
 
+    // L'ordre des réponses correspond exactement à la suite logique des id="trou0" à id="trou28"
     const respuestasEncodes = [
         "dGlyYQ==", "Y29udGVuZWRvcg==", "bmVjZXNpZGFk", "Y2l1ZGFk", "cmVjaWNsYXI=",
         "ZXNjw7pjaGFtZQ==", "cmVzaWR1b3M=", "RGVwb3NpdG8=", "ZGVwb3NpdG8=", "cGzDoXN0aWNvcw==",

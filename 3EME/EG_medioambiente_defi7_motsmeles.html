@@ -7,7 +7,7 @@
             font-family: 'Segoe UI', Arial, sans-serif;
             background: transparent;
             margin: 0;
-            padding: 10px;
+            padding: 5px; /* Réduit pour gagner de la hauteur */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -15,30 +15,28 @@
         .game-wrapper {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 12px;
-            padding: 20px;
+            padding: 12px; /* Réduit */
             max-width: 780px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             text-align: center;
         }
-        /* Nouvelle disposition en deux colonnes côte à côte */
         .game-layout {
             display: flex;
             flex-direction: row;
             align-items: flex-start;
             justify-content: center;
-            gap: 20px;
-            margin-bottom: 15px;
+            gap: 15px;
+            margin-bottom: 10px; /* Réduit */
         }
-        /* Colonne de gauche pour les mots */
         .word-list {
             display: flex;
-            flex-direction: column; /* Alignement vertical */
-            gap: 5px;
-            padding: 7px;
+            flex-direction: column;
+            gap: 4px;
+            padding: 8px;
             background: #f1f8e9;
             border-radius: 8px;
-            width: 180px;
-            height: 460px; /* Aligné sur la hauteur de la grille */
+            width: 175px;
+            height: 440px; /* Légèrement réduit pour compacter */
             overflow-y: auto;
             box-sizing: border-box;
             text-align: left;
@@ -48,7 +46,7 @@
             font-weight: bold;
             color: #555;
             background: #fff;
-            padding: 5px 5px;
+            padding: 4px 8px;
             border-radius: 6px;
             border: 1px solid #c8e6c9;
             text-transform: uppercase;
@@ -62,14 +60,13 @@
             color: #2e7d32;
             border-color: #a5d6a7;
         }
-        /* Colonne de droite pour la grille */
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(16, 27px);
-            grid-template-rows: repeat(16, 27px);
-            gap: 3px;
+            grid-template-columns: repeat(16, 26px); /* Cellules à 26px au lieu de 27px */
+            grid-template-rows: repeat(16, 26px);
+            gap: 2.5px;
             background: #e0e0e0;
-            padding: 6px;
+            padding: 5px;
             border-radius: 8px;
         }
         .cell {
@@ -78,7 +75,7 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 13.5px;
+            font-size: 13px;
             color: #333;
             cursor: pointer;
             user-select: none;
@@ -92,14 +89,14 @@
         .instructions {
             font-size: 12px;
             color: #666;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-style: italic;
         }
         .btn-check {
             background: #2e7d32;
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 10px 20px;
             font-size: 15px;
             font-weight: bold;
             border-radius: 6px;
@@ -109,7 +106,7 @@
         .btn-check:hover { background: #388e3c; }
         
         .resultado {
-            margin-top: 12px;
+            margin-top: 10px;
             padding: 10px;
             border-radius: 6px;
             font-weight: bold;
@@ -118,9 +115,9 @@
         .code-box {
             background-color: #fff9c4;
             border: 2px dashed #fbc02d;
-            padding: 8px;
-            font-size: 20px;
-            margin-top: 8px;
+            padding: 6px;
+            font-size: 18px;
+            margin-top: 6px;
             border-radius: 6px;
             display: inline-block;
             letter-spacing: 2px;
@@ -131,7 +128,7 @@
 <body>
 
 <div class="game-wrapper">
-    <h3 style="margin:0 0 5px 0; color:#2e7d32;">🔍 Misión: Sopa de Letras del Medio Ambiente</h3>
+    <h3 style="margin:0 0 4px 0; color:#2e7d32;">🔍 Misión: Sopa de Letras del Medio Ambiente</h3>
     <div class="instructions">Instrucciones: Haz clic en la <b>primera letra</b> de una palabra y luego en la <b>última letra</b> para validarla.</div>
     
     <div class="game-layout">
@@ -169,7 +166,6 @@
         ['O','T','E','C','O','L','O','G','I','A','C','O','E','R','L','E'],
         ['N','C','O','N','T','A','M','I','N','A','C','I','O','N','O','E']
     ];
-
 
     let palabrasEncontradas = new Set();
     let startCell = null;
@@ -210,98 +206,4 @@
             startCell = { r, c };
             cellElements[r][c].classList.add('start-selected');
         } else {
-            let cellsSelected = getLineCells(startCell.r, startCell.c, r, c);
-            let palabra = cellsSelected.map(cell => cell.innerText).join('');
-            let palabraInversa = palabra.split('').reverse().join('');
-
-            let palabraValida = "";
-            if (palabrasObjetivo.includes(palabra)) palabraValida = palabra;
-            else if (palabrasObjetivo.includes(palabraInversa)) palabraValida = palabraInversa;
-
-            if (palabraValida && !palabrasEncontradas.has(palabraValida)) {
-                palabrasEncontradas.add(palabraValida);
-                cellsSelected.forEach(cell => cell.classList.add('found-word'));
-                document.getElementById(`word-${palabraValida}`).classList.add('found');
-            }
-
-            cellElements[startCell.r][startCell.c].classList.remove('start-selected');
-            startCell = null;
-            clearHoverStyles();
-        }
-    }
-
-    function handleCellHover(r, c) {
-        if (!startCell) return;
-        clearHoverStyles();
-        let cellsSelected = getLineCells(startCell.r, startCell.c, r, c);
-        cellsSelected.forEach(cell => cell.classList.add('hover-selected'));
-    }
-
-    function getLineCells(r1, c1, r2, c2) {
-        let dr = r2 - r1;
-        let dc = c2 - c1;
-        
-        let stepR = dr === 0 ? 0 : dr / Math.abs(dr);
-        let stepC = dc === 0 ? 0 : dc / Math.abs(dc);
-        
-        if (dr !== 0 && dc !== 0) {
-            let steps = Math.min(Math.abs(dr), Math.abs(dc));
-            r2 = r1 + stepR * steps;
-            c2 = c1 + stepC * steps;
-        }
-
-        let currentR = r1;
-        let currentC = c1;
-        let results = [];
-
-        while (true) {
-            results.push(cellElements[currentR][currentC]);
-            if (currentR === r2 && currentC === c2) break;
-            currentR += stepR;
-            currentC += stepC;
-            if (currentR < 0 || currentR >= 16 || currentC < 0 || currentC >= 16) break;
-        }
-        return results;
-    }
-
-    function clearHoverStyles() {
-        for (let r = 0; r < 16; r++) {
-            for (let c = 0; c < 16; c++) {
-                cellElements[r][c].classList.remove('hover-selected');
-            }
-        }
-    }
-
-    function obtenerCleOculte() {
-        const secret = [86, 73, 67, 84, 79, 82, 73, 65]; // "VICTORIA"
-        return secret.map(code => String.fromCharCode(code)).join('');
-    }
-
-    function verificarFinal() {
-        const resBox = document.getElementById('resultado-box');
-        resBox.style.display = 'block';
-
-        if (palabrasEncontradas.size === palabrasObjetivo.length) {
-            resBox.style.backgroundColor = '#e8f5e9';
-            resBox.style.color = '#2e7d32';
-            resBox.style.border = '1px solid #4caf50';
-            
-            const laCleSecrete = obtenirCleOculte();
-            
-            resBox.innerHTML = `
-                <div>¡Felicidades! Habéis encontrado todas las palabras. 🌍</div>
-                <div class="code-box">CLÉ : ${laCleSecrete}</div>
-            `;
-        } else {
-            resBox.style.backgroundColor = '#ffebee';
-            resBox.style.color = '#c62828';
-            resBox.style.border = '1px solid #f44336';
-            resBox.innerHTML = `Lleváis ${palabrasEncontradas.size} de ${palabrasObjetivo.length} palabras. ¡Seguid buscando en la sopa! 🔍`;
-        }
-    }
-
-    iniciarJuego();
-</script>
-
-</body>
-</html>
+            let cellsSelected = getLineCells(startCell.r, startCell.

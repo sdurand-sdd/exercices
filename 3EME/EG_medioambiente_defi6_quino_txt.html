@@ -8,7 +8,7 @@
         :root {
             --primary-color: #2e7d32;
             --primary-light: #e8f5e9;
-            --bg-color: transparent; /* S'intègre parfaitement sur le fond de votre Genially */
+            --bg-color: transparent;
             --card-bg: #ffffff;
             --accent-color: #ff9800;
         }
@@ -48,14 +48,13 @@
             text-align: center;
         }
 
-        /* Liste des phrases */
         #sortable-list {
             list-style: none;
             padding: 0;
             margin: 0;
             display: flex;
             flex-direction: column;
-            gap: 4px; /* Espace très réduit pour éviter le scroll */
+            gap: 4px;
         }
 
         .story-item {
@@ -64,47 +63,41 @@
             border-left: 4px solid var(--primary-color);
             border-radius: 5px;
             padding: 4px 8px;
-            font-size: 12.5px; /* Compact pour faire tenir les 12 phrases */
+            font-size: 12.5px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            cursor: grab;
-            user-select: none;
-            transition: background 0.2s;
+            gap: 10px;
         }
 
-        .story-item:active {
-            cursor: grabbing;
-            background: #f0f0f0;
-        }
-
-        .story-item.dragging {
-            opacity: 0.5;
-            background: #e8f5e9;
-        }
-
-        /* Boutons d'action rapides pour le tactile */
         .item-text {
             flex: 1;
-            padding-right: 10px;
+            line-height: 1.2;
         }
 
         .nav-btns {
             display: flex;
-            gap: 2px;
+            flex-direction: row;
+            gap: 4px;
         }
 
         .nav-btn {
-            background: #e0e0e0;
-            border: none;
-            border-radius: 3px;
-            padding: 2px 6px;
-            font-size: 10px;
+            background: #eeeeee;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            padding: 6px 10px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #333333;
             cursor: pointer;
+            touch-action: manipulation; 
+            user-select: none;
         }
-        .nav-btn:hover { background: #ccc; }
+        
+        .nav-btn:active {
+            background: #d5d5d5;
+        }
 
-        /* Zone Boutons du bas */
         .btn-container {
             display: flex;
             gap: 8px;
@@ -127,7 +120,6 @@
         .reset-btn { background-color: #e0e0e0; color: #333; }
         .reset-btn:hover { background-color: #ccc; }
 
-        /* Messages de résultats */
         .result-box {
             margin-top: 8px;
             padding: 6px;
@@ -168,11 +160,11 @@
     <h1>⏳ Misión: Cronología de la Historia</h1>
     
     <div class="instructions">
-        <strong>¿Qué pasó primero?</strong> Arrastra las frases hacia arriba o hacia abajo para ordenar la historia. <br>También puedes usar les boutons 🔼 y 🔽.
+        <strong>¿Qué pasó primero?</strong> Ordena la historia utilizando los botones laterales 🔼 y 🔽 para mover las frases.
     </div>
 
     <ul id="sortable-list">
-        </ul>
+    </ul>
 
     <div class="btn-container">
         <button class="main-btn reset-btn" onclick="initExercise()">🔄 Reiniciar</button>
@@ -197,45 +189,43 @@
     const decoder = (str) => decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
 
     // ==========================================
-    // 2. CONFIGURATION DES 12 PHRASES (DANS LE BON ORDRE CHRONOLOGIQUE)
+    // 2. CHRONOLOGIE ET NOUVELLES FORMULATIONS ENCODÉES
     // ==========================================
-    // REMPLACEZ SIMPLEMENT LES TEXTES CI-DESSOUS PAR VOS VRAIES PHRASES
     const encryptedStory = [
-        "RWwgbcOpZGljbyBlc2NyaWJlIHVuYSByZWNldGEgcGFyYSByZWNldGFyIHVuIGZyYXNjbyBkZSBwYXN0aWxsYXMgYWwgcGFjaWVudGUu",
-        "RW4gbGEgZmFybWFjaWEsIGVsIHBhY2llbnRlIGxlIGRhIGxhIHJlY2V0YSBtw6lkaWNhIGFsIGZhcm1hY8OpdXRpY28u",
-        "TGFzIGNoaW1lbmVhcyBkZSB1bmEgZsOhYnJpY2EgY29udGFtaW5hbiBlbCBhaXJlIGNvbiB1biBodW1vIG5lZ3JvIHkgZGVuc28u",
-        "RWwgaG9tYnJlIHNhbGUgY29ycmllbmRvIGhhY2lhIGxhIGZhcm1hY2lhIGNvbiBsYSByZWNldGEgZW4gbGEgbWFuby4",
-        "VW5hIGVtcGxlYWRhIHNvbnJpZW50ZSB0cmFiYWphIGVuIGxhIGbDoWJyaWNhIG1ldGllbmRvIGxhcyBwYXN0aWxsYXMgZW4gbG9zIGZyYXNjb3Mu",
-        "VW4gaG9tYnJlIGNhbWluYSBwb3IgbGEgY2FsbGUgeSBlbXBpZXphIGEgdG9zZXIgYSBjYXVzYSBkZSBsYSBjb250YW1pbmFjacOzbi4",
-        "TGEgaW1hZ2VuIG11ZXN0cmEgcXVlIGxhIGNvbnRhbWluYWNpw7NuIGRlIGxhIGbDoWJyaWNhIHNpZ3VlIGRlc3RydXllbmRvIGVsIG1lZGlvIGFtYmllbnRlLg==",
-        "RWwgbcOpZGljbyBhdXNjdWx0YSBsb3MgcHVsbW9uZXMgZGVsIHBhY2llbnRlLCBxdWUgZXN0w6FuIGNvbXBsZXRhbWVudGUgbmVncm9zLg==",
-        "RWwgZmFybWFjYcO1dGljbyBsZSBlbnRyZWdhIGVsIGZyYXNjbyBkZSBtZWRpY2FtZW50b3MgcGFyYSBjdXJhciBzdSB0b3Mu",
-        "RWwgaG9tYnJlIGVuZmVybW8gZGVjaWRlIHRvY2FyIGEgbGEgcHVlcnRhIGRlIGxhIGNvbnN1bHRhIGRlIHVuIG1lZGljby4",
-        "RW4gcmVhbGlkYWQsIGxhIG1pc21hIGbDoWJyaWNhIGNvbnRhbWluYW50ZSBwcm9kdWNlIGxvcyBtZWRpY2FtZW50b3MgZW4gY2FkZW5hLg==",
-        "RWwgaG9tYnJlIHJlZ3Jlc2EgYSBsYSBjYWxsZSBhbGl2aWFkbyB5IG1pcmFuZG8gc3UgZnJhc2NvIGRlIHBhc3RpbGxhcy4"
+        "TGFzIGNoaW1lbmVhcyBkZSB1bmEgZsOhYnJpY2EgY29udGFtaW5hbiBlbCBhaXJlIGNvbiB1biBodW1vIG5lZ3JvIHkgZGVuc28u", // 1. Las chimeneas...
+        "VW4gaG9tYnJlIGNhbWluYSBwb3IgbGEgY2FsbGUgeSBlbXBpZXphIGEgdG9zZXIgYSBjYXVzYSBkZSBsYSBjb250YW1pbmFjacOzbi4=", // 2. Un hombre camina...
+        "RWwgaG9tYnJlIGVuZmVybW8gZGVjaWRlIHRvY2FyIGEgbGEgcHVlcnRhIGRlIGxhIGNvbnN1bHRhIGRlIHVuIG1lZGljby4=", // 3. El hombre enfermo...
+        "RWwgbcOpZGljbyBhdXNjdWx0YSBsb3MgcHVsbW9uZXMgZGVsIHBhY2llbnRlLCBxdWUgZXN0w6FuIGNvbXBsZXRhbWVudGUgbmVncm9zLg==", // 4. El médico ausculta...
+        "RWwgbcOpZGljbyBlc2NyaWJlIHVuYSByZWNldGEgcGFyYSByZWNldGFyIHVuIGZyYXNjbyBkZSBwYXN0aWxsYXMgYWwgcGFjaWVudGUu", // 5. El médico escribe...
+        "RWwgaG9tYnJlIHNhbGUgY29ycmllbmRvIGhhY2lhIGxhIGZhcm1hY2lhIGNvbiBsYSByZWNldGEgZW4gbGEgbWFuby4=", // 6. El hombre sale corriendo...
+        "RW4gbGEgZmFybWFjaWEsIGVsIHBhY2llbnRlIGxlIGRhIGxhIHJlY2V0YSBtw6lkaWNhIGFsIGZhcm1hY8OpdXRpY28u", // 7. En la farmacia...
+        "RWwgZmFybWFjw6l1dGljbyBsZSBlbnRyZWdhIGVsIGZyYXNjbyBkZSBtZWRpY2FtZW50b3MgcGFyYSBjdXJhciBzdSB0b3Mu", // 8. El farmacéutico le entrega...
+        "RWwgaG9tYnJlIHJlZ3Jlc2EgYSBsYSBjYWxsZSBhbGl2aWFkbyB5IG1pcmFuZG8gc3UgZnJhc2NvIGRlIHBhc3RpbGxhcy4=", // 9. El hombre regresa...
+        "TGEgaW1hZ2VuIG11ZXN0cmEgbGEgZsOhYnJpY2EgZGUgbGVqb3MgcXVlIHNpZ3VlIGNvbnRhbWluYW5kbyBlbCBtZWRpbyBhbWJpZW50ZSAocGxhbm8gZ2VuZXJhbCku", // 10. REFORMULÉE (Vignette 10)
+        "Tm9zIGFjZXJjYW1vcyBhIGxhIGbDoWJyaWNhIHkgdmVtb3MgdW5hIGVtcGxlYWRhIHRyYWJhamFuZG8gKHBsYW5vIG1lZGlvKS4=", // 11. REFORMULÉE (Vignette 11)
+        "Tm9zIGFjZXJjYW1vcyB5IHZlbW9zIHF1ZSBsYSBmYWJyaWNhIHByb2R1Y2UgbGFzIHBhc3RpbGxhcyBxdWUgY3VyYW4gbGEgZW5mZXJtZWRhZCBxdWUgc3UgcHJvcGlhIGNvbnRhbWluYWNpw7NuIHByb3ZvY2Eu" // 12. REFORMULÉE (Vignette 12)
     ];
  
     const listContainer = document.getElementById('sortable-list');
 
-    // Initialisation et mélange automatique
     function initExercise() {
         document.getElementById('result').style.display = "none";
         listContainer.innerHTML = '';
         
-        // Associer chaque phrase à son index d'origine pour la vérification finale
-        let itemsArray = correctStory.map((text, index) => ({ text, id: index }));
+        let itemsArray = encryptedStory.map((encryptedText, index) => ({ 
+            text: decoder(encryptedText), 
+            id: index 
+        }));
         
-        // Mélange algorithmique (Fisher-Yates)
+        // Mélange Fisher-Yates
         for (let i = itemsArray.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [itemsArray[i], itemsArray[j]] = [itemsArray[j], itemsArray[i]];
         }
 
-        // Génération du HTML pour chaque phrase
         itemsArray.forEach(item => {
             const li = document.createElement('li');
             li.className = 'story-item';
-            li.setAttribute('draggable', 'true');
             li.setAttribute('data-id', item.id);
             
             li.innerHTML = `
@@ -245,41 +235,10 @@
                     <button class="nav-btn" onclick="moveDown(this)">🔽</button>
                 </div>
             `;
-            
-            // Événements pour le Drag and Drop (Souris)
-            li.addEventListener('dragstart', () => li.classList.add('dragging'));
-            li.addEventListener('dragend', () => li.classList.add('dragging'));
-            
             listContainer.appendChild(li);
         });
     }
 
-    // Logique du glisser-déposer
-    listContainer.addEventListener('dragover', e => {
-        e.preventDefault();
-        const afterElement = getDragAfterElement(listContainer, e.clientY);
-        const draggingItem = document.querySelector('.dragging');
-        if (afterElement == null) {
-            listContainer.appendChild(draggingItem);
-        } else {
-            listContainer.insertBefore(draggingItem, afterElement);
-        }
-    });
-
-    function getDragAfterElement(container, y) {
-        const draggableElements = [...container.querySelectorAll('.story-item:not(.dragging)')];
-        return draggableElements.reduce((closest, child) => {
-            const box = child.getBoundingClientRect();
-            const offset = y - box.top - box.height / 2;
-            if (offset < 0 && offset > closest.offset) {
-                return { offset: offset, element: child };
-            } else {
-                return closest;
-            }
-        }, { offset: Number.NEGATIVE_INFINITY }).element;
-    }
-
-    // Fonctions boutons tactiles 🔼 et 🔽
     function moveUp(btn) {
         const item = btn.closest('.story-item');
         const previous = item.previousElementSibling;
@@ -296,9 +255,6 @@
         }
     }
 
-    // ==========================================
-    // 3. VALIDATION ET SÉCURITÉ ENCODÉE
-    // ==========================================
     function checkOrder() {
         const currentItems = document.querySelectorAll('.story-item');
         let isCorrect = true;
@@ -315,7 +271,6 @@
 
         if (isCorrect) {
             resultBox.className = "result-box success";
-            
             const secretWinCode = decoder("Q1JPTk8tMjAyNg=="); 
             resultBox.innerHTML = `
                 ¡Excelente trabajo! 🌟<br>
@@ -328,7 +283,6 @@
         }
     }
 
-    // Lancement au chargement de la page
     initExercise();
 </script>
 

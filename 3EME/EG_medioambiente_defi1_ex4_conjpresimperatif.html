@@ -270,9 +270,9 @@
             try { audioPerfect.play(); } catch(e) {}
             
             zoneScore.style.color = "#27ae60";
-            // Code secret décodé à la volée ("VkVSQk9TLVBNUEVSQVRJVk8=" -> VERBOS-IMPERATIVO)
+            // Code secret décodé à la volée ("VkVSQk9TLVBNUEVSQVRJVk8=")
             zoneScore.innerHTML = `🏆 Score : ${score} / ${exercices.length} - ¡Excelente! 🎉<br>
-            <div class="code-escape-game">🔑 CODE SECRET : ${decoder("VkVSQk9TLVBNUEVSQVRJVk8=")}</div>`;
+            <div class="code-escape-game">🔑 CODE SECRET : ${decoder("VkVSQk9TLUlNUEVSQVRJVk8=")}</div>`;
         } else {
             zoneScore.style.color = "#c0392b";
             zoneScore.innerHTML = `Score : ${score} / ${exercices.length} <br><span style="font-size: 1.1rem; font-weight: normal;">Corrige las casillas rojas para desbloquear el código secreto.</span>`;

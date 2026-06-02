@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EG - Operación Gaia: Ordena la historia</title>
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-light: #e8f5e9;
+            --bg-color: transparent; /* S'intègre parfaitement sur le fond de votre Genially */
+            --card-bg: #ffffff;
+            --accent-color: #ff9800;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 5px;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: auto;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 16px;
+            text-align: center;
+            margin: 2px 0 6px 0;
+        }
+
+        .instructions {
+            background-color: var(--primary-light);
+            color: #1b5e20;
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 8px;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        /* Liste des phrases */
+        #sortable-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px; /* Espace très réduit pour éviter le scroll */
+        }
+
+        .story-item {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-left: 4px solid var(--primary-color);
+            border-radius: 5px;
+            padding: 4px 8px;
+            font-size: 12.5px; /* Compact pour faire tenir les 12 phrases */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: grab;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .story-item:active {
+            cursor: grabbing;
+            background: #f0f0f0;
+        }
+
+        .story-item.dragging {
+            opacity: 0.5;
+            background: #e8f5e9;
+        }
+
+        /* Boutons d'action rapides pour le tactile */
+        .item-text {
+            flex: 1;
+            padding-right: 10px;
+        }
+
+        .nav-btns {
+            display: flex;
+            gap: 2px;
+        }
+
+        .nav-btn {
+            background: #e0e0e0;
+            border: none;
+            border-radius: 3px;
+            padding: 2px 6px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+        .nav-btn:hover { background: #ccc; }
+
+        /* Zone Boutons du bas */
+        .btn-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        button.main-btn {
+            flex: 1;
+            padding: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .validate-btn { background-color: var(--primary-color); color: white; }
+        .validate-btn:hover { background-color: #1b5e20; }
+        .reset-btn { background-color: #e0e0e0; color: #333; }
+        .reset-btn:hover { background-color: #ccc; }
+
+        /* Messages de résultats */
+        .result-box {
+            margin-top: 8px;
+            padding: 6px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+            font-size: 13px;
+        }
+
+        .success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 2px dashed #4caf50;
+        }
+
+        .error-box {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 2px dashed #f44336;
+        }
+
+        .code-box {
+            background-color: #fff9c4;
+            border: 2px dashed #fbc02d;
+            padding: 4px;
+            font-size: 14px;
+            margin-top: 4px;
+            display: inline-block;
+            letter-spacing: 1px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>⏳ Misión: Cronología de la Historia</h1>
+    
+    <div class="instructions">
+        <strong>¿Qué pasó primero?</strong> Arrastra las frases hacia arriba o hacia abajo para ordenar la historia. <br>También puedes usar les boutons 🔼 y 🔽.
+    </div>
+
+    <ul id="sortable-list">
+        </ul>
+
+    <div class="btn-container">
+        <button class="main-btn reset-btn" onclick="initExercise()">🔄 Reiniciar</button>
+        <button class="main-btn validate-btn" onclick="checkOrder()">Comprobar ➔</button>
+    </div>
+
+    <div id="result" class="result-box"></div>
+</div>
+
+<script>
+    // ==========================================
+    // 1. SÉCURITÉ ANTI-TRICHE
+    // ==========================================
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('keydown', function(e) {
+        if (e.key === "F12" || (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) || (e.ctrlKey && e.key === "u")) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    const decoder = (str) => decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+
+    // ==========================================
+    // 2. CONFIGURATION DES 12 PHRASES (DANS LE BON ORDRE CHRONOLOGIQUE)
+    // ==========================================
+    // REMPLACEZ SIMPLEMENT LES TEXTES CI-DESSOUS PAR VOS VRAIES PHRASES
+    const correctStory = [
+        "Frase 1 : Événement du tout début de votre histoire...",
+        "Frase 2 : Deuxième action logique...",
+        "Frase 3 : Troisième paragraphe...",
+        "Frase 4 : Quatrième élément de l'intrigue...",
+        "Frase 5 : Suite des événements...",
+        "Frase 6 : Sixième phrase du texte...",
+        "Frase 7 : Septième phrase...",
+        "Frase 8 : Huitième action...",
+        "Frase 9 : Neuvième étape...",
+        "Frase 10 : Dixième étape...",
+        "Frase 11 : Avant-dernière phrase...",
+        "Frase 12 : Conclusion de l'histoire."
+    ];
+
+    const listContainer = document.getElementById('sortable-list');
+
+    // Initialisation et mélange automatique
+    function initExercise() {
+        document.getElementById('result').style.display = "none";
+        listContainer.innerHTML = '';
+        
+        // Associer chaque phrase à son index d'origine pour la vérification finale
+        let itemsArray = correctStory.map((text, index) => ({ text, id: index }));
+        
+        // Mélange algorithmique (Fisher-Yates)
+        for (let i = itemsArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [itemsArray[i], itemsArray[j]] = [itemsArray[j], itemsArray[i]];
+        }
+
+        // Génération du HTML pour chaque phrase
+        itemsArray.forEach(item => {
+            const li = document.createElement('li');
+            li.className = 'story-item';
+            li.setAttribute('draggable', 'true');
+            li.setAttribute('data-id', item.id);
+            
+            li.innerHTML = `
+                <div class="item-text">${item.text}</div>
+                <div class="nav-btns">
+                    <button class="nav-btn" onclick="moveUp(this)">🔼</button>
+                    <button class="nav-btn" onclick="moveDown(this)">🔽</button>
+                </div>
+            `;
+            
+            // Événements pour le Drag and Drop (Souris)
+            li.addEventListener('dragstart', () => li.classList.add('dragging'));
+            li.addEventListener('dragend', () => li.classList.add('dragging'));
+            
+            listContainer.appendChild(li);
+        });
+    }
+
+    // Logique du glisser-déposer
+    listContainer.addEventListener('dragover', e => {
+        e.preventDefault();
+        const afterElement = getDragAfterElement(listContainer, e.clientY);
+        const draggingItem = document.querySelector('.dragging');
+        if (afterElement == null) {
+            listContainer.appendChild(draggingItem);
+        } else {
+            listContainer.insertBefore(draggingItem, afterElement);
+        }
+    });
+
+    function getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('.story-item:not(.dragging)')];
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    // Fonctions boutons tactiles 🔼 et 🔽
+    function moveUp(btn) {
+        const item = btn.closest('.story-item');
+        const previous = item.previousElementSibling;
+        if (previous) {
+            listContainer.insertBefore(item, previous);
+        }
+    }
+
+    function moveDown(btn) {
+        const item = btn.closest('.story-item');
+        const next = item.nextElementSibling;
+        if (next) {
+            listContainer.insertBefore(next, item);
+        }
+    }
+
+    // ==========================================
+    // 3. VALIDATION ET SÉCURITÉ ENCODÉE
+    // ==========================================
+    function checkOrder() {
+        const currentItems = document.querySelectorAll('.story-item');
+        let isCorrect = true;
+
+        currentItems.forEach((item, index) => {
+            const correctId = parseInt(item.getAttribute('data-id'));
+            if (correctId !== index) {
+                isCorrect = false;
+            }
+        });
+
+        const resultBox = document.getElementById('result');
+        resultBox.style.display = "block";
+
+        if (isCorrect) {
+            resultBox.className = "result-box success";
+            // Code secret de victoire encodé (Exemple ici : CRONO-2026)
+            const secretWinCode = decoder("Q1JPTk8tMjAyNg=="); 
+            resultBox.innerHTML = `
+                ¡Excelente trabajo! 🌟<br>
+                Has ordenado la cronología perfectamente.<br>
+                <div class="code-box">CÓDIGO : ${secretWinCode}</div>
+            `;
+        } else {
+            resultBox.className = "result-box error-box";
+            resultBox.innerHTML = `La historia no está en el orden correcto. ¡Inténtalo de nuevo! ❌`;
+        }
+    }
+
+    // Lancement au chargement de la page
+    initExercise();
+</script>
+
+</body>
+</html>

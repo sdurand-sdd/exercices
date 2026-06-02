@@ -178,7 +178,7 @@
 </div>
 
 <script>
-    // Security anti-cheat
+    // Anti-cheat controls
     document.addEventListener('contextmenu', event => event.preventDefault());
     document.addEventListener('keydown', function(e) {
         if (
@@ -193,8 +193,9 @@
 
     const decoder = (str) => decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
 
-    // Liste stricte des 10 cibles (7 ordres, 3 interdictions)
+    // Liste des ORDRES (8 verbes cibles désormais avec "sigue")
     const targetOrdres = [
+        decoder("c2lndWU="),      // sigue
         decoder("Y2llcnJh"),      // cierra
         decoder("YWNvbnNlamE="),  // aconseja
         decoder("cmVjaWNsYQ=="),  // recicla
@@ -203,6 +204,7 @@
         decoder("cHJvdGVnZQ==")   // protege
     ];
     
+    // Liste des INTERDICTIONS (3 verbes cibles)
     const targetInterdictions = [
         decoder("dXRpbGljZXM="),  // utilices
         decoder("Y2FtaW5lcw=="),   // camines
@@ -216,7 +218,7 @@
     const wordsArray = rawText.trim().split(/\s+/);
 
     wordsArray.forEach((word, index) => {
-        // Nettoyage complet pour isoler le mot de la ponctuation espagnole
+        // Nettoyage strict incluant les guillemets et tirets spécifiques
         const cleanWord = word.toLowerCase().replace(/[.,:;«»¡!¿?()\-]/g, '').trim();
 
         const span = document.createElement('span');
@@ -256,13 +258,14 @@
         let errorCount = 0;
         let totalCibles = 0;
 
+        // Étape unique pour éviter les conflits de compteurs
         allWords.forEach(word => {
             const targetType = word.getAttribute('data-target');
             const isSelectedOrden = word.classList.contains('selected-orden');
             const isSelectedInterdiction = word.classList.contains('selected-interdiction');
 
             if (targetType === 'orden' || targetType === 'interdiction') {
-                totalCibles++; // Compte chaque élément HTML cible individuellement (gère les doublons)
+                totalCibles++;
             }
 
             if (targetType === 'orden' && isSelectedOrden) {

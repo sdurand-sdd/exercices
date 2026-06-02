@@ -200,19 +200,19 @@
     // 2. CONFIGURATION DES 12 PHRASES (DANS LE BON ORDRE CHRONOLOGIQUE)
     // ==========================================
     // REMPLACEZ SIMPLEMENT LES TEXTES CI-DESSOUS PAR VOS VRAIES PHRASES
-    const correctStory = [
-        "El médico escribe una receta para recetar un frasco de pastillas al paciente.",
-        "En la farmacia, el paciente le da la receta médica al farmacéutico.",
-        "Las chimeneas de una fábrica contaminan el aire con un humo negro y denso.",
-        "El hombre sale corriendo hacia la farmacia con la receta en la mano.",
-        "Una empleada sonriente trabaja en la fábrica metiendo las pastillas en los frascos.",
-        "Un hombre camina por la calle y empieza a toser a causa de la contaminación.",
-        "La imagen muestra que la contaminación de la fábrica sigue destruyendo el medio ambiente.",
-        "El médico ausculta los pulmones del paciente, que están completamente negros.",
-        "El farmacéutico le entrega el frasco de medicamentos para curar su tos.",
-        "El hombre enfermo decide tocar a la puerta de la consulta de un médico.",
-        "En realidad, la misma fábrica contaminante produce los medicamentos en cadena.",
-        "El hombre regresa a la calle aliviado y mirando su frasco de pastillas."
+    const encryptedStory = [
+        "RWwgbcOpZGljbyBlc2NyaWJlIHVuYSByZWNldGEgcGFyYSByZWNldGFyIHVuIGZyYXNjbyBkZSBwYXN0aWxsYXMgYWwgcGFjaWVudGUu",
+        "RW4gbGEgZmFybWFjaWEsIGVsIHBhY2llbnRlIGxlIGRhIGxhIHJlY2V0YSBtw6lkaWNhIGFsIGZhcm1hY8OpdXRpY28u",
+        "TGFzIGNoaW1lbmVhcyBkZSB1bmEgZsOhYnJpY2EgY29udGFtaW5hbiBlbCBhaXJlIGNvbiB1biBodW1vIG5lZ3JvIHkgZGVuc28u",
+        "RWwgaG9tYnJlIHNhbGUgY29ycmllbmRvIGhhY2lhIGxhIGZhcm1hY2lhIGNvbiBsYSByZWNldGEgZW4gbGEgbWFuby4",
+        "VW5hIGVtcGxlYWRhIHNvbnJpZW50ZSB0cmFiYWphIGVuIGxhIGbDoWJyaWNhIG1ldGllbmRvIGxhcyBwYXN0aWxsYXMgZW4gbG9zIGZyYXNjb3Mu",
+        "VW4gaG9tYnJlIGNhbWluYSBwb3IgbGEgY2FsbGUgeSBlbXBpZXphIGEgdG9zZXIgYSBjYXVzYSBkZSBsYSBjb250YW1pbmFjacOzbi4",
+        "TGEgaW1hZ2VuIG11ZXN0cmEgcXVlIGxhIGNvbnRhbWluYWNpw7NuIGRlIGxhIGbDoWJyaWNhIHNpZ3VlIGRlc3RydXllbmRvIGVsIG1lZGlvIGFtYmllbnRlLg==",
+        "RWwgbcOpZGljbyBhdXNjdWx0YSBsb3MgcHVsbW9uZXMgZGVsIHBhY2llbnRlLCBxdWUgZXN0w6FuIGNvbXBsZXRhbWVudGUgbmVncm9zLg==",
+        "RWwgZmFybWFjYcO1dGljbyBsZSBlbnRyZWdhIGVsIGZyYXNjbyBkZSBtZWRpY2FtZW50b3MgcGFyYSBjdXJhciBzdSB0b3Mu",
+        "RWwgaG9tYnJlIGVuZmVybW8gZGVjaWRlIHRvY2FyIGEgbGEgcHVlcnRhIGRlIGxhIGNvbnN1bHRhIGRlIHVuIG1lZGljby4",
+        "RW4gcmVhbGlkYWQsIGxhIG1pc21hIGbDoWJyaWNhIGNvbnRhbWluYW50ZSBwcm9kdWNlIGxvcyBtZWRpY2FtZW50b3MgZW4gY2FkZW5hLg==",
+        "RWwgaG9tYnJlIHJlZ3Jlc2EgYSBsYSBjYWxsZSBhbGl2aWFkbyB5IG1pcmFuZG8gc3UgZnJhc2NvIGRlIHBhc3RpbGxhcy4"
     ];
  
     const listContainer = document.getElementById('sortable-list');
@@ -315,7 +315,7 @@
 
         if (isCorrect) {
             resultBox.className = "result-box success";
-            // Code secret de victoire encodé (Exemple ici : CRONO-2026)
+            
             const secretWinCode = decoder("Q1JPTk8tMjAyNg=="); 
             resultBox.innerHTML = `
                 ¡Excelente trabajo! 🌟<br>

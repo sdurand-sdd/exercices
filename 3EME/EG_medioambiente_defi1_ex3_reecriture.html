@@ -48,7 +48,7 @@
             border-left: 6px solid var(--panel-border);
             border-radius: 6px;
             padding: 10px;
-            box-shadow: 0 4px 12 rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -248,16 +248,15 @@
         },
         { 
             q: "No esquíes fuera de las pistas → (nosotros)", 
-            r: [decoder("cmVjb21pZW5kYW4gcXVlIG5vIGVzcXXDrWVtb3MgZnVlcmEgZGUgbGFzIHBpc3Rhcw=="), decoder("YWNvbnNlamFuIHF1ZSBubyBlc3F1w61lbW9zIGZ1ZXJhIGRlIGxhcyBwaXN0YXM="),
-               decoder("YWNvbnNlamFuIHF1ZSBubyBlc3F1aWVtb3MgZnVlcmEgZGUgbGFzIHBpc3Rhcw==")]
+            r: [decoder("cmVjb21pZW5kYW4gcXVlIG5vIGVzcXXDrWVtb3MgZnVlcmEgZGUgbGFzIHBpc3Rhcw=="), decoder("YWNvbnNlamFuIHF1ZSBubyBlc3F1w61lbW9zIGZ1ZXJhIGRlIGxhcyBwaXN0YXM="), decoder("YWNvbnNlamFuIHF1ZSBubyBlc3F1aWVtb3MgZnVlcmEgZGUgbGFzIHBpc3Rhcw==")]
         },
         {
             q: "Di '¡no!' a la matanza de animales → (tú)", 
             r: [
-                decoder("cmVjb21pZW5kYW4gcXVlIGRpZ2FzICdubycgYSBsYSBtYXRhbnphIGRlIGFuaW1hbGVz"), 
-                decoder("YWNvbnNlamFuIHF1ZSBkaWdhcyAnbm8nIGEgbGEgbWF0YW56YSBkZSBhbmltYWxlcw=="), 
                 decoder("cmVjb21pZW5kYW4gcXVlIGRpZ2FzIMKhbm8hIGEgbGEgbWF0YW56YSBkZSBhbmltYWxlcw=="), 
-                decoder("YWNvbnNlamFuIHF1ZSBkaWdhcyDCoW5vISBhIGxhIG1hdGFuemEgZGUgYW5pbWFsZXM=")
+                decoder("YWNvbnNlamFuIHF1ZSBkaWdhcyDCoW5vISBhIGxhIG1hdGFuemEgZGUgYW5pbWFsZXM="),
+                decoder("cmVjb21pZW5kYW4gcXVlIGRpZ2FzIG5vISBhIGxhIG1hdGFuemEgZGUgYW5pbWFsZXM="), 
+                decoder("YWNvbnNlamFuIHF1ZSBkaWdhcyBubyEgYSBsYSBtYXRhbnphIGRlIGFuaW1hbGVz")
             ]
         },
         { 
@@ -270,7 +269,7 @@
                 decoder("cmVjb21pZW5kYW4gcXVlIGF5dWRlIGEgbGEgY29uc2VydmFjacOzbiBkZSBlc3BlY2llcyBwcm90ZWdpZGFz"), 
                 decoder("YWNvbnNlamFuIHF1ZSBheXVkZSBhIGxhIGNvbnNlcnZhY2nDs24gZGUgZXNwZWNpZXMgcHJvdGVnaWRhcw=="), 
                 decoder("cmVjb21pZW5kYW4gcXVlIGF5dWRlIGEgbGEgY29uc2VydmF0aW9uIGRlIGVzcGVjaWVzIHByb3RlZ2lkYXM="), 
-                decoder("YWNvbnNlamFuIHF1ZSBheXVkZSBhIGxhIGNvbnNlcnZhdGlvbiBkZSBlc3BlY2llcyBwcm90ZWdpZGFz")
+                decoder("YWNvbnNlamFuIHF1ZSBheXVkZSBhIGxhIGNvbnZlcnNhdGlvbiBkZSBlc3BlY2llcyBwcm90ZWdpZGFz")
             ]
         }
     ];
@@ -328,8 +327,10 @@
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
             audioPerfect.play();
             zone.style.color = "var(--correct-color)";
+            // Le code secret de victoire (SUBJUNTIVO-ECO) est décodé à la volée depuis la Base64 ci-dessous
+            const secretWinCode = decoder("U1VCSlVOVElWTy1FQ08=");
             zone.innerHTML = `🏆 ¡Misión cumplida! Score: ${score} / ${exercices.length} (${Math.round(porcentajeExito)}%)<br>
-            <div class="code-box">🔑 CÓDIGO : SUBJUNTIVO-ECO</div>`;
+            <div class="code-box">🔑 CÓDIGO : ${secretWinCode}</div>`;
         } else {
             audioWin.play();
             zone.style.color = "var(--incorrect-color)";

@@ -253,53 +253,59 @@
     });
 
     function validateExercise() {
-        const allWords = document.querySelectorAll('.word');
-        
-        let correctCount = 0;
-        let errorCount = 0;
-        let totalCibles = 0;
+    const allWords = document.querySelectorAll('.word');
+    
+    let correctCount = 0;
+    let errorCount = 0;
+    let totalCibles = 0;
 
-        // Étape unique pour éviter les conflits de compteurs
-        allWords.forEach(word => {
-            const targetType = word.getAttribute('data-target');
-            const isSelectedOrden = word.classList.contains('selected-orden');
-            const isSelectedInterdiction = word.classList.contains('selected-interdiction');
+    allWords.forEach(word => {
+        const targetType = word.getAttribute('data-target');
+        const isSelectedOrden = word.classList.contains('selected-orden');
+        const isSelectedInterdiction = word.classList.contains('selected-interdiction');
 
-            if (targetType === 'orden' || targetType === 'interdiction') {
-                totalCibles++;
-            }
-
-            if (targetType === 'orden' && isSelectedOrden) {
-                correctCount++;
-            } else if (targetType === 'interdiction' && isSelectedInterdiction) {
-                correctCount++;
-            } else if (isSelectedOrden || isSelectedInterdiction) {
-                errorCount++;
-            }
-        });
-
-        const resultBox = document.getElementById('result');
-        resultBox.style.display = "block";
-
-        if (correctCount === totalCibles && errorCount === 0) {
-            resultBox.className = "result-box success";
-            const finalCode = decoder("SU1QRVJBVElWTy0yMDI2");
-            resultBox.innerHTML = `
-                ¡Magnífico! 🌟<br>
-                Habéis reconocido perfectamente las estructuras del imperativo.<br>
-                <div class="code-box">CÓDIGO : ${finalCode}</div>
-            `;
-        } else {
-            resultBox.className = "result-box";
-            resultBox.style.backgroundColor = "#ffebee";
-            resultBox.style.color = "#c62828";
-            resultBox.style.border = "2px dashed #f44336";
-            resultBox.innerHTML = `
-                Inténtalo de nuevo. Quedan errores o verbos clave por seleccionar.<br>
-                <span style="font-size:12px; font-weight:normal;">Verbos correctos encontrados: ${correctCount} / ${totalCibles}. (Errores: ${errorCount})</span>
-            `;
+        if (targetType === 'orden' || targetType === 'interdiction') {
+            totalCibles++;
         }
+
+        if (targetType === 'orden' && isSelectedOrden) {
+            correctCount++;
+        } else if (targetType === 'interdiction' && isSelectedInterdiction) {
+            correctCount++;
+        } else if (isSelectedOrden || isSelectedInterdiction) {
+            errorCount++;
+        }
+    });
+
+    const resultBox = document.getElementById('result');
+    resultBox.style.display = "block";
+
+    const successRate = correctCount / totalCibles;
+    const threshold = 0.80; // 80%
+
+    if (successRate >= threshold && errorCount === 0) {
+        resultBox.className = "result-box success";
+        const finalCode = decoder("SU1QRVJBVElWTy0yMDI2");
+        resultBox.innerHTML = `
+            ¡Magnífico! 🌟<br>
+            Habéis reconocido perfectamente las estructuras del imperativo.<br>
+            <div class="code-box">CÓDIGO : ${finalCode}</div>
+        `;
+    } else {
+        resultBox.className = "result-box";
+        resultBox.style.backgroundColor = "#ffebee";
+        resultBox.style.color = "#c62828";
+        resultBox.style.border = "2px dashed #f44336";
+        resultBox.innerHTML = `
+            Inténtalo de nuevo. Quedan errores o verbos clave por seleccionar.<br>
+            <span style="font-size:12px; font-weight:normal;">
+                Verbos correctos: ${correctCount} / ${totalCibles} (${Math.round(successRate * 100)}%). 
+                Errores: ${errorCount}
+            </span>
+        `;
     }
+}
+
 
     function resetExercise() {
         document.querySelectorAll('.word').forEach(word => {

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EG - Operación Gaia misión 5: Ordena las Viñetas</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-light: #e8f5e9;
+            --bg-color: #f4f7f5;
+            --card-bg: #ffffff;
+            --border-color: #c5b4a2;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 850px;
+            margin: auto;
+            padding: 15px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 18px;
+            text-align: center;
+            margin: 0 0 10px 0;
+        }
+
+        .instructions {
+            background-color: var(--primary-light);
+            color: #1b5e20;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        h2 {
+            font-size: 14px;
+            color: #555;
+            margin: 10px 0 5px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .vignettes-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            background: #fafafa;
+            border: 2px dashed var(--border-color);
+            padding: 10px;
+            border-radius: 8px;
+            min-height: 90px;
+            margin-bottom: 20px;
+        }
+
+        .chronology-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .grid-dropzone {
+            background: #fff;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            height: 110px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .zone-number {
+            position: absolute;
+            top: 4px;
+            left: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #bbb;
+            pointer-events: none;
+        }
+
+        .vignette {
+            height: 95px;
+            width: auto;
+            max-width: 90%;
+            border-radius: 4px;
+            cursor: grab;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+            transition: transform 0.2s;
+            user-select: none;
+            object-fit: contain;
+            background: white;
+        }
+        
+        .vignette:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        button.main-btn {
+            flex: 1;
+            padding: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .validate-btn { background-color: var(--primary-color); color: white; }
+        .validate-btn:hover { background-color: #1b5e20; }
+        .reset-btn { background-color: #e0e0e0; color: #333; }
+        .reset-btn:hover { background-color: #ccc; }
+
+        .result-box {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+            font-size: 14px;
+        }
+
+        .success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 2px dashed #4caf50;
+        }
+
+        .error-box {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 2px dashed #f44336;
+        }
+
+        .code-box {
+            background-color: #fff9c4;
+            border: 2px dashed #fbc02d;
+            padding: 6px;
+            font-size: 16px;
+            margin-top: 6px;
+            display: inline-block;
+            letter-spacing: 1px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>⏳ Misión: Cronología de las Viñetas</h1>
+    
+    <div class="instructions">
+        <strong>¿Cuál es el orden de la historia?</strong> Arrastra y suelta (<em>drag and drop</em>) las imágenes de la bandeja superior hacia las casillas numeradas para reconstruir el cómic.
+    </div>
+
+    <h2>📦 Banco de viñetas</h2>
+    <div id="vignettes-bank" class="vignettes-bank"></div>
+
+    <h2>🗺️ Cronología (1 a 12)</h2>
+    <div id="chronology-grid" class="chronology-grid"></div>
+
+    <div class="btn-container">
+        <button class="main-btn reset-btn" onclick="initExercise()">🔄 Reiniciar</button>
+        <button class="main-btn validate-btn" onclick="checkOrder()">Comprobar ➔</button>
+    </div>
+
+    <div id="result" class="result-box"></div>
+</div>
+
+<script>
+    // ==========================================
+    // 1. SÉCURITÉ ANTI-TRICHE
+    // ==========================================
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('keydown', function(e) {
+        if (e.key === "F12" || (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) || (e.ctrlKey && e.key === "u")) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    const decoder = (str) => decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+
+    
+    const vignettesData = [
+        { id: 0, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl9heHoucG5n") },
+        { id: 1, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl94ZHIucG5n") },
+        { id: 2, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl92bXcucG5n") },
+        { id: 3, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl9rYnEucG5n") },
+        { id: 4, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl9zY3QucG5n") },
+        { id: 5, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl9uaHQucG5n") },
+        { id: 6, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl9vdmkucG5n") },
+        { id: 7, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl9sZWYucG5n") },
+        { id: 8, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl91cmcucG5n") },
+        { id: 9, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl9ydHMucG5n") },
+        { id: 10, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl9hbWQucG5n") },
+        { id: 11, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl9uZnAucG5n") }
+    ];
+
+    const bankContainer = document.getElementById('vignettes-bank');
+    const gridContainer = document.getElementById('chronology-grid');
+    let draggedElement = null;
+
+    // ==========================================
+    // 3. INITIALISATION
+    // ==========================================
+    function initExercise() {
+        document.getElementById('result').style.display = "none";
+        bankContainer.innerHTML = '';
+        gridContainer.innerHTML = '';
+
+        for (let i = 0; i < 12; i++) {
+            const zone = document.createElement('div');
+            zone.className = 'grid-dropzone';
+            zone.setAttribute('data-index', i);
+            zone.innerHTML = `<span class="zone-number">${i + 1}</span>`;
+            zone.addEventListener('dragover', dragOver);
+            zone.addEventListener('drop', dropOnZone);
+            gridContainer.appendChild(zone);
+        }
+
+        let shuffledVignettes = [...vignettesData];
+        for (let i = shuffledVignettes.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledVignettes[i], shuffledVignettes[j]] = [shuffledVignettes[j], shuffledVignettes[i]];
+        }
+
+        shuffledVignettes.forEach(item => {
+            const img = document.createElement('img');
+            img.className = 'vignette';
+            img.src = item.src;
+            img.id = 'vig-' + item.id;
+            img.setAttribute('draggable', 'true');
+            img.setAttribute('data-id', item.id);
+            
+            img.addEventListener('dragstart', dragStart);
+            img.addEventListener('dragend', dragEnd);
+            bankContainer.appendChild(img);
+        });
+
+        bankContainer.addEventListener('dragover', dragOver);
+        bankContainer.addEventListener('drop', dropOnBank);
+    }
+
+    // ==========================================
+    // 4. GESTION DU DRAG AND DROP
+    // ==========================================
+    function dragStart(e) {
+        draggedElement = this;
+        setTimeout(() => this.style.opacity = '0.4', 0);
+    }
+
+    function dragEnd() {
+        draggedElement = null;
+        this.style.opacity = '1';
+    }
+
+    function dragOver(e) {
+        e.preventDefault();
+    }
+
+    function dropOnZone(e) {
+        e.preventDefault();
+        const existingImg = this.querySelector('.vignette');
+        if (existingImg) {
+            const originParent = draggedElement.parentElement;
+            if (originParent.classList.contains('grid-dropzone')) {
+                originParent.appendChild(existingImg);
+            } else {
+                bankContainer.appendChild(existingImg);
+            }
+        }
+        this.appendChild(draggedElement);
+    }
+
+    function dropOnBank(e) {
+        e.preventDefault();
+        bankContainer.appendChild(draggedElement);
+    }
+
+    // ==========================================
+    // 5. VÉRIFICATION
+    // ==========================================
+    function checkOrder() {
+        const zones = document.querySelectorAll('.grid-dropzone');
+        let allPlaced = true;
+        let isCorrect = true;
+
+        zones.forEach((zone, index) => {
+            const img = zone.querySelector('.vignette');
+            if (!img) {
+                allPlaced = false;
+                isCorrect = false;
+            } else {
+                const imgId = parseInt(img.getAttribute('data-id'));
+                if (imgId !== index) {
+                    isCorrect = false;
+                }
+            }
+        });
+
+        const resultBox = document.getElementById('result');
+        resultBox.style.display = "block";
+
+        if (!allPlaced) {
+            resultBox.className = "result-box error-box";
+            resultBox.innerHTML = `Tienes que colocar las 12 viñetas en la cronología antes de comprobar. ⚠️`;
+            return;
+        }
+
+        if (isCorrect) {
+            resultBox.className = "result-box success";
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            const secretWinCode = decoder("UEFTVElMTEFT"); 
+            resultBox.innerHTML = `
+                ¡Excelente trabajo! 🌟<br>
+                Has ordenado las viñetas del cómic perfectamente.<br>
+                <div class="code-box">CÓDIGO : ${secretWinCode}</div>
+            `;
+        } else {
+            resultBox.className = "result-box error-box";
+            resultBox.innerHTML = `El cómic no está en el orden cronológico correcto. ¡Inténtalo de nuevo! ❌`;
+        }
+    }
+
+    initExercise();
+</script>
+
+</body>
+</html>

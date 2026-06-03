@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EG - Operación Gaia: Ordena las Viñetas</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-light: #e8f5e9;
+            --bg-color: #f4f7f5;
+            --card-bg: #ffffff;
+            --border-color: #c5b4a2;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 5px;
+            box-sizing: border-box;
+            height: 40vh;
+            overflow: hidden; /* Supprime le scroll global */
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            margin: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            height: calc(40vh - 10px);
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 16px;
+            text-align: center;
+            margin: 0 0 5px 0;
+        }
+
+        .instructions {
+            background-color: var(--primary-light);
+            color: #1b5e20;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 8px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        /* DISPOSITION DEUX BLOCS CÔTE À CÔTE */
+        .game-layout {
+            display: flex;
+            gap: 15px;
+            flex: 1;
+            min-height: 0; /* Empêche le débordement vertical */
+        }
+
+        .column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        h2 {
+            font-size: 12px;
+            color: #555;
+            margin: 0 0 4px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* GRILLES IDENTIQUES 3x4 EN FLEX-1 */
+        .vignettes-bank, .chronology-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 6px;
+            padding: 8px;
+            border-radius: 8px;
+            box-sizing: border-box;
+            min-height: 0;
+        }
+
+        .vignettes-bank {
+            background: #fafafa;
+            border: 2px dashed var(--border-color);
+        }
+
+        .chronology-grid {
+            background: #ffffff;
+            border: 2px solid var(--border-color);
+        }
+
+        /* CASES DE LA GRILLE (Identiques à gauche et à droite pour stabiliser la taille) */
+        .bank-slot, .grid-dropzone {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .grid-dropzone {
+            border: 2px solid var(--border-color);
+        }
+
+        .zone-number {
+            position: absolute;
+            top: 2px;
+            left: 5px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #bbb;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* TAILLE DES VIGNETTES AUTO-ADAPTATIVE */
+        .vignette {
+            max-height: 95%;
+            max-width: 95%;
+            width: auto;
+            height: auto;
+            border-radius: 4px;
+            cursor: grab;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+            user-select: none;
+            object-fit: contain;
+            background: white;
+            z-index: 2;
+        }
+        
+        .vignette:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        /* BARRE DE SÉCURITÉ ET BOUTONS EN BAS */
+        .bottom-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 8px;
+            width: 280px;
+        }
+
+        button.main-btn {
+            flex: 1;
+            padding: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .validate-btn { background-color: var(--primary-color); color: white; }
+        .validate-btn:hover { background-color: #1b5e20; }
+        .reset-btn { background-color: #e0e0e0; color: #333; }
+        .reset-btn:hover { background-color: #ccc; }
+
+        .result-box {
+            flex: 1;
+            padding: 6px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+            font-size: 12px;
+            box-sizing: border-box;
+        }
+
+        .success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 2px dashed #4caf50;
+        }
+
+        .error-box {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 2px dashed #f44336;
+        }
+
+        .code-box {
+            background-color: #fff9c4;
+            border: 2px dashed #fbc02d;
+            padding: 2px 6px;
+            font-size: 13px;
+            margin-left: 5px;
+            display: inline-block;
+            letter-spacing: 1px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>⏳ Misión: Cronología de las Viñetas</h1>
+    
+    <div class="instructions">
+        <strong>¿Cuál es el orden de la historia?</strong> Arrastra las imágenes del cuadro izquierdo y colócalas en las casillas numeradas del cuadro derecho.
+    </div>
+
+    <div class="game-layout">
+        <!-- BLOC GAUCHE : BANQUE D'ACCUEIL (3x4) -->
+        <div class="column">
+            <h2>📦 Viñetas mezcladas</h2>
+            <div id="vignettes-bank" class="vignettes-bank"></div>
+        </div>
+
+        <!-- BLOC DROITE : CRONOLOGÍA (3x4) -->
+        <div class="column">
+            <h2>🗺️ Cronología (1 a 12)</h2>
+            <div id="chronology-grid" class="chronology-grid"></div>
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+        <div class="btn-container">
+            <button class="main-btn reset-btn" onclick="initExercise()">🔄 Reiniciar</button>
+            <button class="main-btn validate-btn" onclick="checkOrder()">Comprobar ➔</button>
+        </div>
+        <div id="result" class="result-box"></div>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // 1. SÉCURITÉ ANTI-TRICHE
+    // ==========================================
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('keydown', function(e) {
+        if (e.key === "F12" || (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) || (e.ctrlKey && e.key === "u")) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    const decoder = (str) => decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+
+    // ==========================================
+    // 2. DONNÉES EN BASE64
+    // ==========================================
+    const vignettesData = [
+        { id: 0, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl9heHoucG5n") },
+        { id: 1, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl94ZHIucG5n") },
+        { id: 2, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl92bXcucG5n") },
+        { id: 3, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl9rYnEucG5n") },
+        { id: 4, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl9zY3QucG5n") },
+        { id: 5, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl9uaHQucG5n") },
+        { id: 6, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl9vdmkucG5n") },
+        { id: 7, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl9sZWYucG5n") },
+        { id: 8, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl91cmcucG5n") },
+        { id: 9, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl9ydHMucG5n") },
+        { id: 10, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl9hbWQucG5n") },
+        { id: 11, src: decoder("aHR0cHM6Ly9zZHVyYW5kLXNkZC5naXRodWIuaW8vZXhlcmNpY2VzLzNFTUUvRUdfdmlnbmV0dGVzX3F1aW5vX2NvbnRhbWluYWNpb24vUXVpbm9fY29udGFtaW5hY2lvbl9uZnAucG5n") }
+    ];
+
+    const bankContainer = document.getElementById('vignettes-bank');
+    const gridContainer = document.getElementById('chronology-grid');
+    let draggedElement = null;
+
+    // ==========================================
+    // 3. INITIALISATION
+    // ==========================================
+    function initExercise() {
+        document.getElementById('result').style.display = "none";
+        bankContainer.innerHTML = '';
+        gridContainer.innerHTML = '';
+
+        // Création des 12 cases d'accueil à gauche
+        for (let i = 0; i < 12; i++) {
+            const slot = document.createElement('div');
+            slot.className = 'bank-slot';
+            slot.addEventListener('dragover', dragOver);
+            slot.addEventListener('drop', dropElement);
+            bankContainer.appendChild(slot);
+        }
+
+        // Création des 12 cases de la chronologie à droite
+        for (let i = 0; i < 12; i++) {
+            const zone = document.createElement('div');
+            zone.className = 'grid-dropzone';
+            zone.setAttribute('data-index', i);
+            zone.innerHTML = `<span class="zone-number">${i + 1}</span>`;
+            zone.addEventListener('dragover', dragOver);
+            zone.addEventListener('drop', dropElement);
+            gridContainer.appendChild(zone);
+        }
+
+        // Mélange des vignettes
+        let shuffledVignettes = [...vignettesData];
+        for (let i = shuffledVignettes.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledVignettes[i], shuffledVignettes[j]] = [shuffledVignettes[j], shuffledVignettes[i]];
+        }
+
+        // Distribution des vignettes dans les cases de gauche
+        const bankSlots = bankContainer.querySelectorAll('.bank-slot');
+        shuffledVignettes.forEach((item, index) => {
+            const img = document.createElement('img');
+            img.className = 'vignette';
+            img.src = item.src;
+            img.id = 'vig-' + item.id;
+            img.setAttribute('draggable', 'true');
+            img.setAttribute('data-id', item.id);
+            
+            img.addEventListener('dragstart', dragStart);
+            img.addEventListener('dragend', dragEnd);
+            bankSlots[index].appendChild(img);
+        });
+    }
+
+    // ==========================================
+    // 4. GESTION DU DRAG AND DROP (UNIFIÉ)
+    // ==========================================
+    function dragStart(e) {
+        draggedElement = this;
+        setTimeout(() => this.style.opacity = '0.4', 0);
+    }
+
+    function dragEnd() {
+        draggedElement = null;
+        this.style.opacity = '1';
+    }
+
+    function dragOver(e) {
+        e.preventDefault();
+    }
+
+    function dropElement(e) {
+        e.preventDefault();
+        
+        // Si on dépose sur une image, on cible sa case parente
+        let targetZone = e.target;
+        if (targetZone.tagName === 'IMG') {
+            targetZone = targetZone.parentElement;
+        }
+
+        const existingImg = targetZone.querySelector('.vignette');
+        if (existingImg) {
+            const originParent = draggedElement.parentElement;
+            originParent.appendChild(existingImg);
+        }
+        
+        targetZone.appendChild(draggedElement);
+    }
+
+    // ==========================================
+    // 5. VÉRIFICATION
+    // ==========================================
+    function checkOrder() {
+        const zones = document.querySelectorAll('.grid-dropzone');
+        let allPlaced = true;
+        let isCorrect = true;
+
+        zones.forEach((zone, index) => {
+            const img = zone.querySelector('.vignette');
+            if (!img) {
+                allPlaced = false;
+                isCorrect = false;
+            } else {
+                const imgId = parseInt(img.getAttribute('data-id'));
+                if (imgId !== index) {
+                    isCorrect = false;
+                }
+            }
+        });
+
+        const resultBox = document.getElementById('result');
+        resultBox.style.display = "block";
+
+        if (!allPlaced) {
+            resultBox.className = "result-box error-box";
+            resultBox.innerHTML = `Coloca las 12 viñetas en la cronología antes de comprobar. ⚠️`;
+            return;
+        }
+
+        if (isCorrect) {
+            resultBox.className = "result-box success";
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            const secretWinCode = decoder("UEFTVElMTEFT"); // PASTILLAS
+            resultBox.innerHTML = `¡Excelente! 🌟 Código: <div class="code-box">${secretWinCode}</div>`;
+        } else {
+            resultBox.className = "result-box error-box";
+            resultBox.innerHTML = `El orden cronológico no es correcto. ¡Inténtalo de nuevo! ❌`;
+        }
+    }
+
+    initExercise();
+</script>
+
+</body>
+</html>

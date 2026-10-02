@@ -4,18 +4,264 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Gustar et verbes affectifs – 3e</title>
-<style>
-:root{--ink:#24313b;--muted:#68757f;--paper:#fffdf8;--accent:#df5c6b;--accent2:#f3c766;--ok:#20875b;--bad:#c84949;--line:#e7dfd1}
-*{box-sizing:border-box} body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:linear-gradient(135deg,#f9efd7,#f8faf7 48%,#e8f4f1);padding:28px}
-.card{max-width:1050px;margin:auto;background:rgba(255,253,248,.96);border:1px solid #eadfca;border-radius:24px;box-shadow:0 16px 45px #4f5d5d22;overflow:hidden}
-header{padding:22px 28px 18px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,#fff8ed,#fff)}
-.top{display:flex;gap:14px;align-items:center}.badge{font-weight:800;background:var(--accent);color:white;padding:8px 14px;border-radius:10px;transform:rotate(-1deg);box-shadow:0 4px 0 #b84655}.title{font-size:clamp(22px,3vw,34px);font-weight:850;margin:0}.instruction{margin:13px 0 0;font-size:18px;color:#43515a}.instruction b{color:#b84655}
-main{padding:18px 28px 26px}.row{display:grid;grid-template-columns:42px 1fr;gap:10px;align-items:center;padding:12px 0;border-bottom:1px dashed #ded5c8;font-size:21px}.num{font-weight:850;color:#9b5960;text-align:center}.sentence{line-height:2.15}
-input{font:inherit;font-weight:700;text-align:center;border:2px solid #cfc6b8;border-radius:10px;background:white;padding:6px 9px;outline:none;transition:.15s;min-width:90px}input.pron{width:90px}input.verb{width:155px}input:focus{border-color:#d76b76;box-shadow:0 0 0 4px #df5c6b18}.correct{border-color:var(--ok)!important;background:#eaf8f1!important;color:#146743}.wrong{border-color:var(--bad)!important;background:#fff0f0!important;color:#9d3030}
-.actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding-top:22px}button{border:0;border-radius:12px;padding:12px 18px;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 4px 10px #0001}button.primary{background:#d95767;color:#fff}button.secondary{background:#f2c45d;color:#3c3424}button.ghost{background:#edf0ed;color:#39454b}.score{margin-left:auto;font-size:19px;font-weight:800;min-height:28px}.perfect{color:var(--ok)}
-#confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:99}.piece{position:absolute;top:-30px;width:11px;height:18px;border-radius:2px;animation:fall linear forwards}@keyframes fall{to{transform:translate3d(var(--drift),110vh,0) rotate(900deg);opacity:.9}}
-.note{font-size:13px;color:var(--muted);margin-top:13px}
-@media(max-width:720px){body{padding:10px}.card{border-radius:16px}header,main{padding-left:16px;padding-right:16px}.row{grid-template-columns:30px 1fr;font-size:18px}.sentence{line-height:2.35}input.pron{width:72px}input.verb{width:125px}.score{width:100%;margin-left:0}}
+<<style>
+:root {
+    --ink: #24313b;
+    --muted: #68757f;
+    --paper: #fffdf8;
+    --accent: #df5c6b;
+    --accent2: #f3c766;
+    --ok: #20875b;
+    --bad: #c84949;
+    --line: #e7dfd1;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--ink);
+    background: linear-gradient(135deg, #f9efd7, #f8faf7 48%, #e8f4f1);
+    padding: 28px;
+}
+
+.card {
+    max-width: 1050px;
+    margin: auto;
+    background: rgba(255, 253, 248, .96);
+    border: 1px solid #eadfca;
+    border-radius: 24px;
+    box-shadow: 0 16px 45px #4f5d5d22;
+    overflow: hidden;
+}
+
+/* ===== EN-TÊTE ===== */
+
+header {
+    padding: 16px 28px 13px;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(90deg, #fff8ed, #fff);
+}
+
+.top {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+}
+
+.badge {
+    font-weight: 800;
+    background: var(--accent);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 10px;
+    transform: rotate(-1deg);
+    box-shadow: 0 4px 0 #b84655;
+}
+
+.title {
+    font-size: clamp(22px, 3vw, 34px);
+    font-weight: 850;
+    margin: 0;
+}
+
+.instruction {
+    margin: 10px 0 0;
+    font-size: 18px;
+    color: #43515a;
+}
+
+.instruction b {
+    color: #b84655;
+}
+
+/* ===== EXERCICE ===== */
+
+main {
+    padding: 10px 28px 14px;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 42px 1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px dashed #ded5c8;
+    font-size: 21px;
+}
+
+.num {
+    font-weight: 850;
+    color: #9b5960;
+    text-align: center;
+}
+
+.sentence {
+    line-height: 2.15;
+}
+
+/* ===== CHAMPS DE RÉPONSE ===== */
+
+input {
+    font: inherit;
+    font-weight: 700;
+    text-align: center;
+    border: 2px solid #cfc6b8;
+    border-radius: 10px;
+    background: white;
+    padding: 6px 9px;
+    outline: none;
+    transition: .15s;
+    min-width: 90px;
+}
+
+input.pron {
+    width: 90px;
+}
+
+input.verb {
+    width: 155px;
+}
+
+input:focus {
+    border-color: #d76b76;
+    box-shadow: 0 0 0 4px #df5c6b18;
+}
+
+.correct {
+    border-color: var(--ok) !important;
+    background: #eaf8f1 !important;
+    color: #146743;
+}
+
+.wrong {
+    border-color: var(--bad) !important;
+    background: #fff0f0 !important;
+    color: #9d3030;
+}
+
+/* ===== BOUTONS ===== */
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    padding-top: 10px;
+}
+
+button {
+    border: 0;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-size: 17px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 10px #0001;
+}
+
+button.primary {
+    background: #d95767;
+    color: #fff;
+}
+
+button.secondary {
+    background: #f2c45d;
+    color: #3c3424;
+}
+
+button.ghost {
+    background: #edf0ed;
+    color: #39454b;
+}
+
+.score {
+    margin-left: auto;
+    font-size: 19px;
+    font-weight: 800;
+    min-height: 28px;
+}
+
+.perfect {
+    color: var(--ok);
+}
+
+/* ===== CONFETTIS ===== */
+
+#confetti {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 99;
+}
+
+.piece {
+    position: absolute;
+    top: -30px;
+    width: 11px;
+    height: 18px;
+    border-radius: 2px;
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
+    to {
+        transform: translate3d(var(--drift), 110vh, 0) rotate(900deg);
+        opacity: .9;
+    }
+}
+
+.note {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 13px;
+}
+
+/* ===== PETITS ÉCRANS ===== */
+
+@media (max-width: 720px) {
+    body {
+        padding: 10px;
+    }
+
+    .card {
+        border-radius: 16px;
+    }
+
+    header,
+    main {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .row {
+        grid-template-columns: 30px 1fr;
+        font-size: 18px;
+    }
+
+    .sentence {
+        line-height: 2.35;
+    }
+
+    input.pron {
+        width: 72px;
+    }
+
+    input.verb {
+        width: 125px;
+    }
+
+    .score {
+        width: 100%;
+        margin-left: 0;
+    }
+}
 </style>
 </head>
 <body>

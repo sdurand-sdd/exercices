@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gustar et verbes affectifs – 3e</title>
+<style>
+:root{--ink:#24313b;--muted:#68757f;--paper:#fffdf8;--accent:#df5c6b;--accent2:#f3c766;--ok:#20875b;--bad:#c84949;--line:#e7dfd1}
+*{box-sizing:border-box} body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:linear-gradient(135deg,#f9efd7,#f8faf7 48%,#e8f4f1);padding:28px}
+.card{max-width:1050px;margin:auto;background:rgba(255,253,248,.96);border:1px solid #eadfca;border-radius:24px;box-shadow:0 16px 45px #4f5d5d22;overflow:hidden}
+header{padding:22px 28px 18px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,#fff8ed,#fff)}
+.top{display:flex;gap:14px;align-items:center}.badge{font-weight:800;background:var(--accent);color:white;padding:8px 14px;border-radius:10px;transform:rotate(-1deg);box-shadow:0 4px 0 #b84655}.title{font-size:clamp(22px,3vw,34px);font-weight:850;margin:0}.instruction{margin:13px 0 0;font-size:18px;color:#43515a}.instruction b{color:#b84655}
+main{padding:18px 28px 26px}.row{display:grid;grid-template-columns:42px 1fr;gap:10px;align-items:center;padding:12px 0;border-bottom:1px dashed #ded5c8;font-size:21px}.num{font-weight:850;color:#9b5960;text-align:center}.sentence{line-height:2.15}
+input{font:inherit;font-weight:700;text-align:center;border:2px solid #cfc6b8;border-radius:10px;background:white;padding:6px 9px;outline:none;transition:.15s;min-width:90px}input.pron{width:90px}input.verb{width:155px}input:focus{border-color:#d76b76;box-shadow:0 0 0 4px #df5c6b18}.correct{border-color:var(--ok)!important;background:#eaf8f1!important;color:#146743}.wrong{border-color:var(--bad)!important;background:#fff0f0!important;color:#9d3030}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding-top:22px}button{border:0;border-radius:12px;padding:12px 18px;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 4px 10px #0001}button.primary{background:#d95767;color:#fff}button.secondary{background:#f2c45d;color:#3c3424}button.ghost{background:#edf0ed;color:#39454b}.score{margin-left:auto;font-size:19px;font-weight:800;min-height:28px}.perfect{color:var(--ok)}
+#confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:99}.piece{position:absolute;top:-30px;width:11px;height:18px;border-radius:2px;animation:fall linear forwards}@keyframes fall{to{transform:translate3d(var(--drift),110vh,0) rotate(900deg);opacity:.9}}
+.note{font-size:13px;color:var(--muted);margin-top:13px}
+@media(max-width:720px){body{padding:10px}.card{border-radius:16px}header,main{padding-left:16px;padding-right:16px}.row{grid-template-columns:30px 1fr;font-size:18px}.sentence{line-height:2.35}input.pron{width:72px}input.verb{width:125px}.score{width:100%;margin-left:0}}
+</style>
+</head>
+<body>
+<div id="confetti"></div>
+<section class="card">
+<header>
+  <div class="top"><div class="badge">Ejercicio</div><h1 class="title">Gustar y verbos afectivos</h1></div>
+  <p class="instruction">Complète avec le <b>pronom complément d’objet indirect</b> et accorde le <b>verbe</b> comme il convient.</p>
+</header>
+<main>
+<div id="exercise"></div>
+<div class="actions">
+  <button class="primary" id="check">✓ Vérifier</button>
+  <button class="secondary" id="solution">👁 Voir la correction</button>
+  <button class="ghost" id="reset">↻ Recommencer</button>
+  <div class="score" id="score"></div>
+</div>
+<p class="note">Astuce : Entrée permet de passer au champ suivant. Le son ne se déclenche qu’après un clic sur « Vérifier », conformément aux règles des navigateurs.</p>
+</main>
+</section>
+<script>
+const items=[
+ ['A nosotros','nos','encanta','la literatura.'],
+ ['A ella','le','gustan','los libros románticos.'],
+ ['A vosotros','os','duele','la cabeza.'],
+ ['A Rubén','le','apetecen','las pizzas.'],
+ ['A mí no','me','gustan','los videojuegos.'],
+ ['A ti','te','mola','leer libros de ciencia ficción.'],
+ ['A ustedes','les','encanta','el piano.'],
+ ['A ellos no','les','duelen','los pies.']
+];
+const ex=document.querySelector('#exercise');
+const norm=s=>s.trim().toLocaleLowerCase('es').replace(/\s+/g,' ');
+items.forEach((x,i)=>{
+ const r=document.createElement('div');r.className='row';
+ r.innerHTML=`<div class="num">${i+1}.</div><div class="sentence">${x[0]} <input class="pron" aria-label="Pronom phrase ${i+1}" data-answer="${x[1]}"> <input class="verb" aria-label="Verbe phrase ${i+1}" data-answer="${x[2]}"> ${x[3]}</div>`;
+ ex.appendChild(r);
+});
+const inputs=[...document.querySelectorAll('input')];
+inputs.forEach((inp,i)=>inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inputs[(i+1)%inputs.length].focus();}}));
+function mark(inp){const ok=norm(inp.value)===norm(inp.dataset.answer);inp.classList.toggle('correct',ok);inp.classList.toggle('wrong',!ok);return ok;}
+function check(){let good=0;inputs.forEach(i=>{if(mark(i))good++});const total=inputs.length;const score=document.querySelector('#score');score.textContent=`${good} / ${total} réponses correctes`;score.className='score'+(good===total?' perfect':'');if(good===total){score.textContent='🎉 Parfait ! Tout est juste !';celebrate();applause();}}
+function solutions(){inputs.forEach(i=>{i.value=i.dataset.answer;i.classList.remove('wrong');i.classList.add('correct')});document.querySelector('#score').textContent='Correction affichée';}
+function reset(){inputs.forEach(i=>{i.value='';i.className=i.classList.contains('pron')?'pron':'verb'});document.querySelector('#score').textContent='';inputs[0].focus();}
+document.querySelector('#check').onclick=check;document.querySelector('#solution').onclick=solutions;document.querySelector('#reset').onclick=reset;
+function celebrate(){const box=document.querySelector('#confetti'),colors=['#df5c6b','#f3c766','#48a98b','#5578c9','#a95fc4'];box.innerHTML='';for(let i=0;i<140;i++){const p=document.createElement('i');p.className='piece';p.style.left=Math.random()*100+'vw';p.style.background=colors[i%colors.length];p.style.setProperty('--drift',(Math.random()*240-120)+'px');p.style.animationDuration=(2.3+Math.random()*2.2)+'s';p.style.animationDelay=(Math.random()*.7)+'s';box.appendChild(p)}setTimeout(()=>box.innerHTML='',5200)}
+// Applaudissements synthétiques : aucun fichier audio externe nécessaire.
+function applause(){
+ const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+ const ctx=new AC();const master=ctx.createGain();master.gain.value=.18;master.connect(ctx.destination);
+ const start=ctx.currentTime;
+ for(let i=0;i<55;i++){
+   const t=start+Math.random()*1.55;
+   const dur=.025+Math.random()*.055;
+   const buffer=ctx.createBuffer(1,Math.ceil(ctx.sampleRate*dur),ctx.sampleRate);const d=buffer.getChannelData(0);
+   for(let j=0;j<d.length;j++) d[j]=(Math.random()*2-1)*(1-j/d.length);
+   const src=ctx.createBufferSource();src.buffer=buffer;
+   const filter=ctx.createBiquadFilter();filter.type='bandpass';filter.frequency.value=700+Math.random()*1700;filter.Q.value=.7;
+   const g=ctx.createGain();g.gain.setValueAtTime(.001,t);g.gain.exponentialRampToValueAtTime(.45+Math.random()*.35,t+.005);g.gain.exponentialRampToValueAtTime(.001,t+dur);
+   src.connect(filter);filter.connect(g);g.connect(master);src.start(t);src.stop(t+dur+.01);
+ }
+ setTimeout(()=>ctx.close(),2300);
+}
+</script>
+</body>
+</html>

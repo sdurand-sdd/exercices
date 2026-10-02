@@ -33,19 +33,19 @@ input{font:inherit;font-weight:700;text-align:center;border:2px solid #cfc6b8;bo
   <button class="ghost" id="reset">↻ Recommencer</button>
   <div class="score" id="score"></div>
 </div>
-<p class="note">Astuce : Entrée permet de passer au champ suivant. Le son ne se déclenche qu’après un clic sur « Vérifier », conformément aux règles des navigateurs.</p>
+<p class="note">Astuce : Entrée permet de passer au champ suivant.</p>
 </main>
 </section>
 <script>
 const items=[
- ['A nosotros','nos','encanta','la literatura.'],
- ['A ella','le','gustan','los libros románticos.'],
- ['A vosotros','os','duele','la cabeza.'],
- ['A Rubén','le','apetecen','las pizzas.'],
- ['A mí no','me','gustan','los videojuegos.'],
- ['A ti','te','mola','leer libros de ciencia ficción.'],
- ['A ustedes','les','encanta','el piano.'],
- ['A ellos no','les','duelen','los pies.']
+ ['A nosotros','nos','encanta','la literatura. (encantar)'],
+ ['A ella','le','gustan','los libros románticos. (gustar)'],
+ ['A vosotros','os','duele','la cabeza. (doler)'],
+ ['A Rubén','le','apetecen','las pizzas. (apetecer)'],
+ ['A mí no','me','gustan','los videojuegos. (gustar)'],
+ ['A ti','te','mola','leer libros de ciencia ficción. (molar)'],
+ ['A ustedes','les','encanta','el piano. (encantar)'],
+ ['A ellos no','les','duelen','los pies. (doler)']
 ];
 const ex=document.querySelector('#exercise');
 const norm=s=>s.trim().toLocaleLowerCase('es').replace(/\s+/g,' ');

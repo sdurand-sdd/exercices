@@ -299,11 +299,31 @@ const items=[
  ['A ellos no','les','duelen','los pies.','d<u>o</u>ler']
 ];
 const ex=document.querySelector('#exercise');
+
 const norm=s=>s.trim().toLocaleLowerCase('es').replace(/\s+/g,' ');
+
 items.forEach((x,i)=>{
- const r=document.createElement('div');r.className='row';
-r.innerHTML=`<div class="num">${i+1}.</div><div class="sentence">${x[0]} <input class="pron" aria-label="Pronom phrase ${i+1}" data-answer="${x[1]}"> <input class="verb" aria-label="Verbe phrase ${i+1}" data-answer="${x[2]}"> ${x[3]} <span class="infinitif">(${x[4]})</span></div>`;
-    });
+    const r=document.createElement('div');
+    r.className='row';
+
+    r.innerHTML=`
+        <div class="num">${i+1}.</div>
+        <div class="sentence">
+            ${x[0]}
+            <input class="pron"
+                   aria-label="Pronom phrase ${i+1}"
+                   data-answer="${x[1]}">
+            <input class="verb"
+                   aria-label="Verbe phrase ${i+1}"
+                   data-answer="${x[2]}">
+            ${x[3]}
+            <span class="infinitif">(${x[4]})</span>
+        </div>
+    `;
+
+    ex.appendChild(r);
+});
+
 const inputs=[...document.querySelectorAll('input')];
 inputs.forEach((inp,i)=>inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inputs[(i+1)%inputs.length].focus();}}));
 function mark(inp){const ok=norm(inp.value)===norm(inp.dataset.answer);inp.classList.toggle('correct',ok);inp.classList.toggle('wrong',!ok);return ok;}

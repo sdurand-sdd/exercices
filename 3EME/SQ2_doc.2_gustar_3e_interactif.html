@@ -105,6 +105,11 @@ main {
     line-height: 1.15;
 }
 
+.infinitif {
+    font-style: italic;
+    color: #7d878d;
+    font-size: 0.85em;
+}
 /* ===== CHAMPS DE RÉPONSE ===== */
 
 input {
@@ -284,22 +289,21 @@ button.ghost {
 </section>
 <script>
 const items=[
- ['A nosotros','nos','encanta','la literatura. (encantar)'],
- ['A ella','le','gustan','los libros románticos. (gustar)'],
- ['A vosotros','os','duele','la cabeza. (doler)'],
- ['A Rubén','le','apetecen','las pizzas. (apetecer)'],
- ['A mí no','me','gustan','los videojuegos. (gustar)'],
- ['A ti','te','mola','leer libros de ciencia ficción. (molar)'],
- ['A ustedes','les','encanta','el piano. (encantar)'],
- ['A ellos no','les','duelen','los pies. (doler)']
+ ['A nosotros','nos','encanta','la literatura.','encantar'],
+ ['A ella','le','gustan','los libros románticos.','gustar'],
+ ['A vosotros','os','duele','la cabeza.','doler'],
+ ['A Rubén','le','apetecen','las pizzas.','apetecer'],
+ ['A mí no','me','gustan','los videojuegos.','gustar'],
+ ['A ti','te','mola','leer libros de ciencia ficción.','molar'],
+ ['A ustedes','les','encanta','el piano.','encantar'],
+ ['A ellos no','les','duelen','los pies.','doler']
 ];
 const ex=document.querySelector('#exercise');
 const norm=s=>s.trim().toLocaleLowerCase('es').replace(/\s+/g,' ');
 items.forEach((x,i)=>{
  const r=document.createElement('div');r.className='row';
- r.innerHTML=`<div class="num">${i+1}.</div><div class="sentence">${x[0]} <input class="pron" aria-label="Pronom phrase ${i+1}" data-answer="${x[1]}"> <input class="verb" aria-label="Verbe phrase ${i+1}" data-answer="${x[2]}"> ${x[3]}</div>`;
- ex.appendChild(r);
-});
+r.innerHTML=`<div class="num">${i+1}.</div><div class="sentence">${x[0]} <input class="pron" aria-label="Pronom phrase ${i+1}" data-answer="${x[1]}"> <input class="verb" aria-label="Verbe phrase ${i+1}" data-answer="${x[2]}"> ${x[3]} <span class="infinitif">(${x[4]})</span></div>`;
+    });
 const inputs=[...document.querySelectorAll('input')];
 inputs.forEach((inp,i)=>inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inputs[(i+1)%inputs.length].focus();}}));
 function mark(inp){const ok=norm(inp.value)===norm(inp.dataset.answer);inp.classList.toggle('correct',ok);inp.classList.toggle('wrong',!ok);return ok;}

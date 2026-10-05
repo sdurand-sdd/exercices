@@ -1,1 +1,465 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¡Deletrea! — Concours d'épellation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --azul:#1F4FA3;
+    --azul-fonce:#163a7a;
+    --papel:#FFFDF7;
+    --azafran:#F2B705;
+    --rojo:#D7263D;
+    --verde:#2E9E5B;
+    --encre:#1b2440;
+    --font:"Baloo 2","Trebuchet MS","Segoe UI",Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:var(--font);
+    color:var(--encre);
+    background-color:var(--azul);
+    /* motif azulejo discret */
+    background-image:
+      radial-gradient(circle at 50% 50%, rgba(255,255,255,.07) 0 18%, transparent 19%),
+      linear-gradient(45deg, rgba(255,255,255,.05) 25%, transparent 25% 75%, rgba(255,255,255,.05) 75%),
+      linear-gradient(-45deg, rgba(255,255,255,.05) 25%, transparent 25% 75%, rgba(255,255,255,.05) 75%);
+    background-size:80px 80px;
+    display:flex;flex-direction:column;
+  }
 
+  /* ---------- Barre du haut ---------- */
+  header{
+    display:flex;align-items:center;justify-content:space-between;gap:1rem;
+    padding:.8rem 1.5rem;color:var(--papel);
+  }
+  .titre{font-size:2rem;font-weight:800;letter-spacing:.5px;margin:0;line-height:1}
+  .scores{display:flex;gap:.8rem;align-items:center}
+  .pastille{
+    background:rgba(255,255,255,.12);border-radius:14px;padding:.35rem 1rem;
+    font-size:1.25rem;font-weight:700;white-space:nowrap
+  }
+  .pastille b{color:var(--azafran);font-size:1.6rem}
+  .icone{
+    background:transparent;border:2px solid rgba(255,255,255,.35);color:var(--papel);
+    border-radius:12px;font:inherit;font-size:1.1rem;padding:.3rem .8rem;cursor:pointer
+  }
+  .icone:hover{background:rgba(255,255,255,.12)}
+
+  /* ---------- Zone centrale ---------- */
+  main{flex:1;display:flex;align-items:center;justify-content:center;padding:1rem}
+  .ecran{display:none;width:min(1100px,100%);text-align:center}
+  .ecran.actif{display:block}
+
+  .carreau{
+    background:var(--papel);border-radius:28px;
+    padding:2.5rem 2rem;position:relative;
+    border:10px solid var(--papel);
+    outline:6px solid var(--azafran);outline-offset:-22px;
+    box-shadow:0 18px 0 var(--azul-fonce);
+  }
+
+  .numero{font-size:1.6rem;font-weight:700;color:var(--azul);margin:0 0 .5rem}
+
+  /* bouton principal */
+  .gros-bouton{
+    font:inherit;font-weight:800;font-size:2.4rem;
+    background:var(--rojo);color:#fff;border:none;border-radius:22px;
+    padding:1rem 3rem;cursor:pointer;
+    box-shadow:0 8px 0 #9c1a2c;transition:transform .08s, box-shadow .08s;
+  }
+  .gros-bouton:active{transform:translateY(6px);box-shadow:0 2px 0 #9c1a2c}
+  .gros-bouton.vert{background:var(--verde);box-shadow:0 8px 0 #1e6b3d}
+  .gros-bouton.vert:active{box-shadow:0 2px 0 #1e6b3d}
+  .gros-bouton:focus-visible,.icone:focus-visible,.petit:focus-visible{outline:4px solid var(--azafran);outline-offset:4px}
+
+  .petit{
+    font:inherit;font-size:1.05rem;font-weight:700;background:transparent;
+    border:2px solid var(--azul);color:var(--azul);border-radius:12px;padding:.35rem 1rem;cursor:pointer
+  }
+  .petit:hover{background:rgba(31,79,163,.08)}
+
+  /* ---------- Accueil ---------- */
+  .accueil h2{font-size:3.2rem;margin:.2rem 0 .3rem;color:var(--azul);line-height:1.05}
+  .accueil p.consigne{font-size:1.35rem;margin:0 auto 1.8rem;max-width:40ch}
+  .reglages{margin-top:2rem;text-align:left}
+  .reglages summary{cursor:pointer;font-size:1.2rem;font-weight:700;color:var(--azul)}
+  .reglages .bloc{margin-top:1rem}
+  .reglages h3{font-size:1.1rem;margin:.6rem 0 .4rem}
+  .durees,.themes{display:flex;flex-wrap:wrap;gap:.5rem}
+  .choix input{position:absolute;opacity:0;pointer-events:none}
+  .choix span{
+    display:inline-block;padding:.3rem .9rem;border-radius:999px;border:2px solid var(--azul);
+    color:var(--azul);font-weight:700;cursor:pointer;user-select:none
+  }
+  .choix input:checked + span{background:var(--azul);color:#fff}
+  .choix input:focus-visible + span{outline:3px solid var(--azafran);outline-offset:2px}
+  textarea{
+    width:100%;min-height:90px;font:inherit;font-size:1.05rem;border-radius:12px;
+    border:2px solid #c9d3ea;padding:.6rem;resize:vertical
+  }
+  .aide{font-size:.95rem;color:#5a6480;margin:.3rem 0 0}
+
+  /* ---------- Jeu ---------- */
+  .jeu{display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:center}
+  .mot{
+    font-size:clamp(3rem, 11vw, 9rem);font-weight:800;line-height:1;margin:.5rem 0;
+    color:var(--encre);word-break:break-word;letter-spacing:2px
+  }
+  .theme-mot{font-size:1.3rem;color:#5a6480;margin:0}
+  .chrono{position:relative;width:220px;height:220px}
+  .chrono svg{width:100%;height:100%;transform:rotate(-90deg)}
+  .chrono .fond{stroke:#e5e9f4}
+  .chrono .arc{stroke:var(--verde);stroke-linecap:round;transition:stroke .3s}
+  .chrono.urgent .arc{stroke:var(--rojo)}
+  .chrono .sec{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:5rem;font-weight:800;color:var(--encre)
+  }
+  .chrono.urgent .sec{color:var(--rojo)}
+  .actions-jeu{grid-column:1 / -1;display:flex;justify-content:center;gap:1rem;flex-wrap:wrap}
+
+  /* ---------- Fin du mot ---------- */
+  .fin h2{font-size:3.4rem;margin:.2rem 0;line-height:1.05}
+  .fin h2.ok{color:var(--verde)}
+  .fin h2.ko{color:var(--rojo)}
+  .rappel{font-size:1.4rem;margin:.4rem 0 1.6rem}
+  .rappel strong{font-size:2.2rem;color:var(--azul)}
+  .corriger{margin-top:1rem;display:flex;justify-content:center;gap:.6rem;flex-wrap:wrap}
+
+  .clavier{color:rgba(255,255,255,.75);text-align:center;font-size:1rem;padding:.5rem 0 1rem;margin:0}
+
+  @media (max-width:760px){
+    .jeu{grid-template-columns:1fr}
+    .chrono{margin:0 auto;width:170px;height:170px}
+    .chrono .sec{font-size:3.8rem}
+    .gros-bouton{font-size:1.8rem;padding:.8rem 2rem}
+    .titre{font-size:1.5rem}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1 class="titre">¡Deletrea!</h1>
+  <div class="scores">
+    <div class="pastille">Mots joués : <b id="nbJoues">0</b></div>
+    <div class="pastille">Réussis : <b id="nbReussis">0</b></div>
+    <button class="icone" id="btnPleinEcran" title="Plein écran">⛶ Plein écran</button>
+  </div>
+</header>
+
+<main>
+  <!-- ACCUEIL -->
+  <section class="ecran actif" id="ecranAccueil">
+    <div class="carreau accueil">
+      <h2>Concours d'épellation</h2>
+      <p class="consigne">Un mot apparaît : la classe l'épelle en espagnol avant la fin du temps.</p>
+      <button class="gros-bouton" id="btnDemarrerAccueil">Démarrer le mot n°1</button>
+
+      <details class="reglages">
+        <summary>Réglages</summary>
+        <div class="bloc">
+          <h3>Temps par mot</h3>
+          <div class="durees" id="durees"></div>
+        </div>
+        <div class="bloc">
+          <h3>Thèmes</h3>
+          <div class="themes" id="themes"></div>
+          <p class="aide"><button class="petit" id="btnTous" type="button">Tout cocher</button> <button class="petit" id="btnAucun" type="button">Tout décocher</button></p>
+        </div>
+        <div class="bloc">
+          <h3>Mes mots</h3>
+          <textarea id="mesMots" placeholder="Un mot par ligne (ou séparés par des virgules)"></textarea>
+          <p class="aide">Ces mots forment le thème « Mes mots ». Ils restent enregistrés sur cet ordinateur.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- JEU -->
+  <section class="ecran" id="ecranJeu">
+    <div class="carreau">
+      <div class="jeu">
+        <div>
+          <p class="numero" id="numeroJeu">Mot n°1</p>
+          <div class="mot" id="mot">—</div>
+          <p class="theme-mot" id="themeMot"></p>
+        </div>
+        <div class="chrono" id="chrono">
+          <svg viewBox="0 0 120 120" aria-hidden="true">
+            <circle class="fond" cx="60" cy="60" r="52" fill="none" stroke-width="12"/>
+            <circle class="arc" id="arc" cx="60" cy="60" r="52" fill="none" stroke-width="12"/>
+          </svg>
+          <div class="sec" id="secondes" aria-live="polite">15</div>
+        </div>
+        <div class="actions-jeu">
+          <button class="gros-bouton vert" id="btnEpele">✓ Épelé !</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FIN DU MOT -->
+  <section class="ecran" id="ecranFin">
+    <div class="carreau fin">
+      <h2 id="titreFin">¡Tiempo!</h2>
+      <p class="rappel">Le mot n°<span id="numFin">1</span> était : <strong id="motFin"></strong></p>
+      <button class="gros-bouton" id="btnSuivant">Démarrer le mot n°2</button>
+      <div class="corriger">
+        <button class="petit" id="btnCorriger" type="button"></button>
+        <button class="petit" id="btnNouvellePartie" type="button">Nouvelle partie</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<p class="clavier">Barre espace : démarrer / mot épelé</p>
+
+<script>
+/* =========================================================
+   STOCK DE MOTS (un seul mot à chaque fois)
+   ========================================================= */
+const BANQUE = {
+  "El colegio": ["cuaderno","bolígrafo","mochila","estuche","pizarra","profesora","asignatura","matemáticas","horario","recreo","regla","tijeras","diccionario","biblioteca","lápiz","goma","examen","deberes","alumno","clase"],
+  "La familia": ["abuelo","abuela","hermano","hermana","primo","prima","tío","tía","sobrino","padre","madre","hijo","hija","nieto","padres","familia","gemelos","bebé"],
+  "Los animales": ["perro","gato","caballo","conejo","pájaro","tortuga","ballena","jirafa","elefante","serpiente","ardilla","cerdo","oveja","vaca","ratón","tiburón","pingüino","mariposa","araña","llama","pez","león","mono","cocodrilo"],
+  "La comida": ["manzana","naranja","plátano","fresa","queso","jamón","tortilla","paella","chocolate","zumo","leche","pescado","pollo","ensalada","helado","churros","huevo","mantequilla","desayuno","almuerzo","cena","merienda","bocadillo","galleta"],
+  "Los colores": ["amarillo","rojo","azul","verde","morado","marrón","blanco","negro","gris","rosa","naranja"],
+  "La ropa": ["camiseta","pantalón","zapatillas","falda","vestido","chaqueta","bufanda","sombrero","calcetines","gorra","jersey","zapatos","abrigo","vaqueros"],
+  "El cuerpo": ["cabeza","brazo","rodilla","corazón","espalda","oreja","nariz","boca","pierna","pelo","ojos","mano","dedo","diente","barriga","hombro"],
+  "La casa": ["cocina","dormitorio","habitación","salón","ventana","jardín","escalera","baño","sillón","nevera","puerta","cama","mesa","silla","armario","garaje"],
+  "El físico y el carácter": ["simpático","gracioso","perezoso","alto","bajo","delgado","pelirrojo","rubio","moreno","guapo","tímido","divertido","inteligente","hablador","antipático","trabajador","generoso"],
+  "Los días y los meses": ["lunes","martes","miércoles","jueves","viernes","sábado","domingo","enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"],
+  "Las estaciones y el tiempo": ["invierno","verano","otoño","primavera","lluvia","nieve","viento","nublado","calor","frío","sol","tormenta"],
+  "El ocio y los deportes": ["fútbol","baloncesto","natación","tenis","ciclismo","guitarra","videojuegos","música","cine","playa","montaña","piscina","dibujo","baile","lectura"],
+  "Países y ciudades": ["España","México","Argentina","Colombia","Perú","Chile","Cuba","Venezuela","Guatemala","Ecuador","Bolivia","Uruguay","Paraguay","Madrid","Barcelona","Sevilla","Granada","Toledo","Valencia","Málaga","Salamanca","Bilbao","Bogotá","Lima","Montevideo","Cancún"],
+  "Personajes famosos": ["Picasso","Dalí","Velázquez","Goya","Frida","Cervantes","Shakira","Messi","Nadal","Alcaraz","Rosalía","Almodóvar","Bolívar","Colón","Gaudí","Neruda","Quijote","Iniesta","Bisbal","Aitana"]
+};
+const MES_MOTS = "Mes mots";
+const DUREES = [10, 15, 20, 30, 45];
+
+/* =========================================================
+   ÉTAT
+   ========================================================= */
+let duree = 15;
+let joues = 0, reussis = 0;
+let pioche = [];          // mots mélangés restants
+let motCourant = null;    // {mot, theme}
+let dernierReussi = false;
+let debut = 0, rafId = null, dernierTic = null;
+
+const $ = id => document.getElementById(id);
+const ecrans = { accueil: $("ecranAccueil"), jeu: $("ecranJeu"), fin: $("ecranFin") };
+
+/* Sauvegarde locale (facultative, protégée) */
+const stock = {
+  get(k){ try{ return localStorage.getItem("deletrea_"+k); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem("deletrea_"+k, v); }catch(e){} }
+};
+
+/* =========================================================
+   RÉGLAGES
+   ========================================================= */
+function construireReglages(){
+  const dSauvee = parseInt(stock.get("duree"), 10);
+  if (DUREES.includes(dSauvee)) duree = dSauvee;
+  $("durees").innerHTML = DUREES.map(d =>
+    `<label class="choix"><input type="radio" name="duree" value="${d}" ${d===duree?"checked":""}><span>${d} s</span></label>`
+  ).join("");
+  $("durees").addEventListener("change", e => {
+    duree = parseInt(e.target.value, 10);
+    stock.set("duree", duree);
+    $("secondes").textContent = duree;
+  });
+
+  let themesSauves = null;
+  try { themesSauves = JSON.parse(stock.get("themes")); } catch(e){}
+  const tous = [...Object.keys(BANQUE), MES_MOTS];
+  $("themes").innerHTML = tous.map(t => {
+    const coche = themesSauves ? themesSauves.includes(t) : t !== MES_MOTS;
+    return `<label class="choix"><input type="checkbox" value="${t}" ${coche?"checked":""}><span>${t}</span></label>`;
+  }).join("");
+  $("themes").addEventListener("change", () => { sauverThemes(); pioche = []; });
+
+  $("btnTous").onclick = () => { $("themes").querySelectorAll("input").forEach(i => i.checked = true); sauverThemes(); pioche = []; };
+  $("btnAucun").onclick = () => { $("themes").querySelectorAll("input").forEach(i => i.checked = false); sauverThemes(); pioche = []; };
+
+  $("mesMots").value = stock.get("mesMots") || "";
+  $("mesMots").addEventListener("input", () => { stock.set("mesMots", $("mesMots").value); pioche = []; });
+  $("secondes").textContent = duree;
+}
+function sauverThemes(){
+  const sel = [...$("themes").querySelectorAll("input:checked")].map(i => i.value);
+  stock.set("themes", JSON.stringify(sel));
+}
+
+/* =========================================================
+   PIOCHE (sans répétition jusqu'à épuisement)
+   ========================================================= */
+function lireMesMots(){
+  return $("mesMots").value.split(/[\n,;]+/).map(m => m.trim()).filter(m => m && !/\s/.test(m));
+}
+function construirePioche(){
+  const sel = [...$("themes").querySelectorAll("input:checked")].map(i => i.value);
+  let liste = [];
+  sel.forEach(t => {
+    const mots = t === MES_MOTS ? lireMesMots() : BANQUE[t];
+    mots.forEach(m => liste.push({ mot: m, theme: t }));
+  });
+  // dédoublonner (ex. « naranja » couleur / fruit)
+  const vus = new Set();
+  liste = liste.filter(x => !vus.has(x.mot) && vus.add(x.mot));
+  // mélange
+  for (let i = liste.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [liste[i], liste[j]] = [liste[j], liste[i]];
+  }
+  // éviter de retomber sur le même mot juste après un remélange
+  if (motCourant && liste.length > 1 && liste[liste.length-1].mot === motCourant.mot) {
+    [liste[0], liste[liste.length-1]] = [liste[liste.length-1], liste[0]];
+  }
+  pioche = liste;
+}
+function piocher(){
+  if (!pioche.length) construirePioche();
+  return pioche.pop() || null;
+}
+
+/* =========================================================
+   SONS (Web Audio, sans fichier)
+   ========================================================= */
+let ctx = null;
+function bip(freq, dureeMs, type="sine", vol=.25){
+  try{
+    ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dureeMs/1000);
+    o.connect(g).connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime + dureeMs/1000);
+  }catch(e){}
+}
+const sonTic = () => bip(880, 120, "square", .12);
+const sonFin = () => { bip(220, 600, "sawtooth", .2); };
+const sonBravo = () => { bip(660,150); setTimeout(()=>bip(880,150),140); setTimeout(()=>bip(1175,300),280); };
+
+/* =========================================================
+   DÉROULEMENT
+   ========================================================= */
+const CIRC = 2 * Math.PI * 52;
+$("arc").style.strokeDasharray = CIRC;
+
+function afficher(nom){
+  Object.values(ecrans).forEach(e => e.classList.remove("actif"));
+  ecrans[nom].classList.add("actif");
+}
+
+function demarrerMot(){
+  const m = piocher();
+  if (!m){
+    alert("Aucun mot disponible : coche au moins un thème dans les réglages (ou ajoute tes mots).");
+    afficher("accueil");
+    $("ecranAccueil").querySelector("details").open = true;
+    return;
+  }
+  motCourant = m;
+  joues++;
+  majScores();
+  $("numeroJeu").textContent = "Mot n°" + joues;
+  $("mot").textContent = m.mot;
+  $("themeMot").textContent = m.theme;
+  $("chrono").classList.remove("urgent");
+  $("arc").style.strokeDashoffset = 0;
+  $("secondes").textContent = duree;
+  afficher("jeu");
+  $("btnEpele").focus();
+  debut = performance.now();
+  dernierTic = null;
+  cancelAnimationFrame(rafId);
+  rafId = requestAnimationFrame(boucle);
+}
+
+function boucle(t){
+  const ecoule = (t - debut) / 1000;
+  const reste = Math.max(0, duree - ecoule);
+  const s = Math.ceil(reste);
+  $("secondes").textContent = s;
+  $("arc").style.strokeDashoffset = CIRC * (1 - reste / duree);
+  if (reste <= 5) $("chrono").classList.add("urgent");
+  if (s <= 3 && s > 0 && s !== dernierTic){ dernierTic = s; sonTic(); }
+  if (reste <= 0){ terminerMot(false); return; }
+  rafId = requestAnimationFrame(boucle);
+}
+
+function terminerMot(reussi){
+  cancelAnimationFrame(rafId);
+  dernierReussi = reussi;
+  if (reussi){ reussis++; sonBravo(); } else { sonFin(); }
+  majScores();
+  majEcranFin();
+  afficher("fin");
+  $("btnSuivant").focus();
+}
+
+function majEcranFin(){
+  const t = $("titreFin");
+  t.textContent = dernierReussi ? "¡Muy bien!" : "¡Tiempo!";
+  t.className = dernierReussi ? "ok" : "ko";
+  $("numFin").textContent = joues;
+  $("motFin").textContent = motCourant.mot;
+  $("btnSuivant").textContent = "Démarrer le mot n°" + (joues + 1);
+  $("btnCorriger").textContent = dernierReussi ? "Corriger : compter comme raté" : "Corriger : compter comme réussi";
+}
+
+function majScores(){
+  $("nbJoues").textContent = joues;
+  $("nbReussis").textContent = reussis;
+}
+
+/* =========================================================
+   BOUTONS ET CLAVIER
+   ========================================================= */
+$("btnDemarrerAccueil").onclick = demarrerMot;
+$("btnSuivant").onclick = demarrerMot;
+$("btnEpele").onclick = () => terminerMot(true);
+
+$("btnCorriger").onclick = () => {
+  reussis += dernierReussi ? -1 : 1;
+  dernierReussi = !dernierReussi;
+  majScores();
+  majEcranFin();
+};
+
+$("btnNouvellePartie").onclick = () => {
+  if (!confirm("Remettre les compteurs à zéro et recommencer ?")) return;
+  joues = 0; reussis = 0; pioche = []; motCourant = null;
+  majScores();
+  $("btnDemarrerAccueil").textContent = "Démarrer le mot n°1";
+  afficher("accueil");
+};
+
+$("btnPleinEcran").onclick = () => {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+  else document.exitFullscreen?.();
+};
+
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "TEXTAREA") return;
+  if (e.code === "Space" || e.code === "Enter"){
+    if (ecrans.jeu.classList.contains("actif")){ e.preventDefault(); terminerMot(true); }
+    else if (ecrans.fin.classList.contains("actif")){ e.preventDefault(); demarrerMot(); }
+    else if (ecrans.accueil.classList.contains("actif") && e.code === "Space" && e.target.tagName !== "INPUT" && e.target.tagName !== "BUTTON" && e.target.tagName !== "SUMMARY"){ e.preventDefault(); demarrerMot(); }
+  }
+});
+
+construireReglages();
+</script>
+</body>
+</html>

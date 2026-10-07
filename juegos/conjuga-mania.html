@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conjuga Manía</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --yellow:#ffd23f; --pink:#ff4fa3; --green:#22d38a; --red:#ff5a5f; --blue:#38bdf8; --orange:#ff9f1c; --violet:#8b5cf6;
+  --ink:#2a1020; --card:#ffffff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{
+  font-family:'Fredoka',system-ui,-apple-system,"Segoe UI",sans-serif;color:#fff;overflow-x:hidden;min-height:100vh;
+  background:
+    radial-gradient(circle at 15% 8%,rgba(255,159,28,.45) 0,transparent 40%),
+    radial-gradient(circle at 85% 95%,rgba(255,210,63,.3) 0,transparent 38%),
+    linear-gradient(160deg,#3a0820,#8e1538 60%,#b3261e);
+  background-attachment:fixed;
+}
+body,button{touch-action:manipulation}
+.floaters{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.floaters span{position:absolute;font-weight:700;opacity:.08;animation:float 14s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-40px) rotate(15deg)}}
+.wrap{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:16px 16px 40px}
+.screen{display:none;animation:appear .35s ease}
+.screen.active{display:block}
+@keyframes appear{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.logo{text-align:center;margin:8px 0 18px}
+.logo h1{margin:0;font-size:clamp(2.4rem,8vw,3.6rem);line-height:1;
+  background:linear-gradient(90deg,var(--yellow),var(--orange),#fff);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 4px 0 rgba(0,0,0,.25))}
+.logo p{margin:6px 0 0;opacity:.88}
+.logo .ops{font-size:1.4rem;letter-spacing:8px;margin-bottom:4px}
+
+.panel{background:rgba(255,255,255,.09);border:2px solid rgba(255,255,255,.15);border-radius:24px;padding:18px;margin-bottom:16px;backdrop-filter:blur(4px)}
+.panel h2{margin:0 0 12px;font-size:1.15rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.panel h2 .step{background:var(--yellow);color:var(--ink);width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:.95rem}
+.panel h2 .hint{font-size:.85rem;font-weight:400;opacity:.8;margin-left:auto}
+input.name{width:100%;font:inherit;font-size:1.1rem;padding:12px 16px;border-radius:14px;border:3px solid transparent;outline:none;color:var(--ink)}
+input.name:focus{border-color:var(--yellow)}
+
+.choices{display:grid;gap:10px}
+.choices.c2{grid-template-columns:repeat(2,1fr)}
+.choices.c3{grid-template-columns:repeat(3,1fr)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+@media (max-width:560px){.choices.c3{grid-template-columns:1fr}}
+.choice{background:rgba(255,255,255,.1);border:3px solid rgba(255,255,255,.18);border-radius:18px;padding:12px 10px;text-align:center;cursor:pointer;color:#fff;font:inherit;transition:transform .12s,background .15s}
+.choice:hover{transform:translateY(-2px)}
+.choice .big{font-size:1.9rem;display:block;line-height:1.1}
+.choice .lbl{font-weight:600;font-size:1.05rem;display:block;margin-top:4px}
+.choice .sub{font-size:.82rem;opacity:.85;display:block;margin-top:2px}
+.choice.on{background:var(--yellow);border-color:#fff;color:var(--ink);box-shadow:0 6px 0 rgba(0,0,0,.25)}
+.chip{background:rgba(255,255,255,.1);border:3px solid rgba(255,255,255,.2);border-radius:999px;padding:8px 14px;color:#fff;font:inherit;font-weight:500;cursor:pointer;text-align:left;transition:transform .1s}
+.chip small{display:block;font-size:.72rem;opacity:.8;font-weight:400}
+.chip:hover{transform:translateY(-1px)}
+.chip.on{background:#fff;color:var(--ink);border-color:var(--c,#fff);box-shadow:0 4px 0 rgba(0,0,0,.25)}
+.chip.on::before{content:"✓ ";font-weight:700;color:var(--c,var(--green))}
+.chip.all{border-style:dashed}
+.toggle{display:flex;align-items:center;gap:10px;cursor:pointer;margin-top:12px;font-size:.95rem}
+.toggle input{width:22px;height:22px;accent-color:var(--yellow)}
+
+.btn{border:0;border-radius:18px;padding:14px 22px;font:inherit;font-weight:600;font-size:1.05rem;cursor:pointer;color:var(--ink);background:#fff;
+  box-shadow:0 6px 0 rgba(0,0,0,.28);transition:transform .08s,box-shadow .08s,filter .15s}
+.btn:hover{filter:brightness(1.06)}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.28)}
+.btn.play{display:block;width:100%;font-size:1.7rem;padding:18px;background:linear-gradient(90deg,var(--yellow),var(--orange))}
+.btn.ghost{background:rgba(255,255,255,.15);color:#fff}
+.btn.small{padding:8px 14px;font-size:.95rem;border-radius:12px;box-shadow:0 4px 0 rgba(0,0,0,.28)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.menu-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.record{font-size:.95rem;opacity:.9}
+.warn{color:var(--yellow);font-size:.95rem;min-height:1.2em;text-align:center;margin:8px 0 0}
+
+/* ---------- Jeu ---------- */
+.hud{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;margin-bottom:12px}
+.hud .left,.hud .right{display:flex;gap:8px;align-items:center}
+.hud .right{justify-content:flex-end}
+.pill{background:rgba(255,255,255,.14);border-radius:999px;padding:8px 14px;font-weight:600;white-space:nowrap}
+.scorebox{text-align:center}
+.scorebox .lbl{font-size:.8rem;opacity:.8;text-transform:uppercase;letter-spacing:2px}
+.scorebox .val{font-size:2.6rem;font-weight:700;line-height:1;color:var(--yellow);text-shadow:0 4px 0 rgba(0,0,0,.3);display:inline-block}
+.pop{animation:pop .35s ease}
+@keyframes pop{40%{transform:scale(1.35)}}
+.streak.hot{background:linear-gradient(90deg,var(--orange),var(--red));animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.07)}}
+.timer{position:relative;width:64px;height:64px}
+.timer svg{transform:rotate(-90deg)}
+.timer .t{position:absolute;inset:0;display:grid;place-items:center;font-weight:700}
+.timer.warn .t{color:var(--yellow);animation:pulse .5s infinite}
+.timer circle{fill:none;stroke-width:7}
+.timer .bg{stroke:rgba(255,255,255,.18)}
+.timer .fg{stroke:var(--green);stroke-linecap:round;transition:stroke-dashoffset .25s linear,stroke .3s}
+.rankbar{margin-bottom:14px}
+.rankbar .row{display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:5px;gap:8px}
+.bar{height:12px;background:rgba(255,255,255,.15);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--yellow),var(--orange));border-radius:999px;transition:width .4s}
+
+.qcard{position:relative;background:var(--card);color:var(--ink);border-radius:28px;padding:18px 16px 18px;text-align:center;box-shadow:0 10px 0 rgba(0,0,0,.25)}
+.qtop{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.tense{background:var(--violet);color:#fff;border-radius:14px;padding:5px 12px;font-weight:600;font-size:.95rem;text-align:left;line-height:1.15}
+.tense small{display:block;font-weight:400;font-size:.75rem;opacity:.9}
+.ptag{background:#2a1020;color:var(--yellow);border-radius:999px;padding:5px 12px;font-weight:700;font-size:.9rem;white-space:nowrap}
+.catchip{display:inline-block;margin-top:12px;border-radius:999px;padding:4px 14px;font-weight:600;font-size:.9rem;color:#fff;transition:opacity .2s}
+.catchip.hidden{opacity:0}
+.verb{font-size:clamp(2rem,8vw,3.2rem);font-weight:700;margin-top:6px;line-height:1.1}
+.verb small{display:block;font-size:1rem;font-weight:400;color:#8a6a7a}
+.line{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.pron{font-size:clamp(1.3rem,5vw,1.8rem);font-weight:600;color:#b3261e}
+#ans{font:inherit;font-size:clamp(1.5rem,6vw,2.2rem);font-weight:700;color:var(--violet);width:min(100%,320px);text-align:center;
+  border:0;border-bottom:5px dashed #e6c9d5;outline:none;padding:4px 8px;background:transparent}
+#ans:focus{border-bottom-color:var(--orange)}
+.blank{font-size:clamp(1.5rem,6vw,2.2rem);font-weight:700;color:#e6c9d5}
+.qcard.good{box-shadow:0 10px 0 rgba(0,0,0,.25),0 0 0 6px var(--green)}
+.qcard.bad{box-shadow:0 10px 0 rgba(0,0,0,.25),0 0 0 6px var(--red);animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+.feedback{min-height:1.5em;margin-top:10px;font-weight:600;font-size:1.1rem}
+.feedback.good{color:#0f9b62}.feedback.bad{color:#d62839}
+.feedback .rule{display:block;font-weight:400;font-size:.92rem;color:#5a3a4a;margin-top:6px;background:#fff4dc;border-radius:12px;padding:8px 10px;text-align:left}
+
+.typing{margin-top:14px}
+.accents{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.acc{font:inherit;font-size:1.4rem;font-weight:700;width:48px;height:48px;border:0;border-radius:14px;background:rgba(255,255,255,.92);color:var(--ink);cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.3)}
+.acc:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.3)}
+.validate{display:block;margin:14px auto 0;background:var(--green);color:#fff;font-size:1.3rem;min-width:200px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.opt{font:inherit;font-size:clamp(1.15rem,4.5vw,1.5rem);font-weight:700;padding:16px 8px;border:0;border-radius:18px;background:rgba(255,255,255,.94);color:var(--ink);cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.3);transition:transform .06s}
+.opt:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.3)}
+.opt .n{display:inline-block;font-size:.75rem;background:#f1e3ea;border-radius:6px;padding:1px 6px;margin-right:6px;vertical-align:middle;color:#8a6a7a}
+.opt.right{background:var(--green);color:#fff}
+.opt.wrong{background:var(--red);color:#fff}
+.game-foot{display:flex;justify-content:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+
+.floatpts{position:fixed;font-weight:700;font-size:2.2rem;color:var(--yellow);pointer-events:none;text-shadow:0 3px 0 rgba(0,0,0,.35);animation:rise 1s ease forwards;z-index:50}
+@keyframes rise{to{transform:translateY(-90px) scale(1.2);opacity:0}}
+.banner{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%) scale(.5);font-size:clamp(1.6rem,7vw,3rem);font-weight:700;
+  background:linear-gradient(90deg,var(--pink),var(--orange));padding:14px 28px;border-radius:22px;box-shadow:0 8px 0 rgba(0,0,0,.3);
+  pointer-events:none;opacity:0;z-index:60;white-space:nowrap}
+.banner.show{animation:bannerIn 1.4s ease forwards}
+@keyframes bannerIn{15%{opacity:1;transform:translate(-50%,-50%) scale(1.1) rotate(-3deg)}25%{transform:translate(-50%,-50%) scale(1) rotate(0)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-70%) scale(1)}}
+.countdown{position:fixed;inset:0;display:none;place-items:center;background:rgba(40,5,20,.6);z-index:70}
+.countdown.show{display:grid}
+.countdown span{font-size:8rem;font-weight:700;color:var(--yellow);text-shadow:0 8px 0 rgba(0,0,0,.35);animation:pop .6s ease}
+
+/* ---------- Résultats ---------- */
+.result{text-align:center}
+.badge{font-size:5rem;line-height:1;animation:pop .8s ease}
+.result h2{margin:6px 0 2px;font-size:clamp(1.8rem,6vw,2.5rem);color:var(--yellow)}
+.result .who{opacity:.88;margin-bottom:12px}
+.final{font-size:4rem;font-weight:700;line-height:1;text-shadow:0 5px 0 rgba(0,0,0,.3)}
+.final small{font-size:1.3rem;opacity:.8}
+.newrec{display:inline-block;margin-top:10px;background:var(--pink);padding:6px 16px;border-radius:999px;font-weight:700;animation:pulse 1s infinite}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}
+@media (max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:rgba(255,255,255,.12);border-radius:18px;padding:12px}
+.stat b{display:block;font-size:1.8rem}
+.stat span{font-size:.85rem;opacity:.85}
+.review{text-align:left}
+.review ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.review li{background:rgba(255,255,255,.12);border-radius:12px;padding:8px 12px;line-height:1.35}
+.review li .ok{color:#7dffc4;font-weight:700}
+.review li .ko{color:#ffc2c5;text-decoration:line-through}
+.review li small{opacity:.8}
+.result .actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+
+/* ---------- Modales ---------- */
+.modal{position:fixed;inset:0;background:rgba(40,5,20,.72);display:none;place-items:center;z-index:80;padding:16px}
+.modal.show{display:grid}
+.modal .box{background:#fff;color:var(--ink);border-radius:24px;max-width:720px;width:100%;max-height:88vh;overflow:auto;padding:20px}
+.modal h3{margin:0 0 10px}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{padding:6px 8px;border-bottom:1px solid #f1e3ea;text-align:left}
+th{background:#fbf1f5}
+td.pts{font-weight:700;color:#b3261e;text-align:center}
+.ranks{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px;margin-top:8px}
+.ranks div{background:#fbf1f5;border-radius:10px;padding:6px 10px;font-size:.9rem}
+.vsearch{width:100%;font:inherit;padding:10px 14px;border-radius:12px;border:2px solid #ead3de;margin-bottom:10px}
+.vgroup h4{margin:12px 0 6px;display:flex;align-items:center;gap:8px}
+.vgroup h4 i{width:14px;height:14px;border-radius:50%;display:inline-block}
+.vlist{display:flex;flex-wrap:wrap;gap:6px}
+.vbtn{font:inherit;font-size:.9rem;border:0;background:#fbf1f5;border-radius:10px;padding:5px 10px;cursor:pointer;color:var(--ink)}
+.vbtn:hover{background:#ffe7b0}
+.vbtn small{color:#8a6a7a}
+.ctable{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.ctable div{background:#fbf1f5;border-radius:12px;padding:8px 10px;font-size:.92rem}
+.ctable b{display:block;color:#b3261e;margin-bottom:4px}
+.ctable span{color:#8a6a7a}
+.modal-foot{text-align:right;margin-top:12px;position:sticky;bottom:-20px;background:#fff;padding:8px 0}
+
+.topbtns{position:fixed;top:10px;right:10px;display:flex;gap:6px;z-index:40}
+.icon{width:42px;height:42px;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;font-size:1.2rem;cursor:pointer}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:90}
+
+@media (max-width:600px){
+  .wrap{padding:58px 12px 24px}
+  .topbtns{position:absolute}
+  .icon{width:38px;height:38px;font-size:1.05rem}
+  .panel{padding:14px;border-radius:20px}
+  .scorebox .val{font-size:2.1rem}
+  .pill{padding:6px 10px;font-size:.9rem}
+  .timer,.timer svg{width:52px;height:52px}
+  .qcard{padding:14px 12px;border-radius:22px}
+  .acc{width:42px;height:42px;font-size:1.25rem}
+  .options{gap:10px}
+  .opt{padding:13px 6px}
+}
+</style>
+</head>
+<body>
+<div class="floaters" id="floaters"></div>
+<canvas id="confetti"></canvas>
+<div class="topbtns">
+  <button class="icon" id="soundBtn" title="Son">🔊</button>
+  <button class="icon" id="fsBtn" title="Plein écran">⛶</button>
+</div>
+
+<div class="wrap">
+<!-- ================= MENU ================= -->
+<section class="screen active" id="menu">
+  <div class="logo">
+    <div class="ops">¡ ñ ¿ á é</div>
+    <h1>Conjuga Manía</h1>
+    <p>¡Entrénate con los verbos españoles!</p>
+  </div>
+
+  <div class="panel">
+    <h2><span class="step">1</span> Ton prénom (ou pseudo)</h2>
+    <input class="name" id="name" maxlength="20" placeholder="Ex. : Lucía" autocomplete="off">
+  </div>
+
+  <div class="panel">
+    <h2><span class="step">2</span> Mode de jeu</h2>
+    <div class="choices c2" id="modes">
+      <button class="choice" data-mode="train"><span class="big">🎯</span><span class="lbl">Entraînement</span><span class="sub">Score, sans chrono</span></button>
+      <button class="choice" data-mode="challenge"><span class="big">⏱️</span><span class="lbl">Challenge</span><span class="sub">Un max de verbes en 3 min</span></button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2><span class="step">3</span> Niveau</h2>
+    <div class="choices c3" id="levels">
+      <button class="choice" data-level="1"><span class="big">⭐</span><span class="lbl">Débutant</span><span class="sub">QCM, 4 propositions</span></button>
+      <button class="choice" data-level="2"><span class="big">⭐⭐</span><span class="lbl">Confirmé</span><span class="sub">Je tape, accents tolérés</span></button>
+      <button class="choice" data-level="3"><span class="big">⭐⭐⭐</span><span class="lbl">Expert</span><span class="sub">Je tape, accents exigés</span></button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2><span class="step">4</span> Temps et modes</h2>
+    <div class="chips" id="tenses"></div>
+  </div>
+
+  <div class="panel">
+    <h2><span class="step">5</span> Types de verbes <span class="hint" id="verbCount"></span></h2>
+    <div class="chips" id="cats"></div>
+  </div>
+
+  <button class="btn play" id="playBtn">¡VAMOS! 🚀</button>
+  <p class="warn" id="warn"></p>
+  <div class="menu-foot">
+    <span class="record" id="menuRecord"></span>
+    <span style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn small ghost" id="verbsBtn">📖 Liste des verbes</button>
+      <button class="btn small ghost" id="baremeBtn">📋 Barème & titres</button>
+    </span>
+  </div>
+</section>
+
+<!-- ================= JEU ================= -->
+<section class="screen" id="game">
+  <div class="hud">
+    <div class="left"><span class="pill streak" id="streak">🔥 0</span></div>
+    <div class="scorebox"><div class="lbl">Puntos</div><div class="val" id="score">0</div></div>
+    <div class="right">
+      <div class="timer" id="timer">
+        <svg width="64" height="64" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="27"/><circle class="fg" id="ring" cx="32" cy="32" r="27"/></svg>
+        <div class="t" id="timeTxt">3:00</div>
+      </div>
+      <span class="pill" id="counter" style="display:none">✅ 0 / 0</span>
+    </div>
+  </div>
+
+  <div class="rankbar">
+    <div class="row"><span id="rankNow"></span><span id="rankNext"></span></div>
+    <div class="bar"><i id="rankFill"></i></div>
+  </div>
+
+  <div class="qcard" id="qcard">
+    <div class="qtop">
+      <div class="tense" id="tense">Présent<small>Presente</small></div>
+      <div class="ptag" id="ptag">+1</div>
+    </div>
+    <span class="catchip" id="catchip">Diphtongue</span>
+    <div class="verb" id="verb">pensar<small>penser</small></div>
+    <div class="line">
+      <span class="pron" id="pron">yo</span>
+      <input id="ans" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-label="Ta réponse">
+      <span class="blank" id="blank">…</span>
+    </div>
+    <div class="feedback" id="feedback" aria-live="polite"></div>
+  </div>
+
+  <div class="typing" id="typing">
+    <div class="accents">
+      <button class="acc" data-c="á">á</button><button class="acc" data-c="é">é</button><button class="acc" data-c="í">í</button>
+      <button class="acc" data-c="ó">ó</button><button class="acc" data-c="ú">ú</button><button class="acc" data-c="ñ">ñ</button><button class="acc" data-c="ü">ü</button>
+    </div>
+    <button class="btn validate" id="validate">Valider ✓</button>
+  </div>
+  <div class="options" id="options"></div>
+
+  <div class="game-foot">
+    <button class="btn small ghost" id="nextBtn" style="display:none">Suivant ➜</button>
+    <button class="btn small ghost" id="skipBtn">⏭️ Passer</button>
+    <button class="btn small ghost" id="stopBtn">🏁 Terminer</button>
+  </div>
+</section>
+
+<!-- ================= RÉSULTATS ================= -->
+<section class="screen" id="end">
+  <div class="panel result">
+    <div class="badge" id="endBadge">🏆</div>
+    <h2 id="endTitle"></h2>
+    <div class="who" id="endWho"></div>
+    <div class="final"><span id="endScore">0</span> <small>puntos</small></div>
+    <div id="endRec"></div>
+    <div class="stats">
+      <div class="stat"><b id="stGood">0</b><span>bonnes réponses</span></div>
+      <div class="stat"><b id="stBad">0</b><span>erreurs</span></div>
+      <div class="stat"><b id="stPct">0 %</b><span>de réussite</span></div>
+      <div class="stat"><b id="stStreak">0</b><span>meilleure série</span></div>
+    </div>
+    <div class="review" id="review"></div>
+    <div class="actions">
+      <button class="btn play" style="width:auto" id="againBtn">🔁 Rejouer</button>
+      <button class="btn ghost" id="menuBtn">🏠 Menu</button>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="countdown" id="countdown"><span id="cdNum">3</span></div>
+<div class="banner" id="banner"></div>
+
+<div class="modal" id="baremeModal">
+  <div class="box">
+    <h3>📋 Barème des points</h3>
+    <p style="margin-top:0">Points = (type de verbe + bonus du temps) × multiplicateur du niveau.</p>
+    <div id="baremeTable"></div>
+    <p><b>Bonus série :</b> 5 bonnes réponses d'affilée = <b>+3</b> 🎉, 10 d'affilée = <b>+5</b> 🎊 (et ainsi de suite).</p>
+    <h3>🏅 Les titres à débloquer</h3>
+    <div class="ranks" id="ranksList"></div>
+    <div class="modal-foot"><button class="btn small" data-close style="background:#b3261e;color:#fff">Fermer</button></div>
+  </div>
+</div>
+
+<div class="modal" id="verbsModal">
+  <div class="box" id="verbsBox"></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[rand(0,a.length-1)];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const store={
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+// Retire les accents (á é í ó ú ü) mais garde le ñ
+const deacc=s=>s.normalize('NFD').replace(/[\u0300\u0301\u0308]/g,'').normalize('NFC');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* =====================================================================
+   BASE DE VERBES — format « infinitif:traduction », séparés par des virgules.
+   Pour ajouter un verbe, il suffit de l'écrire dans la bonne catégorie.
+   ===================================================================== */
+const DATA={
+  reg:`hablar:parler, cantar:chanter, bailar:danser, trabajar:travailler, estudiar:étudier, escuchar:écouter, mirar:regarder,
+    comprar:acheter, tomar:prendre, llamar:appeler, ayudar:aider, cocinar:cuisiner, viajar:voyager, visitar:visiter,
+    preparar:préparer, desayunar:prendre le petit-déjeuner, cenar:dîner, nadar:nager, caminar:marcher, dibujar:dessiner,
+    ganar:gagner, terminar:terminer, entrar:entrer, esperar:attendre, necesitar:avoir besoin de, olvidar:oublier, lavar:laver,
+    limpiar:nettoyer, usar:utiliser, amar:aimer, descansar:se reposer, pasar:passer, regresar:revenir, contestar:répondre,
+    preguntar:demander, llevar:porter, dejar:laisser, enseñar:enseigner, saltar:sauter, charlar:bavarder, invitar:inviter,
+    alquilar:louer, cambiar:changer, bajar:descendre, ordenar:ranger, montar:monter,
+    comer:manger, beber:boire, aprender:apprendre, comprender:comprendre, correr:courir, vender:vendre, deber:devoir,
+    responder:répondre, romper:casser, meter:mettre, temer:craindre, barrer:balayer, coser:coudre, prometer:promettre,
+    sorprender:surprendre, esconder:cacher,
+    vivir:vivre, escribir:écrire, abrir:ouvrir, recibir:recevoir, subir:monter, decidir:décider, compartir:partager,
+    describir:décrire, discutir:discuter, permitir:permettre, cumplir:accomplir, existir:exister, asistir:assister,
+    sufrir:souffrir, añadir:ajouter, insistir:insister, imprimir:imprimer`,
+  ortho:`buscar:chercher, tocar:toucher, sacar:sortir (qqch), explicar:expliquer, practicar:pratiquer, secar:sécher,
+    marcar:marquer, indicar:indiquer, pescar:pêcher, aparcar:se garer, fabricar:fabriquer, comunicar:communiquer,
+    llegar:arriver, pagar:payer, navegar:naviguer, entregar:remettre, apagar:éteindre, cargar:charger, pegar:coller,
+    obligar:obliger, castigar:punir,
+    cruzar:traverser, organizar:organiser, utilizar:utiliser, realizar:réaliser, lanzar:lancer, alcanzar:atteindre,
+    abrazar:serrer dans ses bras, analizar:analyser, rezar:prier, aterrizar:atterrir,
+    coger:prendre, escoger:choisir, recoger:ramasser, proteger:protéger, dirigir:diriger, exigir:exiger, fingir:faire semblant,
+    vencer:vaincre, convencer:convaincre, ejercer:exercer, distinguir:distinguer,
+    leer:lire, creer:croire, poseer:posséder`,
+  dipht:`pensar:penser, cerrar:fermer, empezar:commencer, comenzar:commencer, despertar:réveiller, sentar:asseoir,
+    calentar:chauffer, recomendar:recommander, merendar:goûter, negar:nier, entender:comprendre, perder:perdre,
+    defender:défendre, encender:allumer,
+    contar:compter / raconter, encontrar:trouver, recordar:se souvenir, mostrar:montrer, costar:coûter, soñar:rêver,
+    volar:voler (dans l'air), probar:goûter / essayer, almorzar:déjeuner, colgar:accrocher, sonar:sonner, aprobar:réussir (un examen),
+    volver:revenir, devolver:rendre, mover:bouger, morder:mordre, resolver:résoudre, jugar:jouer`,
+  alt:`sentir:sentir, preferir:préférer, mentir:mentir, sugerir:suggérer, divertir:divertir, convertir:convertir,
+    herir:blesser, advertir:avertir, consentir:consentir, arrepentir:regretter, dormir:dormir, morir:mourir`,
+  affai:`pedir:demander, repetir:répéter, servir:servir, vestir:habiller, seguir:suivre, conseguir:obtenir, elegir:choisir,
+    corregir:corriger, medir:mesurer, despedir:congédier, impedir:empêcher, competir:rivaliser, gemir:gémir, perseguir:poursuivre`,
+  zc:`conocer:connaître, parecer:sembler, ofrecer:offrir, agradecer:remercier, crecer:grandir, nacer:naître, obedecer:obéir,
+    desaparecer:disparaître, merecer:mériter, pertenecer:appartenir, reconocer:reconnaître, aparecer:apparaître,
+    establecer:établir, conducir:conduire, traducir:traduire, producir:produire, reducir:réduire, introducir:introduire`,
+  uir:`destruir:détruire, construir:construire, incluir:inclure, concluir:conclure, contribuir:contribuer,
+    distribuir:distribuer, sustituir:remplacer, disminuir:diminuer, atribuir:attribuer, instruir:instruire`
+};
+// Verbes irréguliers : formes données à la main (le reste est calculé)
+const IRR={
+  ser:{fr:'être',pres:['soy','eres','es','somos','sois','son'],impf:['era','eras','era','éramos','erais','eran'],
+       pret:['fui','fuiste','fue','fuimos','fuisteis','fueron'],subj:'se',imp:'sé'},
+  estar:{fr:'être (état, lieu)',pres:['estoy','estás','está','estamos','estáis','están'],
+       pret:['estuve','estuviste','estuvo','estuvimos','estuvisteis','estuvieron'],subj:['esté','estés','esté','estemos','estéis','estén']},
+  ir:{fr:'aller',pres:['voy','vas','va','vamos','vais','van'],impf:['iba','ibas','iba','íbamos','ibais','iban'],
+       pret:['fui','fuiste','fue','fuimos','fuisteis','fueron'],subj:'vay',imp:'ve',impNos:'vamos',altNos:'vayamos'},
+  tener:{fr:'avoir',pres:['tengo','tienes','tiene','tenemos','tenéis','tienen'],
+       pret:['tuve','tuviste','tuvo','tuvimos','tuvisteis','tuvieron'],fut:'tendr',subj:'teng',imp:'ten'},
+  venir:{fr:'venir',pres:['vengo','vienes','viene','venimos','venís','vienen'],
+       pret:['vine','viniste','vino','vinimos','vinisteis','vinieron'],fut:'vendr',subj:'veng',imp:'ven'},
+  hacer:{fr:'faire',pres:['hago','haces','hace','hacemos','hacéis','hacen'],
+       pret:['hice','hiciste','hizo','hicimos','hicisteis','hicieron'],fut:'har',subj:'hag',imp:'haz'},
+  decir:{fr:'dire',pres:['digo','dices','dice','decimos','decís','dicen'],
+       pret:['dije','dijiste','dijo','dijimos','dijisteis','dijeron'],fut:'dir',subj:'dig',imp:'di'},
+  poner:{fr:'mettre',pres:['pongo','pones','pone','ponemos','ponéis','ponen'],
+       pret:['puse','pusiste','puso','pusimos','pusisteis','pusieron'],fut:'pondr',subj:'pong',imp:'pon'},
+  salir:{fr:'sortir',pres:['salgo','sales','sale','salimos','salís','salen'],fut:'saldr',subj:'salg',imp:'sal'},
+  poder:{fr:'pouvoir',pres:['puedo','puedes','puede','podemos','podéis','pueden'],
+       pret:['pude','pudiste','pudo','pudimos','pudisteis','pudieron'],fut:'podr',
+       subj:['pueda','puedas','pueda','podamos','podáis','puedan'],noImp:true},
+  querer:{fr:'vouloir / aimer',pres:['quiero','quieres','quiere','queremos','queréis','quieren'],
+       pret:['quise','quisiste','quiso','quisimos','quisisteis','quisieron'],fut:'querr',
+       subj:['quiera','quieras','quiera','queramos','queráis','quieran'],noImp:true},
+  saber:{fr:'savoir',pres:['sé','sabes','sabe','sabemos','sabéis','saben'],
+       pret:['supe','supiste','supo','supimos','supisteis','supieron'],fut:'sabr',subj:'sep'},
+  dar:{fr:'donner',pres:['doy','das','da','damos','dais','dan'],pret:['di','diste','dio','dimos','disteis','dieron'],
+       subj:['dé','des','dé','demos','deis','den']},
+  ver:{fr:'voir',pres:['veo','ves','ve','vemos','veis','ven'],impf:['veía','veías','veía','veíamos','veíais','veían'],
+       pret:['vi','viste','vio','vimos','visteis','vieron'],subj:'ve'},
+  traer:{fr:'apporter',pres:['traigo','traes','trae','traemos','traéis','traen'],
+       pret:['traje','trajiste','trajo','trajimos','trajisteis','trajeron'],subj:'traig'},
+  caer:{fr:'tomber',pres:['caigo','caes','cae','caemos','caéis','caen'],pret:['caí','caíste','cayó','caímos','caísteis','cayeron'],subj:'caig'},
+  'oír':{fr:'entendre',pres:['oigo','oyes','oye','oímos','oís','oyen'],pret:['oí','oíste','oyó','oímos','oísteis','oyeron'],fut:'oir',subj:'oig'},
+  andar:{fr:'marcher',pret:['anduve','anduviste','anduvo','anduvimos','anduvisteis','anduvieron']}
+};
+
+const CATS={
+  reg:{name:'Strictement réguliers',ex:'hablar, comer, vivir',color:'#22d38a',pts:1},
+  ortho:{name:'Réguliers à modif. orthographique',ex:'buscar, llegar, coger, leer',color:'#38bdf8',pts:2},
+  dipht:{name:'Diphtongue',ex:'pensar, contar, jugar',color:'#ff9f1c',pts:2},
+  alt:{name:'Alternance',ex:'sentir, dormir, morir',color:'#eab308',pts:3},
+  affai:{name:'Affaiblissement',ex:'pedir, seguir',color:'#ff4fa3',pts:2},
+  zc:{name:'Type conocer / conducir',ex:'c → zc',color:'#8b5cf6',pts:2},
+  uir:{name:'Type destruir',ex:'-uir → -uy-',color:'#14b8a6',pts:2},
+  irr:{name:'Irréguliers',ex:'ser, ir, tener…',color:'#ef4444',pts:3}
+};
+const TENSES={
+  pres:{fr:'Présent de l\'indicatif',es:'Presente de indicativo',pts:0,color:'#8b5cf6'},
+  impf:{fr:'Imparfait',es:'Pretérito imperfecto',pts:0,color:'#0ea5e9'},
+  pret:{fr:'Passé simple',es:'Pretérito indefinido',pts:1,color:'#e11d48'},
+  fut:{fr:'Futur',es:'Futuro',pts:0,color:'#16a34a'},
+  cond:{fr:'Conditionnel',es:'Condicional',pts:0,color:'#0d9488'},
+  subj:{fr:'Subjonctif présent',es:'Presente de subjuntivo',pts:1,color:'#c026d3'},
+  subjimpf:{fr:'Subjonctif imparfait',es:'Imperfecto de subjuntivo',pts:2,color:'#7c2d12'},
+  imper:{fr:'Impératif',es:'Imperativo afirmativo',pts:1,color:'#ea580c'}
+};
+const LEVELS={1:{name:'Débutant',mult:1},2:{name:'Confirmé',mult:2},3:{name:'Expert',mult:3}};
+const PRON=['yo','tú','él / ella / usted','nosotros / nosotras','vosotros / vosotras','ellos / ellas / ustedes'];
+const PRON_IMP=['','(tú)','(usted)','(nosotros)','(vosotros)','(ustedes)'];
+const RANKS=[[0,'🌱','Principiante'],[15,'📘','Aprendiz'],[40,'⚡','Conjugador rápido'],[80,'🧠','Experto en verbos'],
+  [130,'🚀','Crack de la conjugación'],[200,'🏆','Campeón del español'],[300,'👑','Leyenda de los verbos']];
+
+/* ---------- Construction de la liste ---------- */
+const VERBS=[];
+for(const cat in DATA) DATA[cat].split(',').map(s=>s.trim()).filter(Boolean).forEach(s=>{
+  const i=s.indexOf(':');VERBS.push({inf:s.slice(0,i).trim(),fr:s.slice(i+1).trim(),cat});
+});
+for(const inf in IRR) VERBS.push({inf,fr:IRR[inf].fr,cat:'irr',irr:IRR[inf]});
+
+/* =====================================================================
+   MOTEUR DE CONJUGAISON
+   ===================================================================== */
+const END={
+  ar:{pres:['o','as','a','amos','áis','an'],impf:['aba','abas','aba','ábamos','abais','aban'],
+      pret:['é','aste','ó','amos','asteis','aron'],subj:['e','es','e','emos','éis','en']},
+  er:{pres:['o','es','e','emos','éis','en'],impf:['ía','ías','ía','íamos','íais','ían'],
+      pret:['í','iste','ió','imos','isteis','ieron'],subj:['a','as','a','amos','áis','an']},
+  ir:{pres:['o','es','e','imos','ís','en'],impf:['ía','ías','ía','íamos','íais','ían'],
+      pret:['í','iste','ió','imos','isteis','ieron'],subj:['a','as','a','amos','áis','an']}
+};
+const FUT=['é','ás','á','emos','éis','án'], COND=['ía','ías','ía','íamos','íais','ían'];
+const grp=inf=>deacc(inf).slice(-2);
+const stemOf=inf=>inf.slice(0,-2);
+
+// Diphtongue / affaiblissement sur la dernière voyelle e ou o du radical
+function changeStem(v,s,kind){
+  let i=-1;
+  if(v.inf==='jugar') i=s.lastIndexOf('u');
+  else for(let k=s.length-1;k>=0;k--){if(s[k]==='e'||s[k]==='o'){i=k;break}}
+  if(i<0) return s;
+  const c=s[i];let r;
+  if(kind==='strong') r=(c==='o'||c==='u')?'ue':(v.cat==='affai'?'i':'ie');
+  else r=c==='o'?'u':'i';
+  return s.slice(0,i)+r+s.slice(i+1);
+}
+function stemFor(v,t,p){
+  let s=stemOf(v.inf);const g=grp(v.inf);
+  if(v.cat==='dipht'||v.cat==='affai'||v.cat==='alt'){
+    const stressed=[0,1,2,5].includes(p);
+    if(t==='pres'&&stressed) s=changeStem(v,s,'strong');
+    else if(t==='subj'){ if(stressed) s=changeStem(v,s,'strong'); else if(g==='ir') s=changeStem(v,s,'weak'); }
+    else if(t==='pret'&&g==='ir'&&(p===2||p===5)) s=changeStem(v,s,'weak');
+  }
+  return s;
+}
+// Assemble radical + terminaison avec les règles orthographiques
+function join(v,s,e){
+  const g=grp(v.inf),f=deacc(e[0]||'');
+  if(g==='ar'){
+    if(f==='e'){
+      if(/c$/.test(s)) s=s.slice(0,-1)+'qu';
+      else if(/g$/.test(s)) s=s+'u';
+      else if(/z$/.test(s)) s=s.slice(0,-1)+'c';
+    }
+    return s+e;
+  }
+  if(f==='a'||f==='o'){
+    if(/gu$/.test(s)&&/guir$/.test(v.inf)) s=s.slice(0,-1);
+    else if(/g$/.test(s)) s=s.slice(0,-1)+'j';
+    else if(/c$/.test(s)){
+      if(v.cat==='zc') s=s.slice(0,-1)+'zc';
+      else if(/[^aeiouáéíóú]c$/.test(s)) s=s.slice(0,-1)+'z';
+    }
+  }
+  if(v.cat==='uir'){
+    if('aeo'.includes(f)) s+='y';
+    else if(e[0]==='i'&&e.length>1&&'aeo'.includes(deacc(e[1]))) e='y'+e.slice(1);
+  }else if(/[aeo]$/.test(s)&&e[0]==='i'){
+    e=(e.length>1&&'aeo'.includes(deacc(e[1])))?'y'+e.slice(1):'í'+e.slice(1);
+  }
+  return s+e;
+}
+function conj(v,t,p){
+  const I=v.irr||{},g=grp(v.inf);
+  if(Array.isArray(I[t])) return I[t][p];
+  switch(t){
+    case 'pres':case 'impf':case 'pret':
+      if(t==='pret'&&v.cat==='zc'&&/ducir$/.test(v.inf))
+        return v.inf.slice(0,-3)+'j'+['e','iste','o','imos','isteis','eron'][p];
+      return join(v,stemFor(v,t,p),END[g][t][p]);
+    case 'subj':
+      if(typeof I.subj==='string') return I.subj+END.er.subj[p];
+      return join(v,stemFor(v,t,p),END[g].subj[p]);
+    case 'fut': return (I.fut||deacc(v.inf))+FUT[p];
+    case 'cond': return (I.fut||deacc(v.inf))+COND[p];
+    case 'subjimpf':{
+      const b=conj(v,'pret',5).slice(0,-3);
+      if(p===3) return b.slice(0,-1)+(b.slice(-1)==='a'?'á':'é')+'ramos';
+      return b+['ra','ras','ra','','rais','ran'][p];
+    }
+    case 'imper':
+      if(p===1) return I.imp||conj(v,'pres',2);
+      if(p===3&&I.impNos) return I.impNos;
+      if(p===4) return v.inf.slice(0,-1)+'d';
+      return conj(v,'subj',p);
+  }
+}
+function alternatives(v,t,p){
+  if(t==='subjimpf'){
+    const b=conj(v,'pret',5).slice(0,-3);
+    if(p===3) return [b.slice(0,-1)+(b.slice(-1)==='a'?'á':'é')+'semos'];
+    return [b+['se','ses','se','','seis','sen'][p]];
+  }
+  if(t==='imper'&&p===3&&v.irr&&v.irr.altNos) return [v.irr.altNos];
+  return [];
+}
+const canTense=(v,t)=>!(t==='imper'&&v.irr&&v.irr.noImp);
+
+/* ---------- Étiquettes et règles ---------- */
+function subLabel(v){
+  const g=grp(v.inf),inf=v.inf;
+  switch(v.cat){
+    case 'dipht':{
+      if(inf==='jugar') return 'Diphtongue u → ue';
+      const s=stemOf(inf);let c='e';for(let k=s.length-1;k>=0;k--){if(s[k]==='e'||s[k]==='o'){c=s[k];break}}
+      return 'Diphtongue '+(c==='o'?'o → ue':'e → ie')+(g==='ir'?' (verbe en -ir)':'');
+    }
+    case 'affai': return 'Affaiblissement e → i';
+    case 'alt':{
+      const s=stemOf(inf);let c='e';for(let k=s.length-1;k>=0;k--){if(s[k]==='e'||s[k]==='o'){c=s[k];break}}
+      return 'Alternance '+(c==='o'?'o → ue / u':'e → ie / i');
+    }
+    case 'ortho':
+      if(/car$/.test(inf)) return 'Orthographe c → qu';
+      if(/gar$/.test(inf)) return 'Orthographe g → gu';
+      if(/zar$/.test(inf)) return 'Orthographe z → c';
+      if(/guir$/.test(inf)) return 'Orthographe gu → g';
+      if(/g[ei]r$/.test(inf)) return 'Orthographe g → j';
+      if(/c[ei]r$/.test(inf)) return 'Orthographe c → z';
+      if(/[aeo]er$/.test(inf)) return 'Orthographe i → y (type leer)';
+      return 'Modif. orthographique';
+    case 'zc': return /ducir$/.test(inf)?'Type conducir (c → zc, passé en -uje)':'Type conocer (c → zc)';
+    case 'uir': return 'Type destruir (ajout d\'un y)';
+    case 'irr': return 'Irrégulier';
+    default: return 'Régulier';
+  }
+}
+// Étiquette courte (niveaux Confirmé et Expert) : seulement la famille du verbe
+function family(v){
+  const c=['ortho','zc','uir'].includes(v.cat)?'ortho':v.cat;
+  const names={reg:'Régulier',ortho:'Modification orthographique',dipht:'Diphtongue',affai:'Affaiblissement',alt:'Alternance',irr:'Irrégulier'};
+  return {name:names[c],color:CATS[c].color};
+}
+function rule(v){
+  const g=grp(v.inf),inf=v.inf;
+  switch(v.cat){
+    case 'reg': return 'Verbe régulier : radical + terminaison du groupe -'+g+'.';
+    case 'ortho':
+      if(/car$/.test(inf)) return 'Le c devient qu devant e pour garder le son [k] : busqué, busque.';
+      if(/gar$/.test(inf)) return 'Le g devient gu devant e pour garder le son [g] : llegué, llegue.';
+      if(/zar$/.test(inf)) return 'Le z devient c devant e : crucé, cruce.';
+      if(/guir$/.test(inf)) return 'Le gu devient g devant a et o : distingo, distinga.';
+      if(/g[ei]r$/.test(inf)) return 'Le g devient j devant a et o pour garder le son de la jota : cojo, coja.';
+      if(/[aeo]er$/.test(inf)) return 'Au passé simple, le i devient y entre deux voyelles (leyó, leyeron) et prend un accent ailleurs (leíste, leímos).';
+      return 'Le c devient z devant a et o : venzo, venza.';
+    case 'dipht':{
+      let r=(inf==='jugar'?'u → ue':subLabel(v).includes('o →')?'o → ue':'e → ie')+
+        ' quand l\'accent tonique tombe sur le radical : yo, tú, él, ellos au présent de l\'indicatif et du subjonctif (et tú à l\'impératif).';
+      if(g==='ir') r+=' Verbe en -ir : e → i / o → u aussi au passé simple (él, ellos), au subjonctif présent (nosotros, vosotros) et à tout le subjonctif imparfait.';
+      return r;
+    }
+    case 'alt':{
+      const o=subLabel(v).includes('o →');
+      return (o?'o → ue':'e → ie')+' quand l\'accent tombe sur le radical (yo, tú, él, ellos au présent de l\'indicatif et du subjonctif, tú à l\'impératif), mais '+
+        (o?'o → u':'e → i')+' au passé simple (él, ellos), au subjonctif présent (nosotros, vosotros) et à tout le subjonctif imparfait : '+
+        (o?'duermo, durmió, durmamos.':'siento, sintió, sintamos.');
+    }
+    case 'affai': return 'e → i au présent (sauf nosotros, vosotros), à tout le subjonctif présent, au passé simple (él, ellos) et à tout le subjonctif imparfait.';
+    case 'zc': return 'Le c devient zc devant a et o : conozco, conozca.'+(/ducir$/.test(inf)?' Passé simple irrégulier en -uje : conduje, condujo, condujeron.':'');
+    case 'uir': return 'On ajoute un y devant a, e, o (destruyo, destruye) et le i devient y entre deux voyelles au passé (destruyó, destruyeron).';
+    case 'irr': return 'Verbe irrégulier : cette forme est à connaître par cœur.';
+  }
+}
+
+/* ---------- Réglages & menu ---------- */
+let settings=Object.assign({name:'',mode:'train',level:1,tenses:['pres'],cats:['reg','dipht']},store.get('cj_settings',{}));
+settings.cats=settings.cats.filter(c=>c in CATS);if(!settings.cats.length) settings.cats=['reg'];delete settings.vos;
+const recKey=()=>`cj_rec_${settings.mode}_${settings.level}_${[...settings.tenses].sort().join('-')}_${[...settings.cats].sort().join('-')}`;
+
+function buildChips(){
+  $('#tenses').innerHTML=Object.entries(TENSES).map(([k,t])=>`<button class="chip" data-t="${k}" style="--c:${t.color}">${t.fr}<small>${t.es}</small></button>`).join('')
+    +`<button class="chip all" id="allT">Tous les temps</button>`;
+  $('#cats').innerHTML=Object.entries(CATS).map(([k,c])=>`<button class="chip" data-c="${k}" style="--c:${c.color}">${c.name}<small>${c.ex}</small></button>`).join('')
+    +`<button class="chip all" id="allC">Tous les types</button>`;
+  $$('#tenses [data-t]').forEach(b=>b.onclick=()=>{toggle('tenses',b.dataset.t);sfx.click()});
+  $$('#cats [data-c]').forEach(b=>b.onclick=()=>{toggle('cats',b.dataset.c);sfx.click()});
+  $('#allT').onclick=()=>{settings.tenses=settings.tenses.length===8?['pres']:Object.keys(TENSES);renderMenu();sfx.click()};
+  $('#allC').onclick=()=>{settings.cats=settings.cats.length===Object.keys(CATS).length?['reg']:Object.keys(CATS);renderMenu();sfx.click()};
+}
+function toggle(key,val){settings[key]=settings[key].includes(val)?settings[key].filter(x=>x!==val):[...settings[key],val];renderMenu()}
+function renderMenu(){
+  $('#name').value=settings.name||'';
+  $$('#modes .choice').forEach(b=>b.classList.toggle('on',b.dataset.mode===settings.mode));
+  $$('#levels .choice').forEach(b=>b.classList.toggle('on',+b.dataset.level===settings.level));
+  $$('#tenses [data-t]').forEach(b=>b.classList.toggle('on',settings.tenses.includes(b.dataset.t)));
+  $$('#cats [data-c]').forEach(b=>b.classList.toggle('on',settings.cats.includes(b.dataset.c)));
+  $('#allT').classList.toggle('on',settings.tenses.length===8);
+  $('#allC').classList.toggle('on',settings.cats.length===Object.keys(CATS).length);
+  const n=VERBS.filter(v=>settings.cats.includes(v.cat)).length;
+  $('#verbCount').textContent=n+' verbe'+(n>1?'s':'')+' sélectionné'+(n>1?'s':'');
+  let warn='';
+  if(!settings.tenses.length) warn='Choisis au moins un temps 😉';
+  else if(!settings.cats.length) warn='Choisis au moins un type de verbe 😉';
+  $('#warn').textContent=warn;$('#playBtn').disabled=!!warn;
+  const r=store.get(recKey(),null);
+  $('#menuRecord').textContent=r?`🏅 Record pour ces réglages : ${r.score} pts (${r.name||'anonyme'})`:'🏅 Pas encore de record pour ces réglages';
+  store.set('cj_settings',settings);
+}
+$('#name').addEventListener('input',e=>{settings.name=e.target.value.trim();store.set('cj_settings',settings)});
+$$('#modes .choice').forEach(b=>b.onclick=()=>{settings.mode=b.dataset.mode;renderMenu();sfx.click()});
+$$('#levels .choice').forEach(b=>b.onclick=()=>{settings.level=+b.dataset.level;renderMenu();sfx.click()});
+
+/* ---------- Son ---------- */
+let muted=store.get('cj_muted',false),actx=null;
+function tone(f,d,type='triangle',vol=.15,delay=0){
+  if(muted) return;
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const t=actx.currentTime+delay,o=actx.createOscillator(),g=actx.createGain();
+    o.type=type;o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+d);
+    o.connect(g);g.connect(actx.destination);o.start(t);o.stop(t+d+.02);
+  }catch(e){}
+}
+const sfx={
+  click:()=>tone(500,.05,'square',.04),
+  good:()=>{tone(660,.12);tone(990,.16,'triangle',.15,.08)},
+  bad:()=>tone(160,.3,'sawtooth',.08),
+  streak:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.2,'triangle',.15,i*.08)),
+  tick:()=>tone(1200,.05,'square',.05),
+  go:()=>tone(880,.3,'triangle',.18),
+  end:()=>[392,523,659,784,1047,1319].forEach((f,i)=>tone(f,.28,'triangle',.15,i*.11))
+};
+const renderSound=()=>$('#soundBtn').textContent=muted?'🔇':'🔊';
+$('#soundBtn').onclick=()=>{muted=!muted;store.set('cj_muted',muted);renderSound()};renderSound();
+if(!(document.fullscreenEnabled&&document.documentElement.requestFullscreen)) $('#fsBtn').style.display='none';
+$('#fsBtn').onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}};
+
+/* ---------- Confettis ---------- */
+const cv=$('#confetti'),cx=cv.getContext('2d');let parts=[],W=0,H=0,running=false;
+function resize(){const r=window.devicePixelRatio||1;W=innerWidth;H=innerHeight;cv.width=W*r;cv.height=H*r;cx.setTransform(r,0,0,r,0,0)}
+addEventListener('resize',resize);resize();
+const COLORS=['#ffd23f','#ff4fa3','#22d38a','#38bdf8','#ff9f1c','#ef4444','#ffffff'];
+function confetti(n=120,origin=null){
+  for(let i=0;i<n;i++) parts.push({
+    x:origin?origin.x:Math.random()*W,y:origin?origin.y:-20-Math.random()*H*.3,
+    vx:origin?(Math.random()-.5)*16:(Math.random()-.5)*3,vy:origin?-Math.random()*15-5:Math.random()*3+2,
+    w:Math.random()*8+5,h:Math.random()*5+4,c:COLORS[i%COLORS.length],rot:Math.random()*6,vr:(Math.random()-.5)*.3,round:Math.random()<.3});
+  if(!running){running=true;requestAnimationFrame(loop)}
+}
+function loop(){
+  cx.clearRect(0,0,W,H);
+  parts.forEach(p=>{p.vy+=.28;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;
+    cx.save();cx.translate(p.x,p.y);cx.rotate(p.rot);cx.fillStyle=p.c;
+    if(p.round){cx.beginPath();cx.arc(0,0,p.h/1.5,0,7);cx.fill()}else cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore()});
+  parts=parts.filter(p=>p.y<H+40);
+  if(parts.length) requestAnimationFrame(loop);else{running=false;cx.clearRect(0,0,W,H)}
+}
+(function(){const f=$('#floaters'),s=['ñ','¡','¿','á','é','í','ó','ú','!','?'];
+  for(let i=0;i<18;i++){const e=document.createElement('span');e.textContent=s[i%s.length];
+    e.style.left=Math.random()*100+'%';e.style.top=Math.random()*100+'%';e.style.fontSize=(30+Math.random()*60)+'px';
+    e.style.animationDelay=(-Math.random()*14)+'s';f.appendChild(e)}})();
+
+/* =====================================================================
+   PARTIE
+   ===================================================================== */
+const DURATION=180,CIRC=2*Math.PI*27;$('#ring').style.strokeDasharray=CIRC;
+let G=null,timerId=null,nextTimer=null;
+function show(id){$$('.screen').forEach(s=>s.classList.toggle('active',s.id===id));scrollTo(0,0)}
+const rankOf=s=>{let r=RANKS[0];for(const x of RANKS) if(s>=x[0]) r=x;return r};
+const nextRank=s=>RANKS.find(x=>x[0]>s);
+
+function startGame(){
+  if($('#playBtn').disabled) return;
+  G={mode:settings.mode,level:settings.level,tenses:[...settings.tenses],cats:[...settings.cats],
+     score:0,streak:0,best:0,good:0,bad:0,errors:[],q:null,locked:true,last:'',over:false,end:0,prevRank:null};
+  $('#timer').style.display=G.mode==='challenge'?'':'none';
+  $('#counter').style.display=G.mode==='train'?'':'none';
+  $('#skipBtn').style.display=G.mode==='train'?'':'none';
+  $('#stopBtn').textContent=G.mode==='train'?'🏁 Terminer':'✕ Abandonner';
+  $('#typing').style.display=G.level===1?'none':'';
+  $('#options').style.display=G.level===1?'':'none';
+  $('#ans').style.display=G.level===1?'none':'';
+  $('#blank').style.display=G.level===1?'':'none';
+  $('#timer').classList.remove('warn');$('#ring').style.strokeDashoffset=0;$('#ring').style.stroke='';$('#timeTxt').textContent='3:00';
+  updateHud(false);show('game');nextQ();
+  if(G.mode==='challenge') countdown(()=>{G.locked=false;focusAns();G.end=performance.now()+DURATION*1000;timerId=setInterval(tick,200)});
+  else{G.locked=false;focusAns()}
+}
+function focusAns(){if(G&&G.level>1) setTimeout(()=>$('#ans').focus(),30)}
+function countdown(cb){
+  const el=$('#countdown'),num=$('#cdNum');let n=3;el.classList.add('show');
+  const step=()=>{
+    if(n===0){num.textContent='¡YA!';sfx.go();setTimeout(()=>{el.classList.remove('show');cb()},500);return}
+    num.textContent=n;num.style.animation='none';void num.offsetWidth;num.style.animation='';sfx.tick();n--;setTimeout(step,800);
+  };step();
+}
+let lastSec=null;
+function tick(){
+  const left=Math.max(0,(G.end-performance.now())/1000),s=Math.ceil(left);
+  $('#timeTxt').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+  $('#ring').style.strokeDashoffset=CIRC*(1-left/DURATION);
+  const warn=left<=10;$('#timer').classList.toggle('warn',warn);
+  $('#ring').style.stroke=warn?'var(--yellow)':left<=30?'var(--orange)':'';
+  if(warn&&s!==lastSec&&s>0) sfx.tick();lastSec=s;
+  if(left<=0) endGame();
+}
+function makeQ(){
+  for(let tries=0;tries<60;tries++){
+    const t=pick(G.tenses),cat=pick(G.cats);
+    const pool=VERBS.filter(v=>v.cat===cat&&canTense(v,t));
+    if(!pool.length) continue;
+    const v=pick(pool);
+    const persons=t==='imper'?[1,2,3,4,5]:[0,1,2,3,4,5];
+    const p=pick(persons),key=v.inf+t+p;
+    if(key===G.last&&tries<50) continue;
+    G.last=key;
+    const pts=(CATS[v.cat].pts+TENSES[t].pts)*LEVELS[G.level].mult;
+    return {v,t,p,ans:conj(v,t,p),alts:alternatives(v,t,p),pts};
+  }
+  return null;
+}
+function distractors(q){
+  const seen=new Set([q.ans,...q.alts]),pri=[],sec=[];
+  const add=(arr,x)=>{if(x&&!seen.has(x)){seen.add(x);arr.push(x)}};
+  add(pri,conj({inf:q.v.inf,cat:'reg'},q.t,q.p));             // forme « régularisée » (erreur typique)
+  if(q.v.cat==='dipht'||q.v.cat==='affai'||q.v.cat==='alt'){                       // diphtongue mal placée
+    const other=[0,1,2,3,4,5].filter(x=>x!==q.p&&!(q.t==='imper'&&x===0));
+    add(pri,conj(q.v,q.t,pick(other)));
+  }
+  add(pri,deacc(q.ans));                                          // oubli d'accent
+  let pers=shuffle([0,1,2,3,4,5].filter(x=>x!==q.p&&!(q.t==='imper'&&x===0)));
+  pers.forEach(x=>add(sec,conj(q.v,q.t,x)));
+  shuffle(Object.keys(TENSES).filter(t=>t!==q.t&&!(t==='imper'&&(q.p===0||!canTense(q.v,t))))).forEach(t=>add(sec,conj(q.v,t,q.p)));
+  const out=[...shuffle(pri).slice(0,2),...sec].slice(0,3);
+  return shuffle([q.ans,...out]);
+}
+function nextQ(){
+  clearTimeout(nextTimer);
+  const q=makeQ();if(!q){endGame();return}
+  G.q=q;G.answered=false;
+  const T=TENSES[q.t];
+  $('#tense').innerHTML=`${T.fr}<small>${T.es}</small>`;$('#tense').style.background=T.color;
+  $('#ptag').textContent=`+${q.pts} pt${q.pts>1?'s':''}`;
+  const cc=$('#catchip');
+  if(G.level===1){cc.textContent=subLabel(q.v);cc.style.background=CATS[q.v.cat].color}
+  else{const f=family(q.v);cc.textContent=f.name;cc.style.background=f.color}
+  $('#verb').innerHTML=`${esc(q.v.inf)}<small>${esc(q.v.fr)}</small>`;
+  $('#pron').textContent=q.t==='imper'?PRON_IMP[q.p]:PRON[q.p];
+  $('#qcard').classList.remove('good','bad');$('#feedback').innerHTML='';$('#feedback').className='feedback';
+  $('#nextBtn').style.display='none';
+  if(G.level===1){
+    $('#options').innerHTML=distractors(q).map((o,i)=>`<button class="opt" data-v="${esc(o)}"><span class="n">${i+1}</span>${esc(o)}</button>`).join('');
+    $$('#options .opt').forEach(b=>b.onclick=()=>answer(b.dataset.v,b));
+  }else{$('#ans').value='';$('#ans').disabled=false;focusAns()}
+}
+const PRON_WORDS=/^(yo|tú|tu|él|el|ella|usted|nosotros|nosotras|vosotros|vosotras|ellos|ellas|ustedes)\s+/;
+const norm=s=>s.trim().toLowerCase().replace(/\s+/g,' ').replace(PRON_WORDS,'');
+function answer(given,btn){
+  if(!G||G.locked||G.over||G.answered) return;
+  const q=G.q,g=norm(given);if(!g) return;
+  const ok=[q.ans,...q.alts];
+  let res='bad';
+  if(ok.includes(g)) res='good';
+  else if(G.level===2&&ok.map(deacc).includes(deacc(g))) res='accent';
+  G.answered=true;G.locked=true;$('#ans').disabled=true;
+  if(G.level===1) $$('#options .opt').forEach(b=>{if(b.dataset.v===q.ans) b.classList.add('right');else if(b===btn) b.classList.add('wrong')});
+  if(res!=='bad'){
+    G.score+=q.pts;G.streak++;G.good++;G.best=Math.max(G.best,G.streak);
+    $('#qcard').classList.add('good');
+    $('#catchip').classList.remove('hidden');
+    $('#feedback').className='feedback good';
+    $('#feedback').innerHTML=res==='accent'?`Bien, mais attention à l'accent : <b>${esc(q.ans)}</b>`:pick(['¡Muy bien!','¡Perfecto!','¡Genial!','¡Bravo!','¡Excelente!']);
+    floatText('+'+q.pts);sfx.good();
+    if(G.streak%5===0){
+      const bonus=G.streak%10===0?5:3;G.score+=bonus;
+      setTimeout(()=>{banner(`🔥 Série de ${G.streak} ! +${bonus}`);sfx.streak();
+        const r=$('#qcard').getBoundingClientRect();confetti(G.streak%10===0?220:120,G.streak%10===0?null:{x:r.left+r.width/2,y:r.top+r.height/2})},150);
+    }
+    updateHud(true);
+    nextTimer=setTimeout(()=>{if(!G.over){nextQ();G.locked=false;focusAns()}},res==='accent'?1400:600);
+  }else{
+    G.streak=0;G.bad++;G.errors.push({q,given:g});
+    $('#qcard').classList.add('bad');$('#catchip').classList.remove('hidden');
+    $('#feedback').className='feedback bad';
+    $('#feedback').innerHTML=`La bonne réponse : <b>${esc(q.ans)}</b><span class="rule">💡 ${esc(subLabel(q.v))} — ${esc(rule(q.v))}</span>`;
+    sfx.bad();updateHud(false);
+    $('#nextBtn').style.display='';
+    G.locked=false; // on autorise « Suivant »
+    nextTimer=setTimeout(goNext,G.mode==='challenge'?2600:6000);
+  }
+}
+function goNext(){if(!G||G.over) return;clearTimeout(nextTimer);nextQ();G.locked=false;focusAns()}
+function skip(){
+  if(!G||G.locked||G.over||G.answered) return;
+  G.answered=true;G.streak=0;updateHud(false);
+  $('#catchip').classList.remove('hidden');$('#ans').disabled=true;
+  $('#feedback').className='feedback';
+  $('#feedback').innerHTML=`La réponse était <b>${esc(G.q.ans)}</b><span class="rule">💡 ${esc(subLabel(G.q.v))} — ${esc(rule(G.q.v))}</span>`;
+  $('#nextBtn').style.display='';
+}
+function floatText(txt){
+  const r=$('#verb').getBoundingClientRect(),e=document.createElement('div');
+  e.className='floatpts';e.textContent=txt;e.style.left=(r.left+r.width/2-30)+'px';e.style.top=(r.top)+'px';
+  document.body.appendChild(e);setTimeout(()=>e.remove(),1000);
+}
+function banner(t){const b=$('#banner');b.textContent=t;b.classList.remove('show');void b.offsetWidth;b.classList.add('show')}
+function updateHud(pop){
+  const sc=$('#score');sc.textContent=G.score;
+  if(pop){sc.classList.remove('pop');void sc.offsetWidth;sc.classList.add('pop')}
+  const st=$('#streak');st.textContent='🔥 '+G.streak;st.classList.toggle('hot',G.streak>=5);
+  $('#counter').textContent=`✅ ${G.good} / ${G.good+G.bad}`;
+  const r=rankOf(G.score),n=nextRank(G.score);
+  if(G.prevRank&&G.prevRank!==r[2]){banner(`${r[1]} ${r[2]} !`);confetti(160)}
+  G.prevRank=r[2];
+  $('#rankNow').textContent=`${r[1]} ${r[2]}`;
+  if(n){$('#rankNext').textContent=`Prochain titre : ${n[0]} pts`;$('#rankFill').style.width=((G.score-r[0])/(n[0]-r[0])*100)+'%'}
+  else{$('#rankNext').textContent='¡Título máximo!';$('#rankFill').style.width='100%'}
+}
+function endGame(){
+  if(!G||G.over) return;
+  G.over=true;G.locked=true;clearInterval(timerId);clearTimeout(nextTimer);
+  const r=rankOf(G.score),total=G.good+G.bad;
+  $('#endBadge').textContent=r[1];$('#endTitle').textContent=r[2];
+  $('#endWho').textContent=`${settings.name?settings.name+' · ':''}${G.mode==='train'?'Entraînement':'Challenge 3 min'} · Niveau ${LEVELS[G.level].name}`;
+  $('#endScore').textContent=G.score;
+  $('#stGood').textContent=G.good;$('#stBad').textContent=G.bad;
+  $('#stPct').textContent=(total?Math.round(G.good/total*100):0)+' %';$('#stStreak').textContent=G.best;
+  const key=recKey(),old=store.get(key,null);let rec='';
+  if(G.score>0&&(!old||G.score>old.score)){store.set(key,{score:G.score,name:settings.name});rec='<span class="newrec">🏅 ¡Nuevo récord!</span>'}
+  else if(old) rec=`<div style="margin-top:8px;opacity:.85">Record à battre : ${old.score} pts</div>`;
+  $('#endRec').innerHTML=rec;
+  const errs=G.errors.slice(-12);
+  $('#review').innerHTML=errs.length?`<h3>📝 À revoir</h3><ul>${errs.map(({q,given})=>
+    `<li><b>${esc(q.v.inf)}</b> · ${TENSES[q.t].fr} · ${q.t==='imper'?PRON_IMP[q.p]:PRON[q.p].split(' / ')[0]} → <span class="ok">${esc(q.ans)}</span> &nbsp;<span class="ko">${esc(given)}</span><br><small>${esc(subLabel(q.v))}</small></li>`).join('')}</ul>`
+    :(total?'<p style="text-align:center">✨ ¡Ningún error! Bravo !</p>':'');
+  show('end');sfx.end();
+  if(G.score>0) setTimeout(()=>confetti(rec.includes('Nuevo')||!G.bad?260:110),200);
+}
+
+/* ---------- Événements ---------- */
+$('#playBtn').onclick=startGame;$('#againBtn').onclick=startGame;
+$('#menuBtn').onclick=()=>{renderMenu();show('menu')};
+$('#skipBtn').onclick=skip;$('#nextBtn').onclick=goNext;
+$('#stopBtn').onclick=()=>{if(G.mode==='train') endGame();else{G.over=true;clearInterval(timerId);clearTimeout(nextTimer);renderMenu();show('menu')}};
+$('#validate').onclick=()=>{if(G&&G.answered) goNext();else answer($('#ans').value)};
+$$('.acc').forEach(b=>{
+  b.addEventListener('mousedown',e=>e.preventDefault());
+  b.onclick=()=>{
+    const i=$('#ans');if(i.disabled) return;
+    const s=i.selectionStart??i.value.length,e=i.selectionEnd??i.value.length;
+    i.value=i.value.slice(0,s)+b.dataset.c+i.value.slice(e);i.focus();i.setSelectionRange(s+1,s+1);
+  };
+});
+document.addEventListener('keydown',e=>{
+  if(!$('#game').classList.contains('active')||!G) return;
+  if(e.key==='Enter'){
+    e.preventDefault();
+    if(G.answered) goNext();else if(G.level>1) answer($('#ans').value);
+    return;
+  }
+  if(G.level===1&&/^[1-4]$/.test(e.key)&&!G.answered){const b=$$('#options .opt')[+e.key-1];if(b) b.click()}
+});
+
+/* ---------- Barème ---------- */
+$('#baremeBtn').onclick=()=>{
+  $('#baremeTable').innerHTML=
+    `<table><tr><th>Type de verbe</th><th>Pts</th></tr>${Object.values(CATS).map(c=>`<tr><td><b style="color:${c.color}">●</b> ${c.name}</td><td class="pts">${c.pts}</td></tr>`).join('')}</table><br>
+     <table><tr><th>Temps</th><th>Bonus</th></tr>${Object.values(TENSES).map(t=>`<tr><td>${t.fr} <small>(${t.es})</small></td><td class="pts">+${t.pts}</td></tr>`).join('')}</table><br>
+     <table><tr><th>Niveau</th><th>Multiplicateur</th></tr>${Object.values(LEVELS).map(l=>`<tr><td>${l.name}</td><td class="pts">×${l.mult}</td></tr>`).join('')}</table>`;
+  $('#ranksList').innerHTML=RANKS.map(r=>`<div>${r[1]} <b>${r[2]}</b><br><small>dès ${r[0]} pts</small></div>`).join('');
+  $('#baremeModal').classList.add('show');
+};
+
+/* ---------- Liste des verbes & conjugueur ---------- */
+function verbsList(filter=''){
+  const f=deacc(filter.toLowerCase());
+  let html=`<h3>📖 Les ${VERBS.length} verbes du jeu</h3><input class="vsearch" id="vsearch" placeholder="Rechercher un verbe (espagnol ou français)…" value="${esc(filter)}">`;
+  for(const k in CATS){
+    const list=VERBS.filter(v=>v.cat===k&&(!f||deacc(v.inf).includes(f)||deacc(v.fr.toLowerCase()).includes(f)));
+    if(!list.length) continue;
+    html+=`<div class="vgroup"><h4><i style="background:${CATS[k].color}"></i>${CATS[k].name} (${list.length})</h4><div class="vlist">${
+      list.map(v=>`<button class="vbtn" data-inf="${esc(v.inf)}">${esc(v.inf)} <small>${esc(v.fr)}</small></button>`).join('')}</div></div>`;
+  }
+  html+=`<div class="modal-foot"><button class="btn small" data-close style="background:#b3261e;color:#fff">Fermer</button></div>`;
+  $('#verbsBox').innerHTML=html;
+  const s=$('#vsearch');s.oninput=()=>{verbsList(s.value);const n=$('#vsearch');n.focus();n.setSelectionRange(n.value.length,n.value.length)};
+  $$('#verbsBox .vbtn').forEach(b=>b.onclick=()=>verbTable(VERBS.find(v=>v.inf===b.dataset.inf),filter));
+}
+function verbTable(v,filter){
+  let html=`<h3>${esc(v.inf)} <small style="font-weight:400;color:#8a6a7a">— ${esc(v.fr)}</small></h3>
+    <p style="margin-top:0"><span class="catchip" style="background:${CATS[v.cat].color};margin:0">${esc(subLabel(v))}</span></p>
+    <p style="font-size:.92rem;color:#5a3a4a">💡 ${esc(rule(v))}</p><div class="ctable">`;
+  for(const t in TENSES){
+    if(!canTense(v,t)){html+=`<div><b>${TENSES[t].fr}</b><span>(pas d'impératif courant)</span></div>`;continue}
+    const ps=t==='imper'?[1,2,3,4,5]:[0,1,2,3,4,5];
+    html+=`<div><b>${TENSES[t].fr}</b>${ps.map(p=>{
+      const alt=alternatives(v,t,p);
+      return `<span>${t==='imper'?PRON_IMP[p]:PRON[p].split(' / ')[0]}</span> ${esc(conj(v,t,p))}${alt.length?` <span>/ ${esc(alt[0])}</span>`:''}`;
+    }).join('<br>')}</div>`;
+  }
+  html+=`</div><div class="modal-foot"><button class="btn small ghost" id="backList" style="background:#fbf1f5;color:#2a1020">⬅ Retour</button>
+    <button class="btn small" data-close style="background:#b3261e;color:#fff">Fermer</button></div>`;
+  $('#verbsBox').innerHTML=html;$('#verbsBox').scrollTop=0;
+  $('#backList').onclick=()=>verbsList(filter||'');
+}
+$('#verbsBtn').onclick=()=>{verbsList();$('#verbsModal').classList.add('show')};
+document.addEventListener('click',e=>{
+  if(e.target.matches('[data-close]')||e.target.classList.contains('modal')) $$('.modal').forEach(m=>m.classList.remove('show'));
+});
+
+buildChips();renderMenu();
+})();
+</script>
+</body>
+</html>

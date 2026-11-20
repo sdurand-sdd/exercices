@@ -1,4 +1,4 @@
-/* ¡A memorizar! — 3e, séquence 3
+/* ¡A memorizar! — 4e, séquence 3
    Chaque document contient ses mots sous la forme :
    ["mot espagnol", "traduction française"],
    Plusieurs traductions acceptées à l'écrit : ["mot", ["traduction 1", "traduction 2"]]
@@ -13,7 +13,7 @@ window.AMEM_BANKS[3] = {
       ["la escuela", "l'école"], ["la maestra", "la maîtresse"],
       ["el alumno", "la alumna"], ["escribir", "écrire"],
       ["copiar", "copier"], ["la naturaleza", "la nature"],
-      ["al aire libre", "en plein air"], ["el traje", "la tenue|le costume"],
+      ["al aire libre", "en plein air"], ["el traje", "la tenue"],
       ["descalzo", "pied nu"], ["la falda", "la jupe"], ["el sombrero", "le chapeau"],
       ["la blusa", "le chemisier"], ["la camisa", "la chemise"], ["enseñar", "enseigner"],
       ["aprender", "apprendre"], ["la lengua", "la langue"]

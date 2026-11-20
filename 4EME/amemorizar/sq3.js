@@ -6,15 +6,17 @@
 */
 window.AMEM_BANKS = window.AMEM_BANKS || {};
 window.AMEM_BANKS[3] = {
-  title: "Viajar por América Latina",
+  title: "Así es mi vida",
   demo: true,
   documents: [
-    { id: "doc1", title: "Doc. 1 · Guillermo", words: [
-      ["viajar", "voyager"], ["descubrir", "découvrir"],
-      ["el viaje", "le voyage"], ["la ciudad", "la ville"],
-      ["el país", "le pays"], ["la playa", "la plage"],
-      ["la montaña", "la montagne"], ["el paisaje", "le paysage"],
-      ["visitar", "visiter"], ["conocer", "connaître"]
+    { id: "doc1", title: "Doc. 1 · En la escuela : 1. La pintura - ", words: [
+      ["la escuela", "l'école"], ["la maestra", "la maîtresse"],
+      ["el alumno", "la alumna"], ["escribir", "écrire"],
+      ["copiar", "copier"], ["la naturaleza", "la nature"],
+      ["al aire libre", "en plein air"], ["el traje", "la tenue|le costume"],
+      ["descalzo", "pied nu"], ["la falda", "la jupe"], ["el sombrero", "le chapeau"],
+      ["la blusa", "le chemisier"], ["la camisa", "la chemise"], ["enseñar", "enseigner"],
+      ["aprender", "apprendre"], ["la lengua", "la langue"]
     ]},
     { id: "doc2", title: "Doc. 2 · Diarios de motocicleta", words: [
       ["la moto", "la moto"], ["salir", "partir"],

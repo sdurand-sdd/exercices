@@ -77,140 +77,82 @@ window.AMEM_BANKS[3] = {
       ]
     },
     {
-      "id": "doc2",
-      "title": "Doc. 2 · Diarios de motocicleta",
+      "id": "doc5",
+      "title": "Doc.1 - 2. El tebeo",
       "words": [
         [
-          "la moto",
-          "la moto"
-        ],
-        [
-          "salir",
-          "partir"
-        ],
-        [
-          "despedirse",
-          "prendre congé"
-        ],
-        [
-          "el camino",
-          "le chemin"
-        ],
-        [
-          "cruzar",
-          "traverser"
+          "Me hace ilusión",
+          "j'ai hâte"
         ],
         [
           "llegar",
           "arriver"
         ],
         [
-          "el autobús",
-          "le bus"
+          "también",
+          "aussi"
         ],
         [
-          "el barco",
-          "le bateau"
+          "creer",
+          "croire"
         ],
         [
-          "la frontera",
-          "la frontière"
+          "oír",
+          "entendre"
         ],
         [
-          "recorrer",
-          "parcourir"
-        ]
-      ]
-    },
-    {
-      "id": "doc3",
-      "title": "Doc. 3 · Ruta Quetzal",
-      "words": [
-        [
-          "la selva",
-          "la jungle"
+          "prometer",
+          "promettre"
         ],
         [
-          "la aventura",
-          "l'aventure"
+          "me gusta",
+          "j'aime"
         ],
         [
-          "la pirámide",
-          "la pyramide"
+          "me encanta",
+          "j'adore"
         ],
         [
-          "el grupo",
-          "le groupe"
+          "me chifla",
+          [
+            "j'adore",
+            "je kiffe"
+          ]
         ],
         [
-          "caminar",
-          "marcher"
+          "las matemáticas",
+          "les mathématiques"
         ],
         [
-          "aprender",
-          "apprendre"
+          "la geografía",
+          "la geographie"
         ],
         [
-          "la experiencia",
-          "l'expérience"
+          "la física",
+          "la physique"
         ],
         [
-          "los jóvenes",
-          "les jeunes"
+          "la química",
+          "la chimie"
         ],
         [
-          "explorar",
-          "explorer"
+          "la geometría",
+          "la géométrie"
         ],
         [
-          "el descubrimiento",
-          "la découverte"
-        ]
-      ]
-    },
-    {
-      "id": "doc4",
-      "title": "Doc. 4 · Perú",
-      "words": [
-        [
-          "el alojamiento",
-          "l'hébergement"
+          "las ciencias naturales",
+          [
+            "les sciences naturelles",
+            "la svt"
+          ]
         ],
         [
-          "probar",
-          "goûter"
+          "la maestra",
+          "la maîtresse"
         ],
         [
-          "el lago",
-          "le lac"
-        ],
-        [
-          "la capital",
-          "la capitale"
-        ],
-        [
-          "el museo",
-          "le musée"
-        ],
-        [
-          "el futuro",
-          "le futur"
-        ],
-        [
-          "mañana",
-          "demain"
-        ],
-        [
-          "la semana próxima",
-          "la semaine prochaine"
-        ],
-        [
-          "la comida",
-          "la nourriture"
-        ],
-        [
-          "la excursión",
-          "l'excursion"
+          "¡Yuju!",
+          "Youpi"
         ]
       ]
     }

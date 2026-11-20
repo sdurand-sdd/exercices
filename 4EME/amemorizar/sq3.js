@@ -18,14 +18,14 @@ window.AMEM_BANKS[3] = {
       ["la blusa", "le chemisier"], ["la camisa", "la chemise"], ["enseñar", "enseigner"],
       ["aprender", "apprendre"], ["la lengua", "la langue"]
     ]},
-    { id: "doc2", title: "Doc. 2 · Diarios de motocicleta", words: [
+    { id: "doc2", title: "Doc. 1 · En la escuela : 2. El tebeo", words: [
       ["la moto", "la moto"], ["salir", "partir"],
       ["despedirse", "prendre congé"], ["el camino", "le chemin"],
       ["cruzar", "traverser"], ["llegar", "arriver"],
       ["el autobús", "le bus"], ["el barco", "le bateau"],
       ["la frontera", "la frontière"], ["recorrer", "parcourir"]
     ]},
-    { id: "doc3", title: "Doc. 3 · Ruta Quetzal", words: [
+    { id: "doc3", title: "Doc. 1 · En la escuela : 3. El poema", words: [
       ["la selva", "la jungle"], ["la aventura", "l'aventure"],
       ["la pirámide", "la pyramide"], ["el grupo", "le groupe"],
       ["caminar", "marcher"], ["aprender", "apprendre"],

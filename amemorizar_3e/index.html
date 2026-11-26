@@ -480,15 +480,6 @@
       z-index: 50;
     }
 
-    .demo {
-      background: #fff2b6;
-      color: #56320b;
-      padding: 8px 13px;
-      border-radius: 12px;
-      text-align: center;
-      font-size: .88rem;
-      margin-bottom: 14px;
-    }
 
     @media(max-width:570px) {
       .grid.four {
@@ -547,9 +538,7 @@
      ¡Aprende jugando! · Español 3e
     </p>
    </header>
-   <div class="demo" hidden="" id="demo">
-    🧪 Version pilote : les mots de la séquence 3 sont des exemples à remplacer.
-   </div>
+
    <section class="screen active" id="menu">
     <div class="panel">
      <h2>
@@ -778,7 +767,7 @@
         function sides(w, d) { return d === 'esfr' ? { q: w.es, a: w.fr[0], answers: w.fr } : { q: w.fr[0], a: w.es, answers: [w.es] }; }
         function titleTag() { return esc(getDocs().find(d => d.id === selectedDoc)?.title || 'Toute la séquence'); }
         function drawSeq() { let s = $('#sequences'); s.innerHTML = Array.from({ length: 7 }, (_, i) => `<button class="choice ${i + 1 === selectedSq ? 'on' : ''}" data-sq="${i + 1}"><b>Secuencia ${i + 1}</b></button>`).join(''); s.querySelectorAll('button').forEach(b => b.onclick = () => loadSequence(+b.dataset.sq)); }
-        function updateMenu() { drawSeq(); let docs = getDocs(); $('#documents').innerHTML = `<button class="chip ${selectedDoc === 'all' ? 'on' : ''}" data-doc="all">🌟 Toute la séquence</button>` + docs.map(d => `<button class="chip ${selectedDoc === d.id ? 'on' : ''}" data-doc="${esc(d.id)}">${esc(d.title)}</button>`).join(''); $$('#documents [data-doc]').forEach(b => b.onclick = () => { selectedDoc = b.dataset.doc; updateMenu(); }); let n = allWords().length; $('#wordcount').textContent = n + ' mot' + (n > 1 ? 's' : '') + ' disponible' + (n > 1 ? 's' : '') + (bank?.title ? ' · ' + bank.title : ''); $('#demo').hidden = !bank?.demo; let message = n ? '' : 'Cette séquence ne contient pas encore de vocabulaire.'; if (n < 3 && mode === 'qcm')
+        function updateMenu() { drawSeq(); let docs = getDocs(); $('#documents').innerHTML = `<button class="chip ${selectedDoc === 'all' ? 'on' : ''}" data-doc="all">🌟 Toute la séquence</button>` + docs.map(d => `<button class="chip ${selectedDoc === d.id ? 'on' : ''}" data-doc="${esc(d.id)}">${esc(d.title)}</button>`).join(''); $$('#documents [data-doc]').forEach(b => b.onclick = () => { selectedDoc = b.dataset.doc; updateMenu(); }); let n = allWords().length; $('#wordcount').textContent = n + ' mot' + (n > 1 ? 's' : '') + ' disponible' + (n > 1 ? 's' : '') + (bank?.title ? ' · ' + bank.title : ''); let message = n ? '' : 'Cette séquence ne contient pas encore de vocabulaire.'; if (n < 3 && mode === 'qcm')
             message = 'Le QCM nécessite au moins 3 traductions distinctes.'; $('#warning').textContent = message; $('#play').disabled = !!message; $('#speedhint').textContent = speed === 'challenge' ? '3 minutes pour répondre au maximum de questions. Les flashcards restent sans chrono.' : 'Sans chronomètre, à ton rythme.'; }
         function loadSequence(n) { selectedSq = n; selectedDoc = 'all'; bank = null; updateMenu(); let serial = ++loadSerial; const old = $('#bankScript'); if (old)
             old.remove(); window.AMEM_BANKS = window.AMEM_BANKS || {}; if (window.AMEM_BANKS[n]) {
